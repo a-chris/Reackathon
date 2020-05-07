@@ -1,0 +1,10 @@
+{
+  "name": "reackathon",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/a-chris/reackathon.git",
+  "author": "Christian Toscano - Giada Boccali",
+  "license": "MIT",
+  "private": true,
+  "workspaces": ["reackathon-client", "reackathon-server"]
+}
