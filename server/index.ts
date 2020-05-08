@@ -10,7 +10,8 @@ const PORT = 5000;
 mongoose.connect('mongodb://192.168.1.123', {
     dbName: 'test',
     useNewUrlParser: true,
-    useFindAndModify: false,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
 });
 
 app.use(express.json());
