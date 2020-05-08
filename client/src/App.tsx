@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 import './App.css';
 import { ThemeProvider, theme, CSSReset } from "@chakra-ui/core";
+import Login from './user/Login';
 
 function App() {
     return (
@@ -14,7 +15,7 @@ function App() {
                 <CSSReset />
                 <Router>
                     <Switch>
-                        <Route exact path='/' render={() => (<div>Home</div>)} />
+                        <Route exact path='/' render={() => (<Login/>)} />
                         <Route path='/login' render={() => (<div>Login</div>)} />
                     </Switch>
                 </Router>
