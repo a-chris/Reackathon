@@ -104,3 +104,6 @@ server/*.js
 server/js/*
 build/
 *.code-workspace
+
+#VSCode
+.vscode/*
