@@ -5,16 +5,20 @@ import {
     Route,
 } from 'react-router-dom';
 import './App.css';
+import { ThemeProvider, theme, CSSReset } from "@chakra-ui/core";
 
 function App() {
     return (
         <div className="App">
-            <Router>
-                <Switch>
-                    <Route exact path='/' render={() => (<div>Home</div>)} />
-                    <Route path='/login' render={() => (<div>Login</div>)} />
-                </Switch>
-            </Router>
+            <ThemeProvider theme={theme}>
+                <CSSReset />
+                <Router>
+                    <Switch>
+                        <Route exact path='/' render={() => (<div>Home</div>)} />
+                        <Route path='/login' render={() => (<div>Login</div>)} />
+                    </Switch>
+                </Router>
+            </ThemeProvider>
         </div>
     );
 }
