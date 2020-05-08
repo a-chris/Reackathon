@@ -101,5 +101,6 @@ dist
 .tern-port
 
 server/*.js
+server/js/*
 build/
 *.code-workspace

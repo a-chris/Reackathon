@@ -20,6 +20,15 @@
     "rules": {
         "no-console": "off",
         "indent": ["error", 4],
-        "linebreak-style": 0
+        "linebreak-style": 0,
+        "import/prefer-default-export": "off",
+        "import/extensions": "never"
+    },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [".js", ".jsx", ".ts", ".tsx"]
+            }
+        }
     }
 }
