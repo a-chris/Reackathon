@@ -1,4 +1,3 @@
-
 import express from 'express';
 
 const app = express();
@@ -11,5 +10,5 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.static('../build'))
+app.use(express.static('../build'));
 app.listen(PORT, () => console.log('Server started'));

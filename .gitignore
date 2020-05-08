@@ -102,3 +102,4 @@ dist
 
 server/*.js
 build/
+*.code-workspace
