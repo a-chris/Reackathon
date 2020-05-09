@@ -1,17 +1,17 @@
 import { Request, Response } from 'express';
 import { UserDb } from '../models/User';
 
-export function signup(req: Request, res: Response): void {
-    console.log('register');
-}
+const ACCESS_TOKEN_SECRET = 'cesena2020';
 
-export function getUsers(req: Request, res: Response): void {
+export function getUsers(req: Request, res: Response) {
+    console.log('TCL: getUsers -> req.session', req.session);
     UserDb.find((err, users) => {
+        // TODO: sanitize users data
         res.json(users);
     });
 }
 
-export function usernameExists(req: Request, res: Response): void {
+export function usernameExists(req: Request, res: Response) {
     const paramUsername = req.query.username;
     if (typeof paramUsername !== 'string') {
         res.sendStatus(400);
@@ -21,3 +21,5 @@ export function usernameExists(req: Request, res: Response): void {
         );
     }
 }
+
+export function updateUser(req: Request, res: Response) {}
