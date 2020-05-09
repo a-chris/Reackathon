@@ -18,6 +18,7 @@ export default function Login() {
     const appContext = React.useContext(AppContext);
     const [loginData, setLoginData] = React.useState<LoginData>({ username: '', password: '' });
 
+    const [loading, setLoading] = React.useState<boolean>(false);
     const [pwdVisible, setPwdVisible] = React.useState<boolean>(false);
     const [pwdError, setError] = React.useState<boolean>(false);
 
@@ -91,21 +92,23 @@ export default function Login() {
                                 </Button>
                             </InputRightElement>
                         </InputGroup>
-                        <FormErrorMessage>
+                        {/* <FormErrorMessage>
                             La password deve essere lunga almeno 6 caratteri
-                        </FormErrorMessage>
+                        </FormErrorMessage> */}
                     </FormControl>
                 </Stack>
                 <Button
                     variantColor='teal'
-                    isLoading={false}
+                    isLoading={loading}
                     type='submit'
                     onClick={() => {
+                        setLoading(true)
                         login(loginData).then((user) => {
                             if (appContext?.onLoggedIn != null) {
                                 appContext.onLoggedIn(user);
+                                setLoading(false)
                             }
-                        });
+                        }).catch(() => setLoading(false));
                     }}>
                     Login
                 </Button>
