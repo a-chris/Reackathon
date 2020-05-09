@@ -12,37 +12,37 @@ import {
 } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
 import { AppContext } from '../../App';
-
-type ChangeElem = ChangeEvent<HTMLInputElement>;
+import { login, LoginData } from '../../services/LoginService';
 
 export default function Login() {
     const appContext = React.useContext(AppContext);
+    const [loginData, setLoginData] = React.useState<LoginData>({ username: '', password: '' });
 
-    const [username, setUsername] = React.useState<string>('');
-    const [password, setPassword] = React.useState<string>('');
     const [pwdVisible, setPwdVisible] = React.useState<boolean>(false);
     const [pwdError, setError] = React.useState<boolean>(false);
 
-    React.useEffect(() => {
-        setError(false);
-    }, [password]);
-
-    const setValue = (event: ChangeEvent<HTMLInputElement>, callback: Function) => {
-        const value = event.target.value;
-        callback(value);
-    };
-
-    const validatePwd = () => {
-        if (password.length > 0 && password.length < 6) {
-            setError(true);
+    const onChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event?.target;
+        if (name != null && value != null) {
+            setLoginData((curr) => ({ ...curr, [name]: value }));
         }
     };
+
+    // TODO: only for signup
+    // const validatePwd = (event: ChangeEvent<HTMLInputElement>) => {
+    //     const { value } = event?.target;
+    //     if (value.length > 0 && value.length < 6) {
+    //         setError(true);
+    //     } else {
+    //         setError(false);
+    //     }
+    // };
 
     function togglePwdVisibility() {
         setPwdVisible(!pwdVisible);
     }
 
-    console.log('login refreshed');
+    console.log(loginData);
 
     return (
         <Stack spacing={'-70px'} width={['90%', '80%', '50%', '40%']} m='auto'>
@@ -65,9 +65,10 @@ export default function Login() {
                             <Input
                                 type='text'
                                 placeholder='Username'
-                                value={username}
+                                defaultValue=''
                                 variant='flushed'
-                                onChange={(e: ChangeElem) => setValue(e, setUsername)}
+                                name='username'
+                                onChange={onChangeValue}
                             />
                         </InputGroup>
                     </FormControl>
@@ -77,11 +78,12 @@ export default function Login() {
                             <Input
                                 type={pwdVisible ? 'text' : 'password'}
                                 placeholder='Password'
-                                value={password}
+                                defaultValue=''
                                 pr='4.5rem'
                                 variant='flushed'
-                                onChange={(e: ChangeElem) => setValue(e, setPassword)}
-                                onBlur={validatePwd}
+                                name='password'
+                                onChange={onChangeValue}
+                                // onBlur={validatePwd}
                             />
                             <InputRightElement width='4.5rem'>
                                 <Button h='1.75rem' size='sm' onClick={togglePwdVisibility}>
@@ -99,10 +101,11 @@ export default function Login() {
                     isLoading={false}
                     type='submit'
                     onClick={() => {
-                        console.log('clicked');
-                        if (appContext.onLogin != null) {
-                            appContext.onLogin();
-                        }
+                        login(loginData).then((user) => {
+                            if (appContext?.onLoggedIn != null) {
+                                appContext.onLoggedIn(user);
+                            }
+                        });
                     }}>
                     Login
                 </Button>

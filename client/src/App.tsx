@@ -1,15 +1,15 @@
 import { CSSReset, theme, ThemeProvider } from '@chakra-ui/core';
+import axios from 'axios';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
+import { User } from './models/Models';
 import Login from './pages/login/Login';
-import { get } from './services/http';
 import { LOGIN_ACTION } from './utils/constants';
 
 interface AppStore {
     state?: AppState;
-    dispatch?: React.Dispatch<Action>;
-    onLogin?: () => void;
+    onLoggedIn?: (user: User) => void;
 }
 
 interface AppState {
@@ -21,6 +21,19 @@ interface Action {
     type: LOGIN_ACTION;
     payload?: any;
 }
+
+/**
+ * Debug
+ */
+axios.interceptors.request.use((request) => {
+    console.log('Starting Request', request);
+    return request;
+});
+
+axios.interceptors.response.use((response) => {
+    console.log('Response:', response);
+    return response;
+});
 
 export const AppContext = React.createContext<AppStore>({});
 
@@ -48,18 +61,14 @@ const reducer = (state: AppState, action: Action): AppState => {
 export default function App() {
     const [state, dispatch] = React.useReducer(reducer, {});
 
-    console.log('app refreshed');
-
-    const onLogin = React.useCallback(() => {
-        get('https://httpbin.org/get')
-            .then((res: any) => dispatch({ type: LOGIN_ACTION.LOGGED_IN, payload: res }))
-            .catch(() => dispatch({ type: LOGIN_ACTION.LOGIN_FAIL }));
+    const onLoggedIn = React.useCallback((user: User) => {
+        dispatch({ type: LOGIN_ACTION.LOGGED_IN, payload: user });
     }, []);
 
     return (
         <div className='App'>
             <ThemeProvider theme={theme}>
-                <AppContext.Provider value={{ state, dispatch, onLogin }}>
+                <AppContext.Provider value={{ state, onLoggedIn }}>
                     <CSSReset />
                     <Router>
                         <Switch>

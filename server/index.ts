@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import * as _ from 'lodash';
@@ -30,6 +31,9 @@ app.use(
         }),
     })
 );
+// TODO: wrap this in a if statement
+// before to deploy in qa/production
+app.use(cors());
 
 app.use((req, res, next) => {
     let logString = `${req.originalUrl}:`;
