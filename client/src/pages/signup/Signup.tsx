@@ -18,17 +18,27 @@ import styled from 'styled-components';
 import { AppContext } from '../../App';
 import { login, LoginData } from '../../services/LoginService';
 
-export default function Login() {
+export default function Signup() {
     const appContext = React.useContext(AppContext);
     const [loginData, setLoginData] = React.useState<LoginData>({ username: '', password: '' });
 
     const [loading, setLoading] = React.useState<boolean>(false);
     const [pwdVisible, setPwdVisible] = React.useState<boolean>(false);
+    const [pwdError, setError] = React.useState<boolean>(false);
 
     const onChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event?.target;
         if (name != null && value != null) {
             setLoginData((curr) => ({ ...curr, [name]: value }));
+        }
+    };
+
+    const validatePwd = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value } = event?.target;
+        if (value.length > 0 && value.length < 6) {
+            setError(true);
+        } else {
+            setError(false);
         }
     };
 
@@ -49,7 +59,7 @@ export default function Login() {
                     bg='#319795'
                     zIndex={1}>
                     <Heading h='100%' as='h1' size='xl' p='25px' verticalAlign='middle'>
-                        Login
+                        Registrazione
                     </Heading>
                 </Box>
                 <Box overflow='hidden' borderWidth='1px' rounded='md' pt='70px'>
@@ -67,7 +77,7 @@ export default function Login() {
                                 />
                             </InputGroup>
                         </FormControl>
-                        <FormControl>
+                        <FormControl isInvalid={pwdError}>
                             <InputGroup size='md'>
                                 <InputLeftElement children={<Icon name='lock' />} />
                                 <Input
@@ -78,7 +88,7 @@ export default function Login() {
                                     variant='flushed'
                                     name='password'
                                     onChange={onChangeValue}
-                                    // onBlur={validatePwd}
+                                    onBlur={validatePwd}
                                 />
                                 <InputRightElement width='4.5rem'>
                                     {pwdVisible ? (

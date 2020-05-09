@@ -1,10 +1,15 @@
 import { CSSReset, theme, ThemeProvider } from '@chakra-ui/core';
 import axios from 'axios';
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
 import './App.css';
-import { User } from './models/Models';
+import { User, UserRole } from './models/Models';
+import PageNotFound from './pages/errors/PageNotFound';
+import HackatonsList from './pages/hackatons/HackatonsList';
+import Homepage from './pages/homepage/Homepage';
 import Login from './pages/login/Login';
+import OrganizationBoard from './pages/organization/OrganizationBoard';
+import Signup from './pages/signup/Signup';
 import { LOGIN_ACTION } from './utils/constants';
 
 interface AppStore {
@@ -15,6 +20,7 @@ interface AppStore {
 interface AppState {
     authRequest?: boolean;
     username?: string;
+    user?: User;
 }
 
 interface Action {
@@ -70,14 +76,54 @@ export default function App() {
             <ThemeProvider theme={theme}>
                 <AppContext.Provider value={{ state, onLoggedIn }}>
                     <CSSReset />
-                    <Router>
+                    <HashRouter>
                         <Switch>
-                            <Route exact path='/' render={() => <Login />} />
-                            <Route path='/login' render={() => <div>Login</div>} />
+                            <Route exact path='/' component={Homepage} />
+                            <RestrictedRoute
+                                exact
+                                path='/login'
+                                component={Login}
+                                user={state.user}
+                            />
+                            <RestrictedRoute
+                                exact
+                                path='/signup'
+                                component={Signup}
+                                user={state.user}
+                            />
+                            <RestrictedRoute
+                                exact
+                                path='/org'
+                                component={OrganizationBoard}
+                                user={state.user}
+                                allowedFor={[UserRole.ORGANIZATION]}
+                            />
+                            <Route exact path='/hackatons' component={HackatonsList} />
+                            <Route component={PageNotFound} />
                         </Switch>
-                    </Router>
+                    </HashRouter>
                 </AppContext.Provider>
             </ThemeProvider>
         </div>
     );
 }
+
+interface RestrictedRouteProps extends RouteProps {
+    user?: User;
+    allowedFor?: UserRole[];
+}
+
+const RestrictedRoute: React.FC<RestrictedRouteProps> = ({ user, allowedFor, ...restOfProps }) => {
+    let canRoute = false;
+    if (user?.role != null && allowedFor != null) {
+        canRoute = allowedFor.includes(user.role);
+    } else if (user?.role == null && allowedFor == null) {
+        canRoute = true;
+    }
+    const { component, ...rest } = restOfProps;
+    return canRoute ? (
+        <Route {...restOfProps} />
+    ) : (
+        <Route {...rest} render={() => <Redirect to='/' />} />
+    );
+};
