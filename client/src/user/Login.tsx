@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, useEffect, useContext } from 'react';
 import {
     Box,
     Stack,
@@ -11,10 +11,14 @@ import {
     FormControl,
     FormErrorMessage,
 } from '@chakra-ui/core';
+import { AuthContext } from '../App';
+
 
 type ChangeElem = ChangeEvent<HTMLInputElement>;
 
 export default function Login(): JSX.Element {
+    const context = useContext(AuthContext)
+
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [pwdVisible, setPwdVisible] = useState<boolean>(false);
@@ -89,7 +93,7 @@ export default function Login(): JSX.Element {
                         </FormErrorMessage>
                     </FormControl>
                 </Stack>
-                <Button variantColor='teal' isLoading={false} type='submit'>
+                <Button variantColor='teal' isLoading={false} type='submit' >
                     Login
                 </Button>
             </Box>
