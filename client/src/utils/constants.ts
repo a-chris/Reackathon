@@ -1,6 +1,5 @@
-export enum loginActions {
+export enum LOGIN_ACTION {
     LOGIN_REQUEST,
-    LOGIN,
     LOGGED_IN,
     LOGIN_FAIL,
 }

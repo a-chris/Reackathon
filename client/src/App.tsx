@@ -1,66 +1,65 @@
-import React, { useReducer } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { CSSReset, theme, ThemeProvider } from '@chakra-ui/core';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
-import { ThemeProvider, theme, CSSReset } from '@chakra-ui/core';
-import Login from './user/Login';
-import { loginActions } from './utils/constants';
-import { get } from './utils/http';
+import Login from './pages/login/Login';
+import { get } from './services/http';
+import { LOGIN_ACTION } from './utils/constants';
 
 interface AppStore {
+    state?: AppState;
+    dispatch?: React.Dispatch<Action>;
+    onLogin?: () => void;
+}
+
+interface AppState {
     authRequest?: boolean;
     username?: string;
-    dispatch?: React.Dispatch<Action>;
 }
 
 interface Action {
-    type: loginActions;
+    type: LOGIN_ACTION;
     payload?: any;
 }
 
-interface LoginParams {
-    username: string;
-    password: string;
-}
+export const AppContext = React.createContext<AppStore>({});
 
-export const initialState = {
-    authRequest: false,
+const reducer = (state: AppState, action: Action): AppState => {
+    console.log('TCL: App -> state', state);
+    console.log('TCL: App -> action', action);
+    switch (action.type) {
+        case LOGIN_ACTION.LOGIN_REQUEST:
+            return { ...state };
+        case LOGIN_ACTION.LOGGED_IN:
+            return {
+                ...state,
+                username: action.payload,
+            };
+        case LOGIN_ACTION.LOGIN_FAIL:
+            return {
+                ...state,
+                username: undefined,
+            };
+        default:
+            return state;
+    }
 };
 
-export const AuthContext = React.createContext<AppStore>(initialState);
+export default function App() {
+    const [state, dispatch] = React.useReducer(reducer, {});
 
-function App() {
-    const [state, dispatch] = useReducer((state: AppStore, action: Action): AppStore => {
-        switch (action.type) {
-            case loginActions.LOGIN_REQUEST:
-                get('https://httpbin.org/get')
-                    .then((res: any) => dispatch({ type: loginActions.LOGGED_IN, payload: res }))
-                    .catch(() => dispatch({ type: loginActions.LOGIN_FAIL }));
-                return { ...state };
-            case loginActions.LOGGED_IN:
-                return {
-                    ...state,
-                    username: action.payload,
-                };
-            case loginActions.LOGIN_FAIL:
-                return {
-                    ...state,
-                    username: undefined,
-                };
-        }
-        return state;
-    }, initialState);
+    console.log('app refreshed');
 
-    // function login(data: LoginParams) {
-    //     dispatch({ type: loginActions.LOGIN_REQUEST });
-    //     get('https://httpbin.org/get')
-    //         .then((res: any) => dispatch({ type: loginActions.LOGGED_IN, payload: res }))
-    //         .catch(() => dispatch({ type: loginActions.LOGIN_FAIL }));
-    // }
+    const onLogin = React.useCallback(() => {
+        get('https://httpbin.org/get')
+            .then((res: any) => dispatch({ type: LOGIN_ACTION.LOGGED_IN, payload: res }))
+            .catch(() => dispatch({ type: LOGIN_ACTION.LOGIN_FAIL }));
+    }, []);
 
     return (
         <div className='App'>
             <ThemeProvider theme={theme}>
-                <AuthContext.Provider value={state}>
+                <AppContext.Provider value={{ state, dispatch, onLogin }}>
                     <CSSReset />
                     <Router>
                         <Switch>
@@ -68,10 +67,8 @@ function App() {
                             <Route path='/login' render={() => <div>Login</div>} />
                         </Switch>
                     </Router>
-                </AuthContext.Provider>
+                </AppContext.Provider>
             </ThemeProvider>
         </div>
     );
 }
-
-export default App;

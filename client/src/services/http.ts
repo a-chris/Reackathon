@@ -1,14 +1,5 @@
 import axios from 'axios';
 
-const getHeaders = () => {
-    const token = '';
-    return {
-        headers: {
-            'Authorization': token,
-        },
-    };
-};
-
 export function get(url: string, data?: {}): Promise<any> {
     return new Promise((resolve, reject) =>
         axios
@@ -21,7 +12,7 @@ export function get(url: string, data?: {}): Promise<any> {
 export function post(url: string, data?: {}): Promise<any> {
     return new Promise((resolve, reject) =>
         axios
-            .post(url, data, getHeaders())
+            .post(url, data)
             .then((res: any) => resolve(res))
             .catch((error: any) => reject(error))
     );

@@ -1,37 +1,36 @@
-import React, { useState, ChangeEvent, useEffect, useContext } from 'react';
 import {
     Box,
-    Stack,
-    Input,
-    InputRightElement,
     Button,
-    InputGroup,
-    InputLeftElement,
-    Icon,
     FormControl,
     FormErrorMessage,
+    Icon,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    InputRightElement,
+    Stack,
 } from '@chakra-ui/core';
-import { AuthContext } from '../App';
-
+import React, { ChangeEvent } from 'react';
+import { AppContext } from '../../App';
 
 type ChangeElem = ChangeEvent<HTMLInputElement>;
 
-export default function Login(): JSX.Element {
-    const context = useContext(AuthContext)
+export default function Login() {
+    const appContext = React.useContext(AppContext);
 
-    const [username, setUsername] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [pwdVisible, setPwdVisible] = useState<boolean>(false);
-    const [pwdError, setError] = useState<boolean>(false);
+    const [username, setUsername] = React.useState<string>('');
+    const [password, setPassword] = React.useState<string>('');
+    const [pwdVisible, setPwdVisible] = React.useState<boolean>(false);
+    const [pwdError, setError] = React.useState<boolean>(false);
 
-    const setValue = (event: ChangeElem, callback: Function) => {
+    React.useEffect(() => {
+        setError(false);
+    }, [password]);
+
+    const setValue = (event: ChangeEvent<HTMLInputElement>, callback: Function) => {
         const value = event.target.value;
         callback(value);
     };
-
-    useEffect(() => {
-        setError(false);
-    }, [password]);
 
     const validatePwd = () => {
         if (password.length > 0 && password.length < 6) {
@@ -42,6 +41,8 @@ export default function Login(): JSX.Element {
     function togglePwdVisibility() {
         setPwdVisible(!pwdVisible);
     }
+
+    console.log('login refreshed');
 
     return (
         <Stack spacing={'-70px'} width={['90%', '80%', '50%', '40%']} m='auto'>
@@ -93,7 +94,16 @@ export default function Login(): JSX.Element {
                         </FormErrorMessage>
                     </FormControl>
                 </Stack>
-                <Button variantColor='teal' isLoading={false} type='submit' >
+                <Button
+                    variantColor='teal'
+                    isLoading={false}
+                    type='submit'
+                    onClick={() => {
+                        console.log('clicked');
+                        if (appContext.onLogin != null) {
+                            appContext.onLogin();
+                        }
+                    }}>
                     Login
                 </Button>
             </Box>
