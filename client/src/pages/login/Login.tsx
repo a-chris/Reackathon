@@ -36,6 +36,18 @@ export default function Login() {
         setPwdVisible(!pwdVisible);
     }
 
+    const onLogin = React.useCallback(() => {
+        setLoading(true);
+        login(loginData)
+            .then((user) => {
+                setLoading(false);
+                if (appContext?.onLoggedIn != null) {
+                    appContext.onLoggedIn(user);
+                }
+            })
+            .catch(() => setLoading(false));
+    }, [appContext, loginData]);
+
     return (
         <StyledLoginContainer>
             <Stack spacing={'-70px'} width={['90%', '80%', '50%', '30%']} m='auto'>
@@ -106,25 +118,13 @@ export default function Login() {
                         </FormControl>
                     </Stack>
 
-                    <Button
-                        variantColor='teal'
-                        isLoading={loading}
-                        type='submit'
-                        onClick={() => {
-                            setLoading(true);
-                            login(loginData)
-                                .then((user) => {
-                                    if (appContext?.onLoggedIn != null) {
-                                        appContext.onLoggedIn(user);
-                                        setLoading(false);
-                                    }
-                                })
-                                .catch(() => setLoading(false));
-                        }}>
+                    <Button variantColor='teal' isLoading={loading} type='submit' onClick={onLogin}>
                         Login
                     </Button>
                     <Text p={3} fontSize='0.9em'>
-                        Oppure <Link color='teal.500'>registrati</Link>
+                        <Link href='#/signup' color='teal.500'>
+                            Oppure registrati.
+                        </Link>
                     </Text>
                 </Box>
             </Stack>
