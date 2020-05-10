@@ -1,6 +1,10 @@
 export enum UserRole {
-    ORGANIZATION,
-    CLIENT,
+    ORGANIZATION = 'ORGANIZATION',
+    CLIENT = 'CLIENT',
+}
+
+export function isUserRole(value: string): value is keyof typeof UserRole {
+    return value in UserRole;
 }
 
 export class User {

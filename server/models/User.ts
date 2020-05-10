@@ -3,27 +3,23 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     username: { type: String, unique: true },
     password: String,
-    firstname: String,
-    lastname: String,
-    role: { type: String, enum: ['client', 'organization'] },
+    name: String,
+    role: { type: String, enum: ['CLIENT', 'ORGANIZATION'] },
 });
 
 export class UserView {
     username: string;
-    firstname: string;
-    lastname: string;
+    name: string;
 
-    constructor(username: string, firstname: string, lastname: string) {
+    constructor(username: string, name: string) {
         this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
+        this.name = name;
     }
 
     public clean() {
         return {
             username: this.username,
-            firstname: this.firstname,
-            lastname: this.lastname,
+            name: this.name,
         };
     }
 }
@@ -31,8 +27,7 @@ export class UserView {
 export type User = mongoose.Document & {
     username: string;
     password: string;
-    firstname: string;
-    lastname: string;
+    name: string;
     role: string;
 };
 

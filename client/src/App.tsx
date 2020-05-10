@@ -52,7 +52,7 @@ const reducer = (state: AppState, action: Action): AppState => {
         case LOGIN_ACTION.LOGGED_IN:
             return {
                 ...state,
-                username: action.payload,
+                user: action.payload,
             };
         case LOGIN_ACTION.LOGIN_FAIL:
             return {

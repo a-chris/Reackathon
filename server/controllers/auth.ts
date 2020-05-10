@@ -36,7 +36,7 @@ export function login(req: Request, res: Response) {
 export function signup(req: Request, res: Response) {
     const newUser = req.body;
     const { username, password } = newUser;
-    if (newUser == null || username == null || password == null) {
+    if (username == null || password == null) {
         return res.sendStatus(400);
     }
     UserDb.create({ ...newUser, password: bcrypt.hashSync(password, DEFAULT_SALT_ROUNDS) })
@@ -47,10 +47,9 @@ export function signup(req: Request, res: Response) {
         })
         .catch((err) => {
             const { code, errmsg } = err;
-            if (code === 11000)
-                res.status(400).json({
-                    error: code !== 11000 ? errmsg : 'Username already taken.',
-                });
+            res.status(400).json({
+                error: code !== 11000 ? errmsg : 'Username already taken.',
+            });
         });
 }
 
@@ -67,8 +66,7 @@ export function logout(req: Request, res: Response) {
 function sanitizeUser(user: User) {
     return {
         username: user.username,
-        firstname: user.firstname,
-        lastname: user.lastname,
+        name: user.name,
         role: user.role,
     };
 }

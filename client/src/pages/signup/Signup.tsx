@@ -2,6 +2,7 @@ import {
     Box,
     Button,
     FormControl,
+    FormErrorMessage,
     Heading,
     Icon,
     IconButton,
@@ -10,45 +11,94 @@ import {
     InputLeftElement,
     InputRightElement,
     Link,
+    Radio,
+    RadioGroup,
     Stack,
     Text,
 } from '@chakra-ui/core';
+import * as _ from 'lodash';
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../App';
-import { login, LoginData } from '../../services/LoginService';
+import { isUserRole, UserRole } from '../../models/Models';
+import { signup, SignupData, usernameAlreadyExists } from '../../services/LoginService';
+
+const initialSignupData = {
+    username: '',
+    password: '',
+    role: UserRole.CLIENT,
+    email: '',
+    name: '',
+};
+
+const MIN_PASSWORD_LENGTH = 6;
 
 export default function Signup() {
     const appContext = React.useContext(AppContext);
-    const [loginData, setLoginData] = React.useState<LoginData>({ username: '', password: '' });
-
+    const [signupData, setSignupData] = React.useState<SignupData>(initialSignupData);
     const [loading, setLoading] = React.useState<boolean>(false);
-    const [pwdVisible, setPwdVisible] = React.useState<boolean>(false);
-    const [pwdError, setError] = React.useState<boolean>(false);
+    const [usernameError, setUsernameError] = React.useState<string>('');
+    const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
+    const [passwordError, setPasswordError] = React.useState<boolean>(false);
+    const [passwordConfirmError, setPasswordConfirmError] = React.useState<boolean>(false);
+    const [allValuesValid, setAllValuesValid] = React.useState<boolean>(false);
+
+    React.useEffect(() => {
+        const allValid = _.every(new Set([passwordError, passwordConfirmError, usernameError]));
+        setAllValuesValid(allValid);
+    }, [passwordError, passwordConfirmError, usernameError]);
 
     const onChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event?.target;
         if (name != null && value != null) {
-            setLoginData((curr) => ({ ...curr, [name]: value }));
+            setSignupData((curr) => ({ ...curr, [name]: value }));
         }
     };
 
-    const validatePwd = (event: ChangeEvent<HTMLInputElement>) => {
+    const onRoleChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
         const { value } = event?.target;
-        if (value.length > 0 && value.length < 6) {
-            setError(true);
-        } else {
-            setError(false);
+        if (isUserRole(value)) {
+            setSignupData((curr) => ({ ...curr, role: UserRole[value] }));
         }
     };
 
-    function togglePwdVisibility() {
-        setPwdVisible(!pwdVisible);
-    }
+    const validatePassword = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value } = event?.target;
+        setPasswordError(value?.length > 0 && value?.length < MIN_PASSWORD_LENGTH);
+    };
+
+    const validateConfirmPassword = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value } = event?.target;
+        setPasswordConfirmError(value !== signupData.password);
+    };
+
+    const togglePasswordVisibility = () => {
+        setPasswordVisible((curr) => !curr);
+    };
+
+    const validateUsername = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value } = event?.target;
+        if (value?.length > 0) {
+            usernameAlreadyExists(value).then((alreadyExists) => {
+                setUsernameError(alreadyExists ? 'Username già in uso.' : '');
+            });
+        }
+    };
+
+    const onSignup = React.useCallback(() => {
+        console.log(signupData);
+        setLoading(true);
+        signup(signupData).then((user) => {
+            setLoading(false);
+            if (appContext?.onLoggedIn != null) {
+                appContext.onLoggedIn(user);
+            }
+        });
+    }, [appContext, signupData]);
 
     return (
         <StyledLoginContainer>
-            <Stack spacing={'-70px'} width={['90%', '80%', '50%', '30%']} m='auto'>
+            <Stack spacing={'-70px'} width={['90%', '80%', '50%', '40%']} m='auto'>
                 <Box
                     overflow='visible'
                     borderWidth='1px'
@@ -64,9 +114,9 @@ export default function Signup() {
                 </Box>
                 <Box overflow='hidden' borderWidth='1px' rounded='md' pt='70px'>
                     <Stack spacing={3} p={8}>
-                        <FormControl>
+                        <FormControl isRequired isInvalid={usernameError.length > 0}>
                             <InputGroup size='md'>
-                                <InputLeftElement children={<Icon name='spinner' />} />
+                                <InputLeftElement children={<Icon name='sun' />} />
                                 <Input
                                     type='text'
                                     placeholder='Username'
@@ -74,67 +124,120 @@ export default function Signup() {
                                     variant='flushed'
                                     name='username'
                                     onChange={onChangeValue}
+                                    onBlur={validateUsername}
                                 />
+                                {signupData?.username?.length > 0 && (
+                                    <InputRightElement
+                                        children={
+                                            usernameError ? (
+                                                <Icon name='not-allowed' color='red.500' />
+                                            ) : (
+                                                <Icon name='check' color='green.500' />
+                                            )
+                                        }
+                                    />
+                                )}
                             </InputGroup>
+                            <FormErrorMessage>{usernameError}</FormErrorMessage>
                         </FormControl>
-                        <FormControl isInvalid={pwdError}>
+                        <FormControl isInvalid={passwordError}>
                             <InputGroup size='md'>
                                 <InputLeftElement children={<Icon name='lock' />} />
                                 <Input
-                                    type={pwdVisible ? 'text' : 'password'}
+                                    type={passwordVisible ? 'text' : 'password'}
                                     placeholder='Password'
                                     defaultValue=''
                                     pr='4.5rem'
                                     variant='flushed'
                                     name='password'
                                     onChange={onChangeValue}
-                                    onBlur={validatePwd}
+                                    onBlur={validatePassword}
                                 />
                                 <InputRightElement width='4.5rem'>
-                                    {pwdVisible ? (
-                                        <IconButton
-                                            h='1.75rem'
-                                            size='sm'
-                                            onClick={togglePwdVisibility}
-                                            aria-label='Hide'
-                                            icon='view-off'
-                                        />
-                                    ) : (
-                                        <IconButton
-                                            h='1.75rem'
-                                            size='sm'
-                                            onClick={togglePwdVisibility}
-                                            aria-label='Show'
-                                            icon='view'
-                                        />
-                                    )}
+                                    <IconButton
+                                        h='1.75rem'
+                                        size='sm'
+                                        onClick={togglePasswordVisibility}
+                                        aria-label={passwordVisible ? 'Hide' : 'Show'}
+                                        icon={passwordVisible ? 'view' : 'view-off'}
+                                    />
                                 </InputRightElement>
                             </InputGroup>
-                            {/* <FormErrorMessage>
-                            La password deve essere lunga almeno 6 caratteri
-                        </FormErrorMessage> */}
+                            <FormErrorMessage>
+                                {`La password deve essere lunga almeno ${MIN_PASSWORD_LENGTH} caratteri.`}
+                            </FormErrorMessage>
                         </FormControl>
+                        <FormControl isInvalid={passwordConfirmError}>
+                            <InputGroup size='md'>
+                                <InputLeftElement children={<Icon name='lock' />} />
+                                <Input
+                                    type={passwordVisible ? 'text' : 'password'}
+                                    placeholder='Password di conferma'
+                                    defaultValue=''
+                                    pr='4.5rem'
+                                    variant='flushed'
+                                    name='passwordConfirm'
+                                    onBlur={validateConfirmPassword}
+                                />
+                                <InputRightElement width='4.5rem'>
+                                    <IconButton
+                                        h='1.75rem'
+                                        size='sm'
+                                        onClick={togglePasswordVisibility}
+                                        aria-label={passwordVisible ? 'Hide' : 'Show'}
+                                        icon={passwordVisible ? 'view' : 'view-off'}
+                                    />
+                                </InputRightElement>
+                            </InputGroup>
+                            <FormErrorMessage>Le password non coincidono.</FormErrorMessage>
+                        </FormControl>
+                        <FormControl>
+                            <InputGroup size='md'>
+                                <InputLeftElement children={<Icon name='email' />} />
+                                <Input
+                                    type='text'
+                                    placeholder='Email'
+                                    defaultValue=''
+                                    variant='flushed'
+                                    name='username'
+                                    onChange={onChangeValue}
+                                />
+                            </InputGroup>
+                        </FormControl>
+                        <FormControl>
+                            <InputGroup size='md'>
+                                <InputLeftElement children={<Icon name='spinner' />} />
+                                <Input
+                                    type='text'
+                                    placeholder='Nome'
+                                    defaultValue=''
+                                    variant='flushed'
+                                    name='username'
+                                    onChange={onChangeValue}
+                                />
+                            </InputGroup>
+                        </FormControl>
+                        <RadioGroup
+                            isInline
+                            value={signupData.role.toString()}
+                            name='role'
+                            onChange={onRoleChangeValue}>
+                            <Radio value='CLIENT'>Partecipante</Radio>
+                            <Radio value='ORGANIZATION'>Organizzatore</Radio>
+                        </RadioGroup>
                     </Stack>
-
                     <Button
+                        isDisabled={!allValuesValid}
                         variantColor='teal'
                         isLoading={loading}
                         type='submit'
-                        onClick={() => {
-                            setLoading(true);
-                            login(loginData)
-                                .then((user) => {
-                                    if (appContext?.onLoggedIn != null) {
-                                        appContext.onLoggedIn(user);
-                                        setLoading(false);
-                                    }
-                                })
-                                .catch(() => setLoading(false));
-                        }}>
-                        Login
+                        onClick={onSignup}>
+                        Registrati
                     </Button>
                     <Text p={3} fontSize='0.9em'>
-                        Oppure <Link color='teal.500'>registrati</Link>
+                        <Link color='teal.500' href='#/login'>
+                            Oppure accedi.
+                        </Link>
                     </Text>
                 </Box>
             </Stack>

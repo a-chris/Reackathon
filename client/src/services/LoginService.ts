@@ -1,16 +1,40 @@
 import axios from 'axios';
-import { User } from '../models/Models';
+import { User, UserRole } from '../models/Models';
 
-export type LoginData = {
+export interface LoginData {
     username: string;
     password: string;
-};
+}
+
+export interface SignupData extends LoginData {
+    email: string;
+    role: UserRole;
+    name: string;
+}
 
 export function login(loginData: LoginData): Promise<User> {
     return new Promise((resolve, reject) =>
         axios
             .post('http://localhost:5000/login', loginData)
-            .then((response: any) => resolve(response))
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}
+
+export function signup(loginData: LoginData): Promise<User> {
+    return new Promise((resolve, reject) =>
+        axios
+            .post('http://localhost:5000/signup', loginData)
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}
+
+export function usernameAlreadyExists(username: string): Promise<boolean> {
+    return new Promise((resolve, reject) =>
+        axios
+            .get('http://localhost:5000/users/exist', { params: { username } })
+            .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
 }
