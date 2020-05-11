@@ -5,7 +5,7 @@ import { HashRouter, Redirect, Route, RouteProps, Switch } from 'react-router-do
 import './App.css';
 import { User, UserRole } from './models/Models';
 import PageNotFound from './pages/errors/PageNotFound';
-import HackatonsList from './pages/hackatons/HackatonsList';
+import HackathonsList from './pages/hackathons/HackathonsList';
 import Homepage from './pages/homepage/Homepage';
 import Login from './pages/login/Login';
 import OrganizationBoard from './pages/organization/OrganizationBoard';
@@ -98,7 +98,7 @@ export default function App() {
                                 user={state.user}
                                 allowedFor={[UserRole.ORGANIZATION]}
                             />
-                            <Route exact path='/hackatons' component={HackatonsList} />
+                            <Route exact path='/hackathons' component={HackathonsList} />
                             <Route component={PageNotFound} />
                         </Switch>
                     </HashRouter>
