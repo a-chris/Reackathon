@@ -166,7 +166,7 @@ export class Hackathon {
 
     constructor(
         name: string,
-        _description: string,
+        description: string,
         organization: User,
         attendants: User[],
         startDate: Date,
@@ -175,7 +175,7 @@ export class Hackathon {
         prize: Prize
     ) {
         this._name = name;
-        this._description = _description;
+        this._description = description;
         this._organization = organization;
         this._attendants = attendants;
         this._startDate = startDate;
@@ -184,7 +184,7 @@ export class Hackathon {
         this._prize = prize;
     }
 
-    public get username(): string {
+    public get name(): string {
         return this._name;
     }
     public get description(): string {
@@ -195,7 +195,7 @@ export class Hackathon {
         return this._organization;
     }
 
-    public get role(): User[] {
+    public get attendants(): User[] {
         return this._attendants;
     }
 
