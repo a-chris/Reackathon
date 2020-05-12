@@ -17,6 +17,7 @@ import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../App';
 import { login, LoginData } from '../../services/LoginService';
+import { green, white } from '../../utils/colors';
 
 export default function Login() {
     const appContext = React.useContext(AppContext);
@@ -50,7 +51,7 @@ export default function Login() {
 
     return (
         <StyledLoginContainer>
-            <Stack spacing={'-70px'} width={['90%', '80%', '50%', '30%']} m='auto'>
+            <Stack spacing={'-70px'} width={['90%', '80%', '50%', '40%']} m='auto'>
                 <Box
                     overflow='visible'
                     borderWidth='1px'
@@ -58,9 +59,16 @@ export default function Login() {
                     w='90%'
                     h='100px'
                     m='auto'
-                    bg='#319795'
+                    bg={green}
                     zIndex={1}>
-                    <Heading h='100%' as='h1' size='xl' p='25px' verticalAlign='middle'>
+                    <Heading
+                        h='100%'
+                        as='h1'
+                        size='xl'
+                        p='25px'
+                        color={white}
+                        verticalAlign='middle'
+                        boxShadow='0px 2px 5px #319795'>
                         Login
                     </Heading>
                 </Box>
@@ -118,13 +126,27 @@ export default function Login() {
                         </FormControl>
                     </Stack>
 
-                    <Button variantColor='teal' isLoading={loading} type='submit' onClick={onLogin}>
+                    <Button
+                        variantColor='teal'
+                        isLoading={loading}
+                        type='submit'
+                        margin={3}
+                        boxShadow='0px 1px 6px #319795'
+                        onClick={() => {
+                            setLoading(true);
+                            login(loginData)
+                                .then((user) => {
+                                    if (appContext?.onLoggedIn != null) {
+                                        appContext.onLoggedIn(user);
+                                        setLoading(false);
+                                    }
+                                })
+                                .catch(() => setLoading(false));
+                        }}>
                         Login
                     </Button>
-                    <Text p={3} fontSize='0.9em'>
-                        <Link href='#/signup' color='teal.500'>
-                            Oppure registrati.
-                        </Link>
+                    <Text p={5} fontSize='0.9em'>
+                        Oppure <Link color='teal.500'>registrati</Link>
                     </Text>
                 </Box>
             </Stack>
@@ -134,7 +156,8 @@ export default function Login() {
 
 // TODO change vh to fix smart
 const StyledLoginContainer = styled.div`
-    height: 100vh;
+    height: 100%;
+    margin-top: 7%;
     display: flex;
     align-items: center;
     justify-content: center;
