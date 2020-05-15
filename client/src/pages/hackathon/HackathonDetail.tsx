@@ -14,10 +14,11 @@ import {
     AccordionPanel,
     Textarea,
     Input,
+    Button,
 } from '@chakra-ui/core';
 import styled from 'styled-components';
 import { User, Location } from '../../models/Models';
-import { yellow } from '../../utils/colors';
+import { yellow, gray, orange_light } from '../../utils/colors';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 // TODO find a better solution
@@ -83,24 +84,47 @@ export default function HackathonDetail() {
 
     return (
         <StyledHackathonContainer>
-            <Flex m={5}>
-                <PseudoBox as='label' fontSize='2em' mr={5} fontWeight='semibold'>
-                    Titolo
-                </PseudoBox>
-                <Editable
-                    // isDisabled={new Date() > hackathonData.endDate}
-                    fontSize='2em'
-                    textAlign='left'
-                    value={hackathonData.name}
-                    onChange={onTitleChange}
-                    placeholder='clicca per modificare...'
-                    borderBottom='1px black solid'>
-                    <EditablePreview />
-                    <EditableInput />
-                </Editable>
-            </Flex>
+            <PseudoBox fontSize='1.8em' fontWeight='semibold' m={3}>
+                Dettagli dell'Hackathon
+            </PseudoBox>
 
-            <Accordion defaultIndex={[0, 1, 2]} allowMultiple>
+            <Accordion defaultIndex={[0]} allowMultiple>
+                <AccordionItem>
+                    <AccordionHeader {...AccordionHeaderStyle}>
+                        <Box flex='1' textAlign='left'>
+                            Descrizione dell'evento
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionHeader>
+                    <AccordionPanel pb={4}>
+                        <Stack textAlign='left' m={2}>
+                            <StyledLabel>Nome dell'evento</StyledLabel>
+                            <Editable
+                                textAlign='left'
+                                value={hackathonData.name}
+                                onChange={onTitleChange}
+                                placeholder='clicca per modificare...'
+                                border={'1px solid ' + gray}
+                                borderRadius='0.25em'
+                                p={2}
+                                pl={4}>
+                                <EditablePreview />
+                                <EditableInput />
+                            </Editable>
+                        </Stack>
+
+                        <Stack textAlign='left' m={2}>
+                            <StyledLabel> Descrizione</StyledLabel>
+                            <Textarea
+                                name='description'
+                                placeholder='clicca per modificare...'
+                                value={hackathonData.description}
+                                onChange={onChangeValue}
+                            />
+                        </Stack>
+                    </AccordionPanel>
+                </AccordionItem>
+
                 <AccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
                         <Box flex='1' textAlign='left'>
@@ -142,31 +166,12 @@ export default function HackathonDetail() {
                 <AccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
                         <Box flex='1' textAlign='left'>
-                            Descrizione dell'evento
-                        </Box>
-                        <AccordionIcon />
-                    </AccordionHeader>
-                    <AccordionPanel pb={4}>
-                        <Stack textAlign='left'>
-                            <StyledLabel> Descrizione</StyledLabel>
-                            <Textarea
-                                name='description'
-                                value={hackathonData.description}
-                                onChange={onChangeValue}
-                            />
-                        </Stack>
-                    </AccordionPanel>
-                </AccordionItem>
-
-                <AccordionItem>
-                    <AccordionHeader {...AccordionHeaderStyle}>
-                        <Box flex='1' textAlign='left'>
                             Premi
                         </Box>
                         <AccordionIcon />
                     </AccordionHeader>
                     <AccordionPanel pb={4}>
-                        <Stack textAlign='left'>
+                        <Stack textAlign='left' m={2}>
                             <StyledLabel> Premio in denaro</StyledLabel>
                             <Input
                                 name='amount'
@@ -174,7 +179,7 @@ export default function HackathonDetail() {
                                 onChange={onChangePrize}
                             />
                         </Stack>
-                        <Stack textAlign='left'>
+                        <Stack textAlign='left' m={2}>
                             <StyledLabel> Altre informazioni</StyledLabel>
                             <Input
                                 name='extra'
@@ -185,12 +190,18 @@ export default function HackathonDetail() {
                     </AccordionPanel>
                 </AccordionItem>
             </Accordion>
+            <Button m={3} mb={0} borderColor={orange_light} border='2px' variant='outline'>
+                Salva
+            </Button>
         </StyledHackathonContainer>
     );
 }
 
 const StyledHackathonContainer = styled.div`
     margin: 2%;
+    border: 3px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px;
 `;
 
 const StyleDataPickerDiv = styled.div`
@@ -201,5 +212,5 @@ const StyleDataPickerDiv = styled.div`
 `;
 
 const StyledLabel = styled.label`
-    font-weight: 00;
+    font-weight: 400;
 `;
