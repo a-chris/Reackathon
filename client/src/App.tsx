@@ -11,6 +11,7 @@ import Login from './pages/login/Login';
 import OrganizationBoard from './pages/organization/OrganizationBoard';
 import Signup from './pages/signup/Signup';
 import { LOGIN_ACTION } from './utils/constants';
+import HackathonDetail from './pages/hackathon/HackathonDetail';
 
 interface AppStore {
     state?: AppState;
@@ -99,6 +100,7 @@ export default function App() {
                                 allowedFor={[UserRole.ORGANIZATION]}
                             />
                             <Route exact path='/hackathons' component={HackathonsList} />
+                            <Route exact path='/hackathon/:id' component={HackathonDetail} />
                             <Route component={PageNotFound} />
                         </Switch>
                     </HashRouter>
