@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/core';
 import styled from 'styled-components';
 import { User, Location } from '../../models/Models';
-import { yellow, gray, orange_light } from '../../utils/colors';
+import { yellow, gray, orange_light, white } from '../../utils/colors';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 // TODO find a better solution
@@ -198,7 +198,8 @@ export default function HackathonDetail() {
 }
 
 const StyledHackathonContainer = styled.div`
-    margin: 2%;
+    background-color: ${white};
+    margin: 0 2%;
     border: 3px solid #e2e8f0;
     border-radius: 10px;
     padding: 10px;

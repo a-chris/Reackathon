@@ -79,33 +79,35 @@ export default function App() {
                 <AppContext.Provider value={{ state, onLoggedIn }}>
                     <CSSReset />
                     <Header />
-                    <HashRouter>
-                        <Switch>
-                            <Route exact path='/' component={Homepage} />
-                            <RestrictedRoute
-                                exact
-                                path='/login'
-                                component={Login}
-                                user={state.user}
-                            />
-                            <RestrictedRoute
-                                exact
-                                path='/signup'
-                                component={Signup}
-                                user={state.user}
-                            />
-                            <RestrictedRoute
-                                exact
-                                path='/org'
-                                component={OrganizationBoard}
-                                user={state.user}
-                                allowedFor={[UserRole.ORGANIZATION]}
-                            />
-                            <Route exact path='/hackathons' component={HackathonsList} />
-                            <Route exact path='/hackathon/:id' component={HackathonDetail} />
-                            <Route component={PageNotFound} />
-                        </Switch>
-                    </HashRouter>
+                    <div id='background'>
+                        <HashRouter>
+                            <Switch>
+                                <Route exact path='/' component={Homepage} />
+                                <RestrictedRoute
+                                    exact
+                                    path='/login'
+                                    component={Login}
+                                    user={state.user}
+                                />
+                                <RestrictedRoute
+                                    exact
+                                    path='/signup'
+                                    component={Signup}
+                                    user={state.user}
+                                />
+                                <RestrictedRoute
+                                    exact
+                                    path='/org'
+                                    component={OrganizationBoard}
+                                    user={state.user}
+                                    allowedFor={[UserRole.ORGANIZATION]}
+                                />
+                                <Route exact path='/hackathons' component={HackathonsList} />
+                                <Route exact path='/hackathon/:id' component={HackathonDetail} />
+                                <Route component={PageNotFound} />
+                            </Switch>
+                        </HashRouter>
+                    </div>
                 </AppContext.Provider>
             </ThemeProvider>
         </div>
