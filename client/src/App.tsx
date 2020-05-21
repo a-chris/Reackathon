@@ -12,6 +12,7 @@ import OrganizationBoard from './pages/organization/OrganizationBoard';
 import Signup from './pages/signup/Signup';
 import { LOGIN_ACTION } from './utils/constants';
 import HackathonDetail from './pages/hackathon/HackathonDetail';
+import Header from './pages/login/Header';
 
 interface AppStore {
     state?: AppState;
@@ -77,6 +78,7 @@ export default function App() {
             <ThemeProvider theme={theme}>
                 <AppContext.Provider value={{ state, onLoggedIn }}>
                     <CSSReset />
+                    <Header />
                     <HashRouter>
                         <Switch>
                             <Route exact path='/' component={Homepage} />
