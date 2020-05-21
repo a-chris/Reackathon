@@ -17,7 +17,7 @@ import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../App';
 import { login, LoginData } from '../../services/LoginService';
-import { green, white } from '../../utils/colors';
+import { white, orange, orange_dark, orange_light } from '../../utils/colors';
 
 export default function Login() {
     const appContext = React.useContext(AppContext);
@@ -59,7 +59,7 @@ export default function Login() {
                     w='90%'
                     h='100px'
                     m='auto'
-                    bg={green}
+                    bg={orange_light}
                     zIndex={1}>
                     <Heading
                         h='100%'
@@ -68,11 +68,11 @@ export default function Login() {
                         p='25px'
                         color={white}
                         verticalAlign='middle'
-                        boxShadow='0px 2px 5px #319795'>
+                        boxShadow={'0px 2px 5px' + orange_dark}>
                         Login
                     </Heading>
                 </Box>
-                <Box overflow='hidden' borderWidth='1px' rounded='md' pt='70px'>
+                <Box overflow='hidden' borderWidth='1px' rounded='md' pt='70px' bg={white}>
                     <Stack spacing={3} p={8}>
                         <FormControl>
                             <InputGroup size='md'>
@@ -127,11 +127,11 @@ export default function Login() {
                     </Stack>
 
                     <Button
-                        variantColor='teal'
+                        bg={orange_light}
                         isLoading={loading}
                         type='submit'
                         margin={3}
-                        boxShadow='0px 1px 6px #319795'
+                        boxShadow={'0px 1px 6px ' + orange}
                         onClick={() => {
                             setLoading(true);
                             login(loginData)
@@ -146,7 +146,7 @@ export default function Login() {
                         Login
                     </Button>
                     <Text p={5} fontSize='0.9em'>
-                        Oppure <Link color='teal.500'>registrati</Link>
+                        Oppure <Link color={orange_dark}>registrati</Link>
                     </Text>
                 </Box>
             </Stack>
@@ -157,7 +157,6 @@ export default function Login() {
 // TODO change vh to fix smart
 const StyledLoginContainer = styled.div`
     height: 100%;
-    margin-top: 7%;
     display: flex;
     align-items: center;
     justify-content: center;

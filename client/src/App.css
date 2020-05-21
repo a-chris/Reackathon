@@ -39,7 +39,6 @@
 }
 
 #background {
-    padding-top: 2%;
     background-image: url('./public/background/5.jpg');
     background-color: #ffffff;
     background-position: cover;
