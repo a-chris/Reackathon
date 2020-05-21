@@ -11,7 +11,7 @@ import Login from './pages/login/Login';
 import OrganizationBoard from './pages/organization/OrganizationBoard';
 import Signup from './pages/signup/Signup';
 import { LOGIN_ACTION } from './utils/constants';
-import HackathonDetail from './pages/hackathon/HackathonDetail';
+import HackathonManagement from './pages/hackathon/HackathonManagement';
 import Header from './pages/login/Header';
 
 interface AppStore {
@@ -103,7 +103,17 @@ export default function App() {
                                     allowedFor={[UserRole.ORGANIZATION]}
                                 />
                                 <Route exact path='/hackathons' component={HackathonsList} />
-                                <Route exact path='/hackathon/:id' component={HackathonDetail} />
+                                <RestrictedRoute
+                                    exact
+                                    path='/hackathons/create'
+                                    component={HackathonManagement}
+                                    allowedFor={[UserRole.ORGANIZATION]}
+                                />
+                                {/* <Route
+                                    exact
+                                    path='/hackathons/:id'
+                                    component={HackathonManagement}
+                                /> */}
                                 <Route component={PageNotFound} />
                             </Switch>
                         </HashRouter>

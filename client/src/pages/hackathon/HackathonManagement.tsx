@@ -17,46 +17,45 @@ import {
     Button,
 } from '@chakra-ui/core';
 import styled from 'styled-components';
-import { User, Location } from '../../models/Models';
+import { User, Location, Hackathon } from '../../models/Models';
 import { yellow, gray, orange_light, white } from '../../utils/colors';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 // TODO find a better solution
-import { fakeOrganization, fakeUser, fakeLocation, fakePrize } from '../../models/TempDemoModels';
+import { fakeOrganization } from '../../models/TempDemoModels';
+import { creation } from '../../services/HackathonService';
 
 const AccordionHeaderStyle = {
     fontWeight: '700',
     bg: yellow,
+    borderRadius: 5,
 };
 
-type Prize = {
-    amount: number;
-    extra: string;
+const initialPrizeData = {
+    amount: 0,
+    extra: '',
 };
 
-type Hackathon = {
-    name: string;
-    description: string;
-    organization: User;
-    startDate: Date;
-    endDate: Date;
-    attendants: User[] | [];
-    location: Location;
-    prize: Prize;
+const initialHackathonData = {
+    name: '',
+    description: '',
+    organization: fakeOrganization,
+    startDate: new Date(),
+    endDate: new Date(),
+    attendants: [],
+    location: undefined,
+    prize: initialPrizeData,
 };
 
-export default function HackathonDetail() {
-    // TODO it's possible to use Hackathon class?
-    const [hackathonData, setHackathonData] = React.useState<Hackathon>({
-        name: '',
-        description: '',
-        organization: fakeOrganization,
-        startDate: new Date(),
-        endDate: new Date(),
-        attendants: [fakeUser],
-        location: fakeLocation,
-        prize: fakePrize,
-    });
+export default function HackathonManagement() {
+    const [hackathonData, setHackathonData] = React.useState<Hackathon>(initialHackathonData);
+    const [loading, setLoading] = React.useState<boolean>(false);
+    const [allValuesValid, setAllValuesValid] = React.useState<boolean>(true); //TODO add validation effect and set initial value to false
+
+    // React.useEffect(() => {
+    //     const allValid = _.every(new Set([passwordError, passwordConfirmError, usernameError]));
+    //     setAllValuesValid(allValid);
+    // }, [passwordError, passwordConfirmError, usernameError]);
 
     const onTitleChange = (value: string) => {
         setHackathonData((curr) => ({ ...curr, name: value }));
@@ -80,15 +79,23 @@ export default function HackathonDetail() {
         setHackathonData((curr) => ({ ...curr, [name]: date }));
     };
 
-    console.log(hackathonData);
+    const createHackathon = () => {
+        setLoading(true);
+        console.log(hackathonData);
+        creation(hackathonData).then((hackathon) => {
+            setLoading(false);
+            console.log(hackathon);
+        });
+    };
 
     return (
         <StyledHackathonContainer>
-            <PseudoBox fontSize='1.8em' fontWeight='semibold' m={3}>
-                Dettagli dell'Hackathon
+            <PseudoBox fontSize='1.8em' fontWeight='semibold' m={3} textAlign='left'>
+                {/* {idHackathon ? 'Gestione' : 'Creazione'} dell'Hackathon */}
+                Creazione dell'Hackathon
             </PseudoBox>
 
-            <Accordion defaultIndex={[0]} allowMultiple>
+            <Accordion defaultIndex={[0, 1, 2]} allowMultiple>
                 <AccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
                         <Box flex='1' textAlign='left'>
@@ -175,6 +182,7 @@ export default function HackathonDetail() {
                             <StyledLabel> Premio in denaro</StyledLabel>
                             <Input
                                 name='amount'
+                                type='number'
                                 value={hackathonData.prize.amount}
                                 onChange={onChangePrize}
                             />
@@ -190,7 +198,15 @@ export default function HackathonDetail() {
                     </AccordionPanel>
                 </AccordionItem>
             </Accordion>
-            <Button m={3} mb={0} borderColor={orange_light} border='2px' variant='outline'>
+            <Button
+                isLoading={loading}
+                isDisabled={!allValuesValid}
+                m={3}
+                mb={0}
+                borderColor={orange_light}
+                border='2px'
+                variant='outline'
+                onClick={createHackathon}>
                 Salva
             </Button>
         </StyledHackathonContainer>

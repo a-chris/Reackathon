@@ -15,18 +15,3 @@ export const fakeOrganization = new User(
     'organization@email.com',
     UserRole.ORGANIZATION
 );
-
-export const fakeLocation = new Location('', 1, '', '', '', '', 1, 1, 1);
-
-export const fakePrize = new Prize(5000, 'Premio da dividere tra i primi tre classificati.');
-
-export const fakeHackathon = new Hackathon(
-    '',
-    '',
-    fakeOrganization,
-    [fakeUser],
-    new Date(),
-    new Date(),
-    fakeLocation,
-    fakePrize
-);
