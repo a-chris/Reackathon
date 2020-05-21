@@ -1,8 +1,7 @@
-import React, { useContext } from 'react';
-import { AppContext } from '../../App';
-import styled from '@emotion/styled';
+import React from 'react';
 import { Stack, Button, ButtonGroup } from '@chakra-ui/core';
 import { red_dark, red_light, orange, yellow, orange_dark, gray, white } from '../../utils/colors';
+import styled from 'styled-components';
 
 const menuItems: { name: string; path: string }[] = [
     {
@@ -16,7 +15,6 @@ const menuItems: { name: string; path: string }[] = [
 ];
 
 export default function Header() {
-    // const appContext = useContext(AppContext);
 
     const onMenuClick = (path: string) => {};
 
