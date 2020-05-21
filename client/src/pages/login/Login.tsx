@@ -17,7 +17,7 @@ import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../App';
 import { login, LoginData } from '../../services/LoginService';
-import { white, orange, orange_dark, orange_light } from '../../utils/colors';
+import { white, orange, orange_dark, orange_light, black } from '../../utils/colors';
 
 export default function Login() {
     const appContext = React.useContext(AppContext);
@@ -55,6 +55,7 @@ export default function Login() {
                 <Box
                     overflow='visible'
                     borderWidth='1px'
+                    borderColor={orange_dark}
                     rounded='md'
                     w='90%'
                     h='100px'
@@ -128,10 +129,10 @@ export default function Login() {
 
                     <Button
                         bg={orange_light}
+                        color={white}
                         isLoading={loading}
                         type='submit'
                         margin={3}
-                        boxShadow={'0px 1px 6px ' + orange}
                         onClick={() => {
                             setLoading(true);
                             login(loginData)
@@ -143,10 +144,10 @@ export default function Login() {
                                 })
                                 .catch(() => setLoading(false));
                         }}>
-                        Login
+                        Accedi
                     </Button>
                     <Text p={5} fontSize='0.9em'>
-                        Oppure <Link color={orange_dark}>registrati</Link>
+                        Oppure <Link color={orange}>registrati</Link>
                     </Text>
                 </Box>
             </Stack>
