@@ -2,11 +2,12 @@ import React from 'react';
 import { Stack, Button, ButtonGroup } from '@chakra-ui/core';
 import { red_dark, red_light, orange, yellow, orange_dark, gray, white } from '../../utils/colors';
 import styled from 'styled-components';
+import { useHistory } from 'react-router-dom';
 
 const menuItems: { name: string; path: string }[] = [
     {
         name: 'Crea',
-        path: '/hackathon/1',
+        path: '/hackathons/create',
     },
     {
         name: 'Lista',
@@ -15,8 +16,11 @@ const menuItems: { name: string; path: string }[] = [
 ];
 
 export default function Header() {
+    const history = useHistory();
 
-    const onMenuClick = (path: string) => {};
+    function onMenuClick(path: string) {
+        history.push(path);
+    }
 
     return (
         <StyledNavBar>

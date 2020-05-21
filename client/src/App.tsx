@@ -78,9 +78,9 @@ export default function App() {
             <ThemeProvider theme={theme}>
                 <AppContext.Provider value={{ state, onLoggedIn }}>
                     <CSSReset />
-                    <Header />
-                    <div id='background'>
-                        <HashRouter>
+                    <HashRouter>
+                        <Header />
+                        <div id='background'>
                             <Switch>
                                 <Route exact path='/' component={Homepage} />
                                 <RestrictedRoute
@@ -107,7 +107,7 @@ export default function App() {
                                     exact
                                     path='/hackathons/create'
                                     component={HackathonManagement}
-                                    allowedFor={[UserRole.ORGANIZATION]}
+                                    // allowedFor={[UserRole.ORGANIZATION]} // TODO uncomment
                                 />
                                 {/* <Route
                                     exact
@@ -116,8 +116,8 @@ export default function App() {
                                 /> */}
                                 <Route component={PageNotFound} />
                             </Switch>
-                        </HashRouter>
-                    </div>
+                        </div>
+                    </HashRouter>
                 </AppContext.Provider>
             </ThemeProvider>
         </div>
