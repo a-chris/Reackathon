@@ -65,7 +65,7 @@ app.route('/users')
     .get(authController.isOrganization, usersController.getUsers)
     .post(authController.isLogged, usersController.updateUser);
 
-app.route('hackatons').get();
+app.route('hackathons').get();
 /**
  * Listen
  */

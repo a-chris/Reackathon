@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function HackatonsList() {
+export default function HackathonsList() {
     return (
         <div>
-            <p>hackatons</p>
+            <p>hackathons</p>
         </div>
     );
 }

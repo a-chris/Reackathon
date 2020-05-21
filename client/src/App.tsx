@@ -5,12 +5,14 @@ import { HashRouter, Redirect, Route, RouteProps, Switch } from 'react-router-do
 import './App.css';
 import { User, UserRole } from './models/Models';
 import PageNotFound from './pages/errors/PageNotFound';
-import HackatonsList from './pages/hackatons/HackatonsList';
+import HackathonsList from './pages/hackathons/HackathonsList';
 import Homepage from './pages/homepage/Homepage';
 import Login from './pages/login/Login';
 import OrganizationBoard from './pages/organization/OrganizationBoard';
 import Signup from './pages/signup/Signup';
 import { LOGIN_ACTION } from './utils/constants';
+import HackathonManagement from './pages/hackathon/HackathonManagement';
+import Header from './pages/login/Header';
 
 interface AppStore {
     state?: AppState;
@@ -77,30 +79,44 @@ export default function App() {
                 <AppContext.Provider value={{ state, onLoggedIn }}>
                     <CSSReset />
                     <HashRouter>
-                        <Switch>
-                            <Route exact path='/' component={Homepage} />
-                            <RestrictedRoute
-                                exact
-                                path='/login'
-                                component={Login}
-                                user={state.user}
-                            />
-                            <RestrictedRoute
-                                exact
-                                path='/signup'
-                                component={Signup}
-                                user={state.user}
-                            />
-                            <RestrictedRoute
-                                exact
-                                path='/org'
-                                component={OrganizationBoard}
-                                user={state.user}
-                                allowedFor={[UserRole.ORGANIZATION]}
-                            />
-                            <Route exact path='/hackatons' component={HackatonsList} />
-                            <Route component={PageNotFound} />
-                        </Switch>
+                        <Header />
+                        <div id='background'>
+                            <Switch>
+                                <Route exact path='/' component={Homepage} />
+                                <RestrictedRoute
+                                    exact
+                                    path='/login'
+                                    component={Login}
+                                    user={state.user}
+                                />
+                                <RestrictedRoute
+                                    exact
+                                    path='/signup'
+                                    component={Signup}
+                                    user={state.user}
+                                />
+                                <RestrictedRoute
+                                    exact
+                                    path='/org'
+                                    component={OrganizationBoard}
+                                    user={state.user}
+                                    allowedFor={[UserRole.ORGANIZATION]}
+                                />
+                                <Route exact path='/hackathons' component={HackathonsList} />
+                                <RestrictedRoute
+                                    exact
+                                    path='/hackathons/create'
+                                    component={HackathonManagement}
+                                    // allowedFor={[UserRole.ORGANIZATION]} // TODO uncomment
+                                />
+                                {/* <Route
+                                    exact
+                                    path='/hackathons/:id'
+                                    component={HackathonManagement}
+                                /> */}
+                                <Route component={PageNotFound} />
+                            </Switch>
+                        </div>
                     </HashRouter>
                 </AppContext.Provider>
             </ThemeProvider>
