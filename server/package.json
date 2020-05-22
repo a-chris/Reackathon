@@ -7,7 +7,7 @@
     "scripts": {
         "compile": "tsc",
         "start": "tsc && node js/index.js",
-        "dev": "tsc && nodemon --watch js js/index.js"
+        "dev": "tsnd --respawn index.ts"
     },
     "dependencies": {
         "bcrypt": "^4.0.1",
@@ -27,6 +27,6 @@
         "@types/lodash": "^4.14.150",
         "@types/mongoose": "^5.7.15",
         "eslint": "^6.8.0",
-        "nodemon": "^2.0.3"
+        "ts-node-dev": "^1.0.0-pre.44"
     }
 }
