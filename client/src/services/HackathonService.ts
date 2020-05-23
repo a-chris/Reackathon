@@ -11,10 +11,10 @@ export function getHackathons(): Promise<Hackathon[]> {
     );
 }
 
-export function creation(hackathonData: Hackathon): Promise<Hackathon> {
+export function createHackathon(hackathonData: Hackathon): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
-            .post('http://localhost:5000/hackathons/create', hackathonData)
+            .post('http://localhost:5000/hackathons', hackathonData)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
