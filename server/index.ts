@@ -4,6 +4,7 @@ import session from 'express-session';
 import * as _ from 'lodash';
 import mongoose from 'mongoose';
 import * as authController from './controllers/auth';
+import * as hackathonsController from './controllers/hackatons';
 import * as usersController from './controllers/users';
 
 const app = express();
@@ -23,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
     session({
         secret: 'reackathon2020',
-        cookie: { maxAge: 1000 * 60 * 60 * 24 * 14 },
+        cookie: { maxAge: 1000 * 60 * 60 * 24 * 14 }, // two weeks
         store: new MongoStore({
             mongooseConnection: mongoose.connection,
             collections: 'sessions',
@@ -65,7 +66,13 @@ app.route('/users')
     .get(authController.isOrganization, usersController.getUsers)
     .post(authController.isLogged, usersController.updateUser);
 
-app.route('hackathons').get();
+app.route('/hackathons')
+    .get(hackathonsController.findHackathons)
+    .post(hackathonsController.saveHackathons);
+
+app.route('/hackathons/:id')
+    .get(hackathonsController.findHackathon)
+    .put(hackathonsController.changeHackathonStatus);
 /**
  * Listen
  */

@@ -4,7 +4,6 @@ import { UserDb } from '../models/User';
 const ACCESS_TOKEN_SECRET = 'cesena2020';
 
 export function getUsers(req: Request, res: Response) {
-    console.log('TCL: getUsers -> req.session', req.session);
     UserDb.find((err, users) => {
         // TODO: sanitize users data
         res.json(users);

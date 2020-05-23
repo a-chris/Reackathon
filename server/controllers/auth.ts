@@ -64,9 +64,11 @@ export function logout(req: Request, res: Response) {
  * Hides private fields of User.
  */
 function sanitizeUser(user: User) {
-    return {
-        username: user.username,
-        name: user.name,
-        role: user.role,
-    };
+    return user;
+    // const { username, name, role } = user;
+    // return {
+    //     username,
+    //     name,
+    //     role,
+    // };
 }
