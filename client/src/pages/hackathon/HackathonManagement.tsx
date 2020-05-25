@@ -115,10 +115,12 @@ export default function HackathonManagement() {
     const onHackathonCreation = React.useCallback(() => {
         setLoading(true);
         console.log(hackathonData);
-        createHackathon(hackathonData).then((hackathon) => {
-            setLoading(false);
-            console.log(hackathon);
-        });
+        createHackathon(hackathonData)
+            .then((hackathon) => {
+                setLoading(false);
+                console.log(hackathon);
+            })
+            .catch((error) => console.log(error));
     }, [hackathonData]);
 
     return (
@@ -128,160 +130,158 @@ export default function HackathonManagement() {
                 Creazione dell'Hackathon
             </PseudoBox>
 
-            <form onSubmit={onHackathonCreation}>
-                <Accordion defaultIndex={[0, 1, 2]} allowMultiple>
-                    <AccordionItem>
-                        <AccordionHeader {...AccordionHeaderStyle}>
-                            <Box flex='1' textAlign='left'>
-                                Descrizione dell'evento
+            <Accordion defaultIndex={[0, 1, 2]} allowMultiple>
+                <AccordionItem>
+                    <AccordionHeader {...AccordionHeaderStyle}>
+                        <Box flex='1' textAlign='left'>
+                            Descrizione dell'evento
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionHeader>
+                    <AccordionPanel pb={4}>
+                        <FormControl isRequired textAlign='left'>
+                            <FormLabel htmlFor='name'>Nome dell'evento</FormLabel>
+                            <Input
+                                id='name'
+                                name='name'
+                                textAlign='left'
+                                value={hackathonData.name}
+                                onChange={onChangeValue}
+                                placeholder='clicca per modificare...'
+                                border={'1px solid ' + gray}
+                                borderRadius='0.25em'
+                                p={2}
+                                pl={4}
+                            />
+                        </FormControl>
+
+                        <FormControl isRequired textAlign='left'>
+                            <FormLabel htmlFor='description'>Descrizione</FormLabel>
+                            <Textarea
+                                id='description'
+                                name='description'
+                                placeholder='clicca per modificare...'
+                                value={hackathonData.description}
+                                onChange={onChangeValue}
+                            />
+                        </FormControl>
+                    </AccordionPanel>
+                </AccordionItem>
+
+                <AccordionItem>
+                    <AccordionHeader {...AccordionHeaderStyle}>
+                        <Box flex='1' textAlign='left'>
+                            Orari e location
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionHeader>
+                    <AccordionPanel pb={4}>
+                        <FormControl isInvalid={dateError}>
+                            <Box display={{ md: 'flex' }}>
+                                <FormControl isRequired textAlign='left' pr={4}>
+                                    <FormLabel htmlFor='startDate'>Data di inizio</FormLabel>
+                                    <StyleDataPickerDiv>
+                                        <DatePicker
+                                            id='startDate'
+                                            showTimeSelect
+                                            showTimeInput
+                                            selected={hackathonData.startDate}
+                                            onChange={(date: Date) =>
+                                                onDateChange(date, 'startDate')
+                                            }
+                                            dateFormat='dd/MM/yyyy HH:mm'
+                                        />
+                                    </StyleDataPickerDiv>
+                                </FormControl>
+                                <FormControl isRequired textAlign='left'>
+                                    <FormLabel htmlFor='endDate'>Data di fine</FormLabel>
+                                    <StyleDataPickerDiv>
+                                        <DatePicker
+                                            id='endDate'
+                                            showTimeSelect
+                                            showTimeInput
+                                            selected={hackathonData.endDate}
+                                            onChange={(date: Date) => onDateChange(date, 'endDate')}
+                                            dateFormat='dd/MM/yyyy HH:mm'
+                                        />
+                                    </StyleDataPickerDiv>
+                                </FormControl>
+
+                                <FormErrorMessage>
+                                    {`L'Hackathon deve essere creato almeno un giorno prima dell'inizio dell'evento,\
+                                     e la data di inizio deve essere inferiore a quella di fine.`}
+                                </FormErrorMessage>
                             </Box>
-                            <AccordionIcon />
-                        </AccordionHeader>
-                        <AccordionPanel pb={4}>
                             <FormControl isRequired textAlign='left'>
-                                <FormLabel htmlFor='name'>Nome dell'evento</FormLabel>
+                                <FormLabel htmlFor='location'>Luogo</FormLabel>
                                 <Input
-                                    id='name'
-                                    name='name'
+                                    id='location'
+                                    name='location'
                                     textAlign='left'
-                                    value={hackathonData.name}
-                                    onChange={onChangeValue}
+                                    defaultValue={Object.entries(hackathonData.location).map(
+                                        (v: any) => v[1]
+                                    )}
+                                    isReadOnly={true}
+                                    // onChange={onChangeValue}
                                     placeholder='clicca per modificare...'
-                                    border={'1px solid ' + gray}
-                                    borderRadius='0.25em'
                                     p={2}
                                     pl={4}
                                 />
                             </FormControl>
+                        </FormControl>
+                        <Stack>{/* TODO add google autocomplete */}</Stack>
+                    </AccordionPanel>
+                </AccordionItem>
 
-                            <FormControl isRequired textAlign='left'>
-                                <FormLabel htmlFor='description'>Descrizione</FormLabel>
-                                <Textarea
-                                    id='description'
-                                    name='description'
-                                    placeholder='clicca per modificare...'
-                                    value={hackathonData.description}
-                                    onChange={onChangeValue}
-                                />
-                            </FormControl>
-                        </AccordionPanel>
-                    </AccordionItem>
+                <AccordionItem>
+                    <AccordionHeader {...AccordionHeaderStyle}>
+                        <Box flex='1' textAlign='left'>
+                            Premi
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionHeader>
+                    <AccordionPanel pb={4}>
+                        <FormControl isRequired textAlign='left'>
+                            <FormLabel htmlFor='startDate'>Premio in denaro</FormLabel>
+                            <Input
+                                id='amount'
+                                name='amount'
+                                type='number'
+                                value={hackathonData.prize.amount}
+                                onChange={onChangePrize}
+                            />
+                        </FormControl>
 
-                    <AccordionItem>
-                        <AccordionHeader {...AccordionHeaderStyle}>
-                            <Box flex='1' textAlign='left'>
-                                Orari e location
-                            </Box>
-                            <AccordionIcon />
-                        </AccordionHeader>
-                        <AccordionPanel pb={4}>
-                            <FormControl isInvalid={dateError}>
-                                <Box display={{ md: 'flex' }}>
-                                    <FormControl isRequired textAlign='left' pr={4}>
-                                        <FormLabel htmlFor='startDate'>Data di inizio</FormLabel>
-                                        <StyleDataPickerDiv>
-                                            <DatePicker
-                                                id='startDate'
-                                                showTimeSelect
-                                                showTimeInput
-                                                selected={hackathonData.startDate}
-                                                onChange={(date: Date) =>
-                                                    onDateChange(date, 'startDate')
-                                                }
-                                                dateFormat='dd/MM/yyyy HH:mm'
-                                            />
-                                        </StyleDataPickerDiv>
-                                    </FormControl>
-                                    <FormControl isRequired textAlign='left'>
-                                        <FormLabel htmlFor='endDate'>Data di fine</FormLabel>
-                                        <StyleDataPickerDiv>
-                                            <DatePicker
-                                                id='endDate'
-                                                showTimeSelect
-                                                showTimeInput
-                                                selected={hackathonData.endDate}
-                                                onChange={(date: Date) =>
-                                                    onDateChange(date, 'endDate')
-                                                }
-                                                dateFormat='dd/MM/yyyy HH:mm'
-                                            />
-                                        </StyleDataPickerDiv>
-                                    </FormControl>
+                        <FormControl textAlign='left' pr={4}>
+                            <FormLabel htmlFor='extra'>Altre informazioni</FormLabel>
+                            <Input
+                                id='extra'
+                                name='extra'
+                                value={hackathonData.prize.extra}
+                                onChange={onChangePrize}
+                            />
+                        </FormControl>
+                    </AccordionPanel>
+                </AccordionItem>
+            </Accordion>
 
-                                    <FormErrorMessage>
-                                        {`L'Hackathon deve essere creato almeno un giorno prima dell'inizio dell'evento,\
-                                     e la data di inizio deve essere inferiore a quella di fine.`}
-                                    </FormErrorMessage>
-                                </Box>
-                                <FormControl isRequired textAlign='left'>
-                                    <FormLabel htmlFor='location'>Luogo</FormLabel>
-                                    <Input
-                                        id='location'
-                                        name='location'
-                                        textAlign='left'
-                                        value={Object.entries(hackathonData.location).map(
-                                            (v: any) => v[1]
-                                        )}
-                                        // onChange={onChangeValue}
-                                        placeholder='clicca per modificare...'
-                                        p={2}
-                                        pl={4}
-                                    />
-                                </FormControl>
-                            </FormControl>
-                            <Stack>{/* TODO add google autocomplete */}</Stack>
-                        </AccordionPanel>
-                    </AccordionItem>
-
-                    <AccordionItem>
-                        <AccordionHeader {...AccordionHeaderStyle}>
-                            <Box flex='1' textAlign='left'>
-                                Premi
-                            </Box>
-                            <AccordionIcon />
-                        </AccordionHeader>
-                        <AccordionPanel pb={4}>
-                            <FormControl isRequired textAlign='left'>
-                                <FormLabel htmlFor='startDate'>Premio in denaro</FormLabel>
-                                <Input
-                                    id='amount'
-                                    name='amount'
-                                    type='number'
-                                    value={hackathonData.prize.amount}
-                                    onChange={onChangePrize}
-                                />
-                            </FormControl>
-
-                            <FormControl textAlign='left' pr={4}>
-                                <FormLabel htmlFor='extra'>Altre informazioni</FormLabel>
-                                <Input
-                                    id='extra'
-                                    name='extra'
-                                    value={hackathonData.prize.extra}
-                                    onChange={onChangePrize}
-                                />
-                            </FormControl>
-                        </AccordionPanel>
-                    </AccordionItem>
-                </Accordion>
-
-                <Button
-                    isLoading={loading}
-                    isDisabled={!allValuesValid}
-                    m={3}
-                    mb={0}
-                    borderColor={orange_light}
-                    border='2px'
-                    variant='outline'
-                    type='submit'>
-                    Salva
-                </Button>
-                {!allValuesValid && (
-                    <Text>
-                        <small>Inserisci tutte le informazioni richieste per poter procedere</small>
-                    </Text>
-                )}
-            </form>
+            <Button
+                isLoading={loading}
+                isDisabled={!allValuesValid}
+                m={3}
+                mb={0}
+                borderColor={orange_light}
+                border='2px'
+                variant='outline'
+                onClick={onHackathonCreation}
+                type='button'>
+                Salva
+            </Button>
+            {!allValuesValid && (
+                <Text>
+                    <small>Inserisci tutte le informazioni richieste per poter procedere</small>
+                </Text>
+            )}
         </StyledHackathonContainer>
     );
 }
