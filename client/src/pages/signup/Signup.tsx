@@ -88,12 +88,17 @@ export default function Signup() {
     const onSignup = React.useCallback(() => {
         console.log(signupData);
         setLoading(true);
-        signup(signupData).then((user) => {
-            setLoading(false);
-            if (appContext?.onLoggedIn != null) {
-                appContext.onLoggedIn(user);
-            }
-        });
+        signup(signupData)
+            .then((user) => {
+                setLoading(false);
+                if (appContext?.onLoggedIn != null) {
+                    appContext.onLoggedIn(user);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                setLoading(false);
+            });
     }, [appContext, signupData]);
 
     return (
@@ -199,7 +204,7 @@ export default function Signup() {
                                     placeholder='Email'
                                     defaultValue=''
                                     variant='flushed'
-                                    name='username'
+                                    name='email'
                                     onChange={onChangeValue}
                                 />
                             </InputGroup>
@@ -212,7 +217,7 @@ export default function Signup() {
                                     placeholder='Nome'
                                     defaultValue=''
                                     variant='flushed'
-                                    name='username'
+                                    name='name'
                                     onChange={onChangeValue}
                                 />
                             </InputGroup>
