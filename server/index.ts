@@ -54,6 +54,7 @@ app.use(express.static('../build'));
 /**
  * Auth Routes
  */
+app.route('/info').post(authController.info);
 app.route('/login').post(authController.login);
 app.route('/signup').post(authController.signup);
 app.route('/logout').post(authController.logout);

@@ -22,7 +22,7 @@ import {
     Text,
 } from '@chakra-ui/core';
 import 'react-datepicker/dist/react-datepicker.css';
-import { AppContext } from '../../App';
+import { AppContext } from '../../AppContext';
 import { createHackathon } from '../../services/HackathonService';
 import { User, Location, Hackathon, HackathonStatus } from '../../models/Models';
 // TODO find a better solution

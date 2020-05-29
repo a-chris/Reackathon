@@ -15,6 +15,21 @@ export function isOrganization(req: Request, res: Response, next: NextFunction) 
     else return res.sendStatus(401);
 }
 
+export function info(req: Request, res: Response) {
+    const { username } = req.body;
+    if (username == null) {
+        return res.sendStatus(400);
+    }
+    UserDb.findOne({ username: username }, (err, storedUser) => {
+        if (storedUser == null || err != null) {
+            return res.sendStatus(401);
+        }
+        const sanitizedUser = sanitizeUser(storedUser);
+        if (req.session) req.session.user = sanitizedUser;
+        res.json(sanitizeUser(storedUser));
+    });
+}
+
 export function login(req: Request, res: Response) {
     const { username, password } = req.body;
     if (username == null || password == null) {

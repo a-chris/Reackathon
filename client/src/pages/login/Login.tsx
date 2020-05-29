@@ -15,9 +15,9 @@ import {
 } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { AppContext } from '../../App';
+import { AppContext } from '../../AppContext';
 import { login, LoginData } from '../../services/LoginService';
-import { white, orange, orange_dark, orange_light, black } from '../../utils/colors';
+import { white, orange, orange_dark, orange_light } from '../../utils/colors';
 
 export default function Login() {
     const appContext = React.useContext(AppContext);
@@ -99,7 +99,6 @@ export default function Login() {
                                     variant='flushed'
                                     name='password'
                                     onChange={onChangeValue}
-                                    // onBlur={validatePwd}
                                 />
                                 <InputRightElement width='4.5rem'>
                                     {pwdVisible ? (
@@ -121,9 +120,6 @@ export default function Login() {
                                     )}
                                 </InputRightElement>
                             </InputGroup>
-                            {/* <FormErrorMessage>
-                            La password deve essere lunga almeno 6 caratteri
-                        </FormErrorMessage> */}
                         </FormControl>
                     </Stack>
 
@@ -133,17 +129,7 @@ export default function Login() {
                         isLoading={loading}
                         type='submit'
                         margin={3}
-                        onClick={() => {
-                            setLoading(true);
-                            login(loginData)
-                                .then((user) => {
-                                    if (appContext?.onLoggedIn != null) {
-                                        appContext.onLoggedIn(user);
-                                        setLoading(false);
-                                    }
-                                })
-                                .catch(() => setLoading(false));
-                        }}>
+                        onClick={onLogin}>
                         Accedi
                     </Button>
                     <Text p={5} fontSize='0.9em'>

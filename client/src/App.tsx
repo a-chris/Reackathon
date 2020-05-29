@@ -3,6 +3,7 @@ import axios from 'axios';
 import React from 'react';
 import { HashRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
 import './App.css';
+import { reducer, AppContext } from './AppContext';
 import { User, UserRole } from './models/Models';
 import PageNotFound from './pages/errors/PageNotFound';
 import HackathonsList from './pages/hackathons/HackathonsList';
@@ -12,23 +13,8 @@ import OrganizationBoard from './pages/organization/OrganizationBoard';
 import Signup from './pages/signup/Signup';
 import { LOGIN_ACTION } from './utils/constants';
 import HackathonManagement from './pages/hackathon/HackathonManagement';
-import Header from './pages/login/Header';
-
-interface AppStore {
-    state?: AppState;
-    onLoggedIn?: (user: User) => void;
-}
-
-interface AppState {
-    authRequest?: boolean;
-    username?: string;
-    user?: User;
-}
-
-interface Action {
-    type: LOGIN_ACTION;
-    payload?: any;
-}
+import Header from './pages/homepage/Header';
+import { getUserInfo } from './services/LoginService';
 
 /**
  * Debug
@@ -43,40 +29,34 @@ axios.interceptors.response.use((response) => {
     return response;
 });
 
-export const AppContext = React.createContext<AppStore>({});
-
-const reducer = (state: AppState, action: Action): AppState => {
-    console.log('TCL: App -> state', state);
-    console.log('TCL: App -> action', action);
-    switch (action.type) {
-        case LOGIN_ACTION.LOGIN_REQUEST:
-            return { ...state };
-        case LOGIN_ACTION.LOGGED_IN:
-            return {
-                ...state,
-                user: action.payload,
-            };
-        case LOGIN_ACTION.LOGIN_FAIL:
-            return {
-                ...state,
-                username: undefined,
-            };
-        default:
-            return state;
-    }
-};
-
 export default function App() {
     const [state, dispatch] = React.useReducer(reducer, {});
+
+    React.useEffect(() => {
+        const loginInfo = localStorage.getItem('loginInfo');
+        let username = null;
+        if (loginInfo) {
+            username = JSON.parse(loginInfo).username;
+        }
+        if (username) {
+            getUserInfo(username)
+                .then((user) => onLoggedIn(user))
+                .catch(() => onLogout());
+        }
+    }, []);
 
     const onLoggedIn = React.useCallback((user: User) => {
         dispatch({ type: LOGIN_ACTION.LOGGED_IN, payload: user });
     }, []);
 
+    const onLogout = React.useCallback(() => {
+        dispatch({ type: LOGIN_ACTION.LOGOUT });
+    }, []);
+
     return (
         <div className='App'>
             <ThemeProvider theme={theme}>
-                <AppContext.Provider value={{ state, onLoggedIn }}>
+                <AppContext.Provider value={{ state, onLoggedIn, onLogout }}>
                     <CSSReset />
                     <HashRouter>
                         <Header />
@@ -107,7 +87,8 @@ export default function App() {
                                     exact
                                     path='/hackathons/create'
                                     component={HackathonManagement}
-                                    // allowedFor={[UserRole.ORGANIZATION]} // TODO uncomment
+                                    user={state.user}
+                                    allowedFor={[UserRole.ORGANIZATION]}
                                 />
                                 {/* <Route
                                     exact
