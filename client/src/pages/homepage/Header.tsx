@@ -2,7 +2,7 @@ import React from 'react';
 import { Stack, Button, ButtonGroup } from '@chakra-ui/core';
 import { red_dark, red_light, orange, yellow, orange_dark, gray, white } from '../../utils/colors';
 import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { AppContext } from '../../AppContext';
 import { UserRole } from '../../models/Models';
 import { logout } from '../../services/LoginService';
@@ -70,10 +70,12 @@ export default function Header() {
         <StyledNavBar>
             <Stack>
                 <Stack isInline justify='space-between' align='center'>
-                    <StyledLogo>
-                        <StyledLogoOrange>reac</StyledLogoOrange>
-                        <StyledLogoRed>kathon</StyledLogoRed>
-                    </StyledLogo>
+                    <Link to='/'>
+                        <StyledLogo>
+                            <StyledLogoOrange>reac</StyledLogoOrange>
+                            <StyledLogoRed>kathon</StyledLogoRed>
+                        </StyledLogo>
+                    </Link>
                     <div>
                         {loginMenu
                             .filter(
