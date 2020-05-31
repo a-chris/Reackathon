@@ -19,8 +19,13 @@ const menuItems: { name: string; path: string }[] = [
 ];
 
 export default function Header() {
+    const history = useHistory();
     const appContext = React.useContext(AppContext);
     const currenRole = appContext.state?.user?.role;
+
+    function onMenuClick(path: string) {
+        history.push(path);
+    }
 
     const onLogout = React.useCallback(() => {
         if (appContext.state?.user) {
@@ -60,12 +65,6 @@ export default function Header() {
             action: () => onLogout(),
         },
     ];
-
-    const history = useHistory();
-
-    function onMenuClick(path: string) {
-        history.push(path);
-    }
 
     return (
         <StyledNavBar>
