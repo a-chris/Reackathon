@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Hackathon } from '../models/Models';
+import { Hackathon, NewHackathon } from '../models/Models';
 
 export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
     // TODO: add params
@@ -11,7 +11,7 @@ export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
     );
 }
 
-export function createHackathon(hackathonData: Hackathon): Promise<Hackathon> {
+export function createHackathon(hackathonData: NewHackathon): Promise<NewHackathon> {
     return new Promise((resolve, reject) =>
         axios
             .post('http://localhost:5000/hackathons', hackathonData)

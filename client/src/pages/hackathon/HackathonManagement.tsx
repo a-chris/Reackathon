@@ -24,7 +24,7 @@ import {
 import 'react-datepicker/dist/react-datepicker.css';
 import { AppContext } from '../../AppContext';
 import { createHackathon } from '../../services/HackathonService';
-import { User, Location, Hackathon, HackathonStatus } from '../../models/Models';
+import { User, Location, HackathonStatus, NewHackathon } from '../../models/Models';
 // TODO find a better solution
 import { fakeOrganization, fakeLocation } from '../../models/TempDemoModels';
 import { yellow, gray, orange_light, white } from '../../utils/colors';
@@ -62,7 +62,7 @@ const initialHackathonData = (user: User = fakeOrganization) => {
 export default function HackathonManagement() {
     const appContext = React.useContext(AppContext);
     // const params = useParams<RouteParams>(); // TODO get id from params
-    const [hackathonData, setHackathonData] = React.useState<Hackathon>(
+    const [hackathonData, setHackathonData] = React.useState<NewHackathon>(
         initialHackathonData(appContext.state!.user)
     );
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -114,7 +114,6 @@ export default function HackathonManagement() {
 
     const onHackathonCreation = React.useCallback(() => {
         setLoading(true);
-        console.log(hackathonData);
         createHackathon(hackathonData)
             .then((hackathon) => {
                 setLoading(false);

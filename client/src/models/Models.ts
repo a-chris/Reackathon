@@ -44,7 +44,7 @@ export type Prize = {
     extra: string;
 };
 
-export type Hackathon = {
+export type NewHackathon = {
     name: string;
     description: string;
     organization: User;
@@ -54,4 +54,8 @@ export type Hackathon = {
     location: Location;
     prize: Prize;
     status: HackathonStatus;
+};
+
+export type Hackathon = NewHackathon & {
+    _id: string;
 };

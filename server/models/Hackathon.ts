@@ -14,10 +14,7 @@ const LocationSchema = new mongoose.Schema({
 });
 
 const PrizeSchema = new mongoose.Schema({
-    amount: {
-        type: Number,
-        min: 0,
-    },
+    amount: { type: Number, min: 0 },
     extra: String,
 });
 
@@ -51,6 +48,7 @@ export type Prize = mongoose.Document & {
 };
 
 export type Hackathon = mongoose.Document & {
+    _id: string;
     name: string;
     description: string;
     organization: User;
