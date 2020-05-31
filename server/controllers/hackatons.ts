@@ -4,7 +4,9 @@ import { HackathonDb } from '../models/Hackathon';
 const HackathonAction = ['pending', 'started', 'finished'];
 
 export function findHackathons(req: Request, res: Response) {
-    HackathonDb.find((err, hackathons) => {
+    const filters = req.body.filters;
+
+    HackathonDb.find(filters, (err, hackathons) => {
         res.json(hackathons);
     });
 }
