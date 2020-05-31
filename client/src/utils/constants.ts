@@ -5,3 +5,4 @@ export enum LOGIN_ACTION {
     LOGOUT,
 }
 
+export const GOOGLE_KEY = 'AIzaSyCiCZ7660wweybgdrpz1F0GDCadWpYQTeg';
