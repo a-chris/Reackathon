@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import * as _ from 'lodash';
@@ -29,10 +28,6 @@ import { User, Location, HackathonStatus, NewHackathon } from '../../models/Mode
 import { fakeOrganization, fakeLocation } from '../../models/TempDemoModels';
 import { yellow, gray, orange_light, white } from '../../utils/colors';
 
-interface RouteParams {
-    id?: string;
-}
-
 const AccordionHeaderStyle = {
     fontWeight: '700',
     bg: yellow,
@@ -61,7 +56,6 @@ const initialHackathonData = (user: User = fakeOrganization) => {
 
 export default function HackathonManagement() {
     const appContext = React.useContext(AppContext);
-    // const params = useParams<RouteParams>(); // TODO get id from params
     const [hackathonData, setHackathonData] = React.useState<NewHackathon>(
         initialHackathonData(appContext.state!.user)
     );
@@ -125,7 +119,6 @@ export default function HackathonManagement() {
     return (
         <StyledHackathonContainer>
             <PseudoBox fontSize='1.8em' fontWeight='semibold' m={3} textAlign='left'>
-                {/* {idHackathon ? 'Gestione' : 'Creazione'} dell'Hackathon */}
                 Creazione dell'Hackathon
             </PseudoBox>
 

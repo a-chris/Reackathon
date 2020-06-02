@@ -15,6 +15,7 @@ import { LOGIN_ACTION } from './utils/constants';
 import HackathonManagement from './pages/hackathon/HackathonManagement';
 import Header from './pages/homepage/Header';
 import { getUserInfo } from './services/LoginService';
+import HackathonDetail from './pages/hackathon/HackathonDetail';
 
 /**
  * Debug
@@ -82,6 +83,7 @@ export default function App() {
                                     user={state.user}
                                     allowedFor={[UserRole.ORGANIZATION]}
                                 />
+                                <Route exact path='/hackathons/:id' component={HackathonDetail} />
                                 <RestrictedRoute
                                     exact
                                     path='/hackathons/create'
@@ -89,11 +91,6 @@ export default function App() {
                                     user={state.user}
                                     allowedFor={[UserRole.ORGANIZATION]}
                                 />
-                                {/* <Route
-                                    exact
-                                    path='/hackathons/:id'
-                                    component={HackathonManagement}
-                                /> */}
                                 <Route path='/hackathons' component={HackathonsList} />
                                 <Route component={PageNotFound} />
                             </Switch>

@@ -11,6 +11,15 @@ export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
     );
 }
 
+export function getHackathon(id: string): Promise<Hackathon> {
+    return new Promise((resolve, reject) =>
+        axios
+            .get('http://localhost:5000/hackathons/' + id)
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}
+
 export function createHackathon(hackathonData: NewHackathon): Promise<NewHackathon> {
     return new Promise((resolve, reject) =>
         axios
