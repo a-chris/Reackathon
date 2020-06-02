@@ -15,7 +15,7 @@ const LocationSchema = new mongoose.Schema({
 });
 
 const GroupSchema = new mongoose.Schema({
-    name: { type: String, unique: true },
+    name: { type: String, unique: true, sparse: true },
     leader: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     teamSize: { type: Number, min: 1 },
 });
