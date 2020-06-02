@@ -11,9 +11,10 @@ import { Hackathon } from '../models/Models';
 
 type MapProps = {
     hackathons: Hackathon[] | undefined;
+    style?: { width: string };
 };
 
-export function MapContainer({ hackathons }: MapProps) {
+export function MapContainer({ hackathons, style }: MapProps) {
     const history = useHistory();
 
     const MyMapComponent = compose(
@@ -23,7 +24,9 @@ export function MapContainer({ hackathons }: MapProps) {
                 GOOGLE_KEY +
                 '&libraries=geometry,drawing,places',
             loadingElement: <div style={{ height: `100%` }} />,
-            containerElement: <div style={{ height: `100%`, width: '50%' }} />,
+            containerElement: (
+                <div style={{ height: `100%`, width: style?.width ? style.width : '50%' }} />
+            ),
             mapElement: <div style={{ height: `100%` }} />,
         }),
         withHandlers({
@@ -37,8 +40,6 @@ export function MapContainer({ hackathons }: MapProps) {
         withGoogleMap
     )((props: any) => (
         <GoogleMap
-            // google={props.google}
-            // onReady={fetchPlaces}
             defaultZoom={6}
             defaultCenter={{
                 lat: 41.69246,
@@ -53,7 +54,7 @@ export function MapContainer({ hackathons }: MapProps) {
                 {hackathons?.map((hackathons, index) => (
                     <Marker
                         key={hackathons.name + index}
-                        onClick={() => history.push('/hackathon/id=' + hackathons._id)}
+                        onClick={() => history.push('/hackathons/' + hackathons._id)}
                         position={{
                             lat: hackathons.location.lat,
                             lng: hackathons.location.long,
