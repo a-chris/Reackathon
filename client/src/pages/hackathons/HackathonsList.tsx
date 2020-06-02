@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Box, Text, Badge, Stack, Heading, Grid } from '@chakra-ui/core';
+import { Box, Badge, Stack, Heading, SimpleGrid } from '@chakra-ui/core';
 import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getHackathons } from '../../services/HackathonService';
 import queryString from 'query-string';
@@ -33,8 +33,8 @@ export default function HackathonsList() {
 
     return (
         <Box w={'100%'} h={'100%'}>
-            <Grid w={'100%'} h={'100%'} templateColumns='repeat(2, 5fr)'>
-                <Stack w={['100%', '100%']} p={[25, 25, 15, 5]} overflowY='auto'>
+            <SimpleGrid w={'100%'} h={'100%'} columns={[1, 1, 2]} spacing={10}>
+                <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box color={red_light}>
                         <Heading as='h2' size='lg'>
                             Hackathons
@@ -63,10 +63,10 @@ export default function HackathonsList() {
                         </Box>
                     ))}
                 </Stack>
-                <Box w={['100%', '100%', '100%', '100%']} p={2}>
+                <Box w={'100%'} p={2}>
                     <MapContainer hackathons={hackathons} style={{ width: '100%' }} />
                 </Box>
-            </Grid>
+            </SimpleGrid>
         </Box>
     );
 }
