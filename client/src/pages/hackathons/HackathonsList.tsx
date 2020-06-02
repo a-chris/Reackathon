@@ -44,12 +44,9 @@ export default function HackathonsList() {
                         <Box p={2} color='gray.500' border={'2px solid ' + gray} textAlign='left'>
                             <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
                                 <Heading as='h3' size='lg'>
-                                    {hackathon.name} ddddd fdgsrth ehath
+                                    {hackathon.name}
                                 </Heading>
-                                <Box color='gray.400'>
-                                    {hackathon.description} vsdvjns dfbjang grjgneiogn rgjnegion
-                                    nethnrthn egrghneoithn ejnhjtrnhe erjnhoietnhi
-                                </Box>
+                                <Box color='gray.400'>{hackathon.description}</Box>
                                 <Box d='flex' alignItems='baseline' justifyContent='space-between'>
                                     <Box
                                         color='gray.500'
@@ -60,7 +57,7 @@ export default function HackathonsList() {
                                         {hackathon.location.city} &bull;{' '}
                                         {hackathon.location.country}
                                     </Box>
-                                    {StatusBadge(hackathon.status)}
+                                    {StatusBadge(hackathon)}
                                 </Box>
                             </Link>
                         </Box>
@@ -84,14 +81,22 @@ function sanitizeRouteParams(params: any): RouteParams {
     return newParams;
 }
 
-function StatusBadge(status: HackathonStatus) {
+function StatusBadge(hackathon: Hackathon) {
+    const status = hackathon.status;
+    const maxAttendants = hackathon.attendantsRequirements.maxNum;
+    const actualAttendants = hackathon.attendants.length;
     let color = 'green';
     let text = '';
 
     switch (status) {
         case HackathonStatus.PENDING:
-            color = 'yellow';
-            text = 'iscriviti';
+            if (maxAttendants && actualAttendants < maxAttendants) {
+                color = 'yellow';
+                text = 'iscriviti';
+            } else {
+                color = 'red';
+                text = 'iscrizioni chiuse';
+            }
             break;
         case HackathonStatus.STARTED:
             color = 'green';
