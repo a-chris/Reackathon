@@ -16,6 +16,7 @@ import HackathonManagement from './pages/hackathon/HackathonManagement';
 import Header from './pages/homepage/Header';
 import { getUserInfo } from './services/LoginService';
 import HackathonDetail from './pages/hackathon/HackathonDetail';
+import Profile from './pages/profile/Profile';
 
 /**
  * Debug
@@ -92,6 +93,7 @@ export default function App() {
                                 />
                                 <Route exact path='/hackathons/:id' component={HackathonDetail} />
                                 <Route path='/hackathons' component={HackathonsList} />
+                                <Route exact path='/profile' component={Profile} />
                                 <Route component={PageNotFound} />
                             </Switch>
                         </div>
