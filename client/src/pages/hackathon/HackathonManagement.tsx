@@ -44,10 +44,12 @@ const initialHackathonData = (user: User = fakeOrganization) => {
     return {
         name: '',
         description: '',
+        attendantsRequirements: {
+            description: '',
+        },
         organization: user,
         startDate: date.add(7, 'days').toDate(),
         endDate: date.add(1, 'days').toDate(),
-        attendants: [],
         location: fakeLocation, //TODO remove fake value
         prize: initialPrizeData,
         status: HackathonStatus.PENDING,
@@ -95,6 +97,16 @@ export default function HackathonManagement() {
         }
     };
 
+    const onChangeRequirements = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event?.target;
+        if (name != null && value != null) {
+            setHackathonData((curr) => ({
+                ...curr,
+                attendantsRequirements: { ...curr.attendantsRequirements, [name]: value },
+            }));
+        }
+    };
+
     const onChangePrize = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event?.target;
         if (name != null && value != null) {
@@ -111,7 +123,7 @@ export default function HackathonManagement() {
         createHackathon(hackathonData)
             .then((hackathon) => {
                 setLoading(false);
-                console.log(hackathon);
+                console.log(hackathon); //TODO handle
             })
             .catch((error) => console.log(error));
     }, [hackathonData]);
@@ -122,7 +134,7 @@ export default function HackathonManagement() {
                 Creazione dell'Hackathon
             </PseudoBox>
 
-            <Accordion defaultIndex={[0, 1, 2]} allowMultiple>
+            <Accordion defaultIndex={[0]} allowMultiple>
                 <AccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
                         <Box flex='1' textAlign='left'>
@@ -212,7 +224,7 @@ export default function HackathonManagement() {
                                     textAlign='left'
                                     defaultValue={Object.entries(hackathonData.location).map(
                                         (v: any) => v[1]
-                                    )}
+                                    )} //TODO add address autocomplete
                                     isReadOnly={true}
                                     // onChange={onChangeValue}
                                     placeholder='clicca per modificare...'
@@ -221,7 +233,59 @@ export default function HackathonManagement() {
                                 />
                             </FormControl>
                         </FormControl>
-                        <Stack>{/* TODO add google autocomplete */}</Stack>
+                    </AccordionPanel>
+                </AccordionItem>
+
+                <AccordionItem>
+                    <AccordionHeader {...AccordionHeaderStyle}>
+                        <Box flex='1' textAlign='left'>
+                            Requisiti per partecipare
+                        </Box>
+                        <AccordionIcon />
+                    </AccordionHeader>
+                    <AccordionPanel pb={4}>
+                        <FormControl isRequired textAlign='left'>
+                            <FormLabel htmlFor='description'>
+                                Requisiti richiesti ai partecipanti
+                            </FormLabel>
+                            <Textarea
+                                id='requirements_description'
+                                name='description'
+                                placeholder='clicca per modificare...'
+                                value={hackathonData.attendantsRequirements.description}
+                                onChange={onChangeRequirements}
+                            />
+                        </FormControl>
+
+                        <Box display={{ md: 'flex' }}>
+                            <FormControl textAlign='left' pr={4}>
+                                <FormLabel htmlFor='startDate'>
+                                    Numero minimo di partecipanti
+                                </FormLabel>
+                                <Input
+                                    id='minNum'
+                                    name='minNum'
+                                    type='number'
+                                    placeholder='-'
+                                    value={hackathonData.attendantsRequirements.minNum || ''}
+                                    onChange={onChangeRequirements}
+                                />
+                            </FormControl>
+
+                            <FormControl textAlign='left'>
+                                <FormLabel htmlFor='startDate'>
+                                    Numero massimo di partecipanti
+                                </FormLabel>
+                                <Input
+                                    id='maxNum'
+                                    name='maxNum'
+                                    type='number'
+                                    placeholder='-'
+                                    value={hackathonData.attendantsRequirements.maxNum || ''}
+                                    onChange={onChangeRequirements}
+                                />
+                            </FormControl>
+                        </Box>
                     </AccordionPanel>
                 </AccordionItem>
 

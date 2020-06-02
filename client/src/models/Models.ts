@@ -44,18 +44,36 @@ export type Prize = {
     extra: string;
 };
 
+export type Group = {
+    name: string;
+    leader: User;
+    teamSize: number;
+};
+
+export type Attendant = {
+    user: User;
+    group: Group | undefined;
+    pendingGroups: Group[];
+};
+
 export type NewHackathon = {
     name: string;
     description: string;
+    attendantsRequirements: {
+        description: string;
+        minNum?: number;
+        maxNum?: number;
+    };
     organization: User;
-    attendants: User[];
     startDate: Date;
     endDate: Date;
     location: Location;
     prize: Prize;
-    status: HackathonStatus;
 };
 
 export type Hackathon = NewHackathon & {
     _id: string;
+    attendants: Attendant[];
+    groups: Group[];
+    status: HackathonStatus;
 };
