@@ -3,8 +3,47 @@ import { HackathonDb } from '../models/Hackathon';
 
 const HackathonAction = ['pending', 'started', 'finished'];
 
+type FilterType = {
+    city?: string;
+    country?: string;
+    state?: string;
+    name?: string;
+};
+
+const mapFiltersToString = (filterName: string) => {
+    switch (filterName) {
+        case 'city':
+            return 'location.city';
+        case 'country':
+            return 'location.country';
+        case 'name':
+            return 'name';
+        default:
+            return undefined;
+    }
+};
+
+const HACKATHON_FIELDS = new Set(['city', 'country', 'name']);
+
+const sanitizeFilters = (filters: any): FilterType => {
+    const sanitizedFilters: any = {};
+    if (filters) {
+        Object.entries(filters)
+            .filter((e) => HACKATHON_FIELDS.has(e[0]))
+            .forEach((e) => {
+                const key = mapFiltersToString(e[0]);
+                if (key != undefined) {
+                    sanitizedFilters[key] = e[1];
+                }
+            });
+    }
+    return sanitizedFilters as FilterType;
+};
+
 export function findHackathons(req: Request, res: Response) {
-    const filters = req.body.filters;
+    const query = req.query;
+    let filters = sanitizeFilters(query);
+    console.log('findHackathons -> filters', filters);
 
     HackathonDb.find(filters, (err, hackathons) => {
         res.json(hackathons);
@@ -16,7 +55,7 @@ export function findHackathon(req: Request, res: Response) {
     if (hackathonId == null) {
         return res.sendStatus(400);
     }
-    HackathonDb.find({ '_id': hackathonId }, (err, hackathon) => {
+    HackathonDb.findOne({ '_id': hackathonId }, (err, hackathon) => {
         if (hackathon == null) {
             return res.sendStatus(400);
         }

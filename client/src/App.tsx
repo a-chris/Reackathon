@@ -82,7 +82,6 @@ export default function App() {
                                     user={state.user}
                                     allowedFor={[UserRole.ORGANIZATION]}
                                 />
-                                <Route exact path='/hackathons' component={HackathonsList} />
                                 <RestrictedRoute
                                     exact
                                     path='/hackathons/create'
@@ -95,6 +94,7 @@ export default function App() {
                                     path='/hackathons/:id'
                                     component={HackathonManagement}
                                 /> */}
+                                <Route path='/hackathons' component={HackathonsList} />
                                 <Route component={PageNotFound} />
                             </Switch>
                         </div>
