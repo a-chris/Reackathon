@@ -9,10 +9,14 @@ import { red_light, gray, black } from '../../utils/colors';
 
 type RouteParams = {
     city?: string;
-    address?: string;
+    province?: string;
+    district?: string;
+    country?: string;
+    from?: string;
+    to?: string;
 };
 
-const ROUTE_PARAMS = new Set(['city', 'address']);
+const ROUTE_PARAMS = new Set(['city', 'province', 'district', 'country', 'from', 'to']);
 
 export default function HackathonsList() {
     const [hackathons, setHackathons] = React.useState<Hackathon[]>([]);
