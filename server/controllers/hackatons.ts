@@ -10,6 +10,7 @@ type FilterType = {
     country?: string;
     from?: string;
     to?: string;
+    status?: string;
 };
 
 const mapFiltersToString = (filterName: string) => {
@@ -32,6 +33,7 @@ const HACKATHON_FIELDS = new Set([
     'state',
     'from',
     'to',
+    'status',
 ]);
 
 const sanitizeFilters = (filters: any): FilterType => {

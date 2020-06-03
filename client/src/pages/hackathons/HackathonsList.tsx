@@ -14,9 +14,10 @@ type RouteParams = {
     country?: string;
     from?: string;
     to?: string;
+    status?: HackathonStatus;
 };
 
-const ROUTE_PARAMS = new Set(['city', 'province', 'district', 'country', 'from', 'to']);
+const ROUTE_PARAMS = new Set(['city', 'province', 'district', 'country', 'from', 'to', 'status']);
 
 export default function HackathonsList() {
     const [hackathons, setHackathons] = React.useState<Hackathon[]>([]);
