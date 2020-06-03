@@ -16,7 +16,8 @@
         "express": "^4.17.1",
         "express-session": "^1.17.1",
         "lodash": "^4.17.15",
-        "mongoose": "^5.9.12"
+        "mongoose": "^5.9.12",
+        "nodemailer": "^6.4.8"
     },
     "devDependencies": {
         "@types/bcrypt": "^3.0.0",
@@ -26,6 +27,7 @@
         "@types/express-session": "^1.17.0",
         "@types/lodash": "^4.14.150",
         "@types/mongoose": "^5.7.15",
+        "@types/nodemailer": "^6.4.0",
         "eslint": "^6.8.0",
         "ts-node-dev": "^1.0.0-pre.44"
     }

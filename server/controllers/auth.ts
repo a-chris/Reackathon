@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
 import { User, UserDb } from '../models/User';
+import sendWelcomeEmail from '../utils/email';
 
 const DEFAULT_SALT_ROUNDS = 10;
 
 export function isLogged(req: Request, res: Response, next: NextFunction) {
-    console.log('TCL: isLogged -> req.session', req.session);
     if (req.session?.user) next();
     else return res.sendStatus(401);
 }
@@ -58,6 +58,7 @@ export function signup(req: Request, res: Response) {
         .then((storedUser: User) => {
             const sanitizedUser = sanitizeUser(storedUser);
             if (req.session) req.session.user = sanitizedUser;
+            sendWelcomeEmail(storedUser.email);
             res.json(sanitizedUser);
         })
         .catch((err) => {
