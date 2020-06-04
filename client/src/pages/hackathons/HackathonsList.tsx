@@ -69,7 +69,10 @@ export default function HackathonsList() {
                     ))}
                 </Stack>
                 <Box w={'100%'} p={2}>
-                    <MapContainer hackathons={hackathons} style={{ width: '100%' }} />
+                    <MapContainer
+                        hackathons={hackathons}
+                        style={{ height: '100%', width: '100%' }}
+                    />
                 </Box>
             </SimpleGrid>
         </Box>

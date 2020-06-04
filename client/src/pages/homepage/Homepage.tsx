@@ -48,13 +48,16 @@ export default function Homepage() {
                 )}
             </Box>
             <Box w={'100%'} h={'100%'} display={{ md: 'flex' }}>
-                <MapContainer hackathons={hackathons} />
                 <Stack>
                     <PseudoBox>Trova l'Hackathon più adatto a te!</PseudoBox>
                 </Stack>
             </Box>
             <Box>
                 <Heading as='h3' p={10}>
+                <MapContainer
+                    hackathons={hackathons}
+                    style={{ width: '100%', minHeight: '100vh' }}
+                />
                     Stai organizzando un Hackathon?
                 </Heading>
                 <Heading as='h4'>
