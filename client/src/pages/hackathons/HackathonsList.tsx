@@ -37,8 +37,8 @@ export default function HackathonsList() {
     }, [filters]);
 
     return (
-        <Box w={'100%'} h={'100%'}>
-            <SimpleGrid w={'100%'} h={'100%'} columns={[1, 1, 2]} spacing={10}>
+        <Box w={'100%'} h={'90%'}>
+            <SimpleGrid w={'100%'} h={'100%'} columns={[1, 1, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box color={red_light}>
                         <Heading as='h2' size='lg'>
@@ -46,7 +46,12 @@ export default function HackathonsList() {
                         </Heading>
                     </Box>
                     {hackathons.map((hackathon, index) => (
-                        <Box p={2} color='gray.500' border={'2px solid ' + gray} textAlign='left'>
+                        <Box
+                            key={index}
+                            p={2}
+                            color='gray.500'
+                            border={'2px solid ' + gray}
+                            textAlign='left'>
                             <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
                                 <Heading as='h3' size='lg'>
                                     {hackathon.name}
@@ -98,7 +103,7 @@ function StatusBadge(hackathon: Hackathon) {
 
     switch (status) {
         case HackathonStatus.PENDING:
-            if (maxAttendants && actualAttendants < maxAttendants) {
+            if (!maxAttendants || (maxAttendants && actualAttendants < maxAttendants)) {
                 color = 'yellow';
                 text = 'iscriviti';
             } else {
