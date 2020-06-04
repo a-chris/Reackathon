@@ -10,3 +10,7 @@ export const red_dark = 'rgb(189, 79, 56)';
 
 export const red_light = 'rgb(230, 80, 79)';
 export const orange = 'rgb(234, 102, 25)';
+
+export const blue_night = '#06133d';
+export const blue = '#0b1b4c';
+export const gold = '#fbf2bc';

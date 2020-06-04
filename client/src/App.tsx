@@ -62,41 +62,39 @@ export default function App() {
                     <CSSReset />
                     <HashRouter>
                         <Header />
-                        <div id='background'>
-                            <Switch>
-                                <Route exact path='/' component={Homepage} />
-                                <RestrictedRoute
-                                    exact
-                                    path='/login'
-                                    component={Login}
-                                    user={state.user}
-                                />
-                                <RestrictedRoute
-                                    exact
-                                    path='/signup'
-                                    component={Signup}
-                                    user={state.user}
-                                />
-                                <RestrictedRoute
-                                    exact
-                                    path='/org'
-                                    component={OrganizationBoard}
-                                    user={state.user}
-                                    allowedFor={[UserRole.ORGANIZATION]}
-                                />
-                                <RestrictedRoute
-                                    exact
-                                    path='/hackathons/create'
-                                    component={HackathonManagement}
-                                    user={state.user}
-                                    allowedFor={[UserRole.ORGANIZATION]}
-                                />
-                                <Route exact path='/hackathons/:id' component={HackathonDetail} />
-                                <Route path='/hackathons' component={HackathonsList} />
-                                <Route exact path='/profile' component={Profile} />
-                                <Route component={PageNotFound} />
-                            </Switch>
-                        </div>
+                        <Switch>
+                            <Route exact path='/' component={Homepage} />
+                            <RestrictedRoute
+                                exact
+                                path='/login'
+                                component={Login}
+                                user={state.user}
+                            />
+                            <RestrictedRoute
+                                exact
+                                path='/signup'
+                                component={Signup}
+                                user={state.user}
+                            />
+                            <RestrictedRoute
+                                exact
+                                path='/org'
+                                component={OrganizationBoard}
+                                user={state.user}
+                                allowedFor={[UserRole.ORGANIZATION]}
+                            />
+                            <RestrictedRoute
+                                exact
+                                path='/hackathons/create'
+                                component={HackathonManagement}
+                                user={state.user}
+                                allowedFor={[UserRole.ORGANIZATION]}
+                            />
+                            <Route exact path='/hackathons/:id' component={HackathonDetail} />
+                            <Route path='/hackathons' component={HackathonsList} />
+                            <Route exact path='/profile' component={Profile} />
+                            <Route component={PageNotFound} />
+                        </Switch>
                     </HashRouter>
                 </AppContext.Provider>
             </ThemeProvider>
