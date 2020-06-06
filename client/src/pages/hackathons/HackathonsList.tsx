@@ -5,7 +5,7 @@ import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getHackathons } from '../../services/HackathonService';
 import queryString from 'query-string';
 import { MapContainer } from '../../components/Map';
-import { red_light, gray, black } from '../../utils/colors';
+import { red_light, gray, gray_dark } from '../../utils/colors';
 
 type RouteParams = {
     city?: string;
@@ -59,7 +59,7 @@ export default function HackathonsList() {
                                 <Box color='gray.400'>{hackathon.description}</Box>
                                 <Box d='flex' alignItems='baseline' justifyContent='space-between'>
                                     <Box
-                                        color='gray.500'
+                                        color={gray_dark}
                                         fontWeight='semibold'
                                         letterSpacing='wide'
                                         fontSize='xs'
