@@ -39,7 +39,7 @@ export default function Homepage() {
     };
 
     return (
-        <Box>
+        <StyledContainer>
             <FlexContainer>
                 <SimpleResponsiveGrid>
                     <Flex alignSelf='center' color={white} pr={0}>
@@ -62,12 +62,19 @@ export default function Homepage() {
                                     Trova l'Hackathon che fa per te
                                 </Heading>
                                 <Box>
-                                    <Select onChange={onFilterChange}>
+                                    <Select
+                                        onChange={onFilterChange}
+                                        placeholder='Seleziona una città'>
                                         {Array.from(cities).map((city) => (
                                             <option key={city} value={city} label={city} />
                                         ))}
                                     </Select>
-                                    <Link to={`/hackathons?city=${selectedCity}`}>
+                                    <Link
+                                        to={
+                                            selectedCity != null
+                                                ? `/hackathons?city=${selectedCity}`
+                                                : '/hackathons'
+                                        }>
                                         <StyledBlueButton>Vai</StyledBlueButton>
                                     </Link>
                                 </Box>
@@ -138,7 +145,7 @@ export default function Homepage() {
             <StyledBlueBox p='2%' textAlign='left'>
                 ©Copyright 2020 - Giada Boccali &bull; Antonio Christian Toscano
             </StyledBlueBox>
-        </Box>
+        </StyledContainer>
     );
 }
 
@@ -163,6 +170,10 @@ const SimpleResponsiveGrid: React.FC<{}> = (props) => {
         </SimpleGrid>
     );
 };
+
+const StyledContainer = styled(Box)`
+    text-align: center;
+`;
 
 const StyledBlueButton = styled(Button).attrs({
     bg: blue_night,
