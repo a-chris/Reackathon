@@ -19,6 +19,7 @@ export type Badge = {
 };
 
 export type User = {
+    _id: string;
     username: string;
     password: string;
     name: string;
