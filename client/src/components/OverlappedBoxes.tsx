@@ -1,6 +1,6 @@
 import React from 'react';
 import { Stack, Box, BoxProps, StackProps } from '@chakra-ui/core';
-import { white, blue_night, gray } from '../utils/colors';
+import { white, black } from '../utils/colors';
 
 type Boxes = {
     TopContent: () => JSX.Element;
@@ -22,7 +22,7 @@ export default function OverlappedBoxes(props: Boxes) {
             <Box
                 overflow='visible'
                 borderWidth='1px'
-                borderColor={blue_night}
+                borderColor={black}
                 bg={white}
                 rounded='md'
                 w='90%'
