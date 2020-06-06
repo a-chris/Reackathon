@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { User, UserRole } from '../models/Models';
+import { setLocalUser } from './UserService';
 
 export interface LoginData {
     username: string;
@@ -52,7 +53,11 @@ export function logout(loginData: LoginData): Promise<boolean> {
     return new Promise((resolve, reject) =>
         axios
             .post('http://localhost:5000/logout', loginData)
-            .then((response: any) => resolve(response.data))
+            .then((response: any) => {
+                console.log('TCL: response', response);
+                setLocalUser(null);
+                resolve(response.data);
+            })
             .catch((error: any) => reject(error))
     );
 }
