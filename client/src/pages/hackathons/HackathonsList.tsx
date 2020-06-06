@@ -1,11 +1,11 @@
+import { Badge, Box, Heading, SimpleGrid, Stack } from '@chakra-ui/core';
+import queryString from 'query-string';
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { Box, Badge, Stack, Heading, SimpleGrid } from '@chakra-ui/core';
+import { Link, useLocation } from 'react-router-dom';
+import { MapContainer } from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getHackathons } from '../../services/HackathonService';
-import queryString from 'query-string';
-import { MapContainer } from '../../components/Map';
-import { red_light, gray, black } from '../../utils/colors';
+import colors from '../../utils/colors';
 
 type RouteParams = {
     city?: string;
@@ -25,7 +25,7 @@ export default function HackathonsList() {
             const val = { ...curr, ...urlFilters };
             return val;
         });
-    }, [, location]);
+    }, [location]);
 
     React.useEffect(() => {
         getHackathons(filters).then((hackathons) => setHackathons(hackathons));
@@ -35,13 +35,17 @@ export default function HackathonsList() {
         <Box w={'100%'} h={'100%'}>
             <SimpleGrid w={'100%'} h={'100%'} columns={[1, 1, 2]} spacing={10}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
-                    <Box color={red_light}>
+                    <Box color={colors.red_light}>
                         <Heading as='h2' size='lg'>
                             Hackathons
                         </Heading>
                     </Box>
                     {hackathons.map((hackathon, index) => (
-                        <Box p={2} color='gray.500' border={'2px solid ' + gray} textAlign='left'>
+                        <Box
+                            p={2}
+                            color='gray.500'
+                            border={'2px solid ' + colors.gray}
+                            textAlign='left'>
                             <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
                                 <Heading as='h3' size='lg'>
                                     {hackathon.name}

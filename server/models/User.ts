@@ -18,11 +18,34 @@ export type Badge = mongoose.Document & {
     partecipation: number;
 };
 
+const ExperienceSchema = new mongoose.Schema({
+    role: {
+        type: String,
+    },
+    company: {
+        type: String,
+    },
+    from: {
+        type: Date,
+    },
+    to: {
+        type: Date,
+    },
+});
+
+export type Experience = mongoose.Document & {
+    role: String;
+    company: String;
+    from: Date;
+    to: Date;
+};
+
 export const UserSchema = new mongoose.Schema({
     username: { type: String, index: true, unique: true },
     password: String,
     name: String,
     email: String,
+    avatar: { type: String, required: false },
     role: { type: String, enum: ['CLIENT', 'ORGANIZATION'] },
     badge: {
         type: BadgeSchema,
@@ -32,6 +55,12 @@ export const UserSchema = new mongoose.Schema({
         default: function (this: User) {
             if (this.role === 'CLIENT') return BadgeSchema;
         },
+    },
+    skills: {
+        type: [String],
+    },
+    experiences: {
+        type: [ExperienceSchema],
     },
 });
 
@@ -51,8 +80,11 @@ export type User = mongoose.Document & {
     password: string;
     name: string;
     email: string;
+    avatar?: string;
     role: string;
     badge?: Badge;
+    skills: string[];
+    experiences: Experience[];
 };
 
 export const UserDb = mongoose.model<User>('User', UserSchema);

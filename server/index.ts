@@ -3,6 +3,8 @@ import express from 'express';
 import session from 'express-session';
 import * as _ from 'lodash';
 import mongoose from 'mongoose';
+import multer from 'multer';
+import path from 'path';
 import * as authController from './controllers/auth';
 import * as hackathonsController from './controllers/hackatons';
 import * as usersController from './controllers/users';
@@ -19,12 +21,32 @@ mongoose.connect('mongodb://192.168.1.123', {
 
 const MongoStore = require('connect-mongo')(session);
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        const filename = file.originalname.slice(0, file.originalname.length - ext.length);
+        cb(null, Date.now() + '_' + filename + ext);
+    },
+});
+
+const upload = multer({ storage });
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
     session({
+        name: 'reackathon_session',
         secret: 'reackathon2020',
-        cookie: { maxAge: 1000 * 60 * 60 * 24 * 14 }, // two weeks
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24 * 14,
+            secure: false,
+            httpOnly: false,
+        }, // two weeks
         store: new MongoStore({
             mongooseConnection: mongoose.connection,
             collections: 'sessions',
@@ -32,9 +54,15 @@ app.use(
         }),
     })
 );
+
 // TODO: wrap this in a if statement
 // before to deploy in qa/production
-app.use(cors());
+app.use(
+    cors({
+        credentials: true,
+        origin: 'http://localhost:3000',
+    })
+);
 
 app.use((req, res, next) => {
     let logString = `${req.originalUrl}:`;
@@ -52,6 +80,11 @@ app.use((req, res, next) => {
 app.use(express.static('../build'));
 
 /**
+ * Returns the uploaded resources
+ */
+app.use('/avatar', express.static(__dirname + '/uploads'));
+
+/**
  * Auth Routes
  */
 app.route('/info').post(authController.info);
@@ -63,17 +96,34 @@ app.route('/users/exist').get(usersController.usernameExists);
 /**
  * Authenticated Routes
  */
-app.route('/users')
-    .get(authController.isOrganization, usersController.getUsers)
-    .post(authController.isLogged, usersController.updateUser);
+app.route('/users').get(authController.isOrganization, usersController.getUsers);
+
+app.route('/users/:username')
+    .get(authController.isLogged, usersController.getUserDetail)
+    .post(authController.isClient, usersController.updateClient)
+    .post(authController.isOrganization, usersController.updateOrganization);
+
+app.route('/users/:username/avatar').post(
+    authController.isLogged,
+    upload.single('avatar'),
+    usersController.uploadAvatar
+);
 
 app.route('/hackathons')
     .get(hackathonsController.findHackathons)
     .post(hackathonsController.saveHackathons);
 
-app.route('/hackathons/:id')
-    .get(hackathonsController.findHackathon)
-    .put(hackathonsController.changeHackathonStatus);
+app.route('/hackathons/:id').get(hackathonsController.findHackathon);
+
+//TODO: put isClient again
+app.route('/hackathons/:id/sub').put(authController.isClient, hackathonsController.subscribeUser);
+app.route('/hackathons/:id/unsub').put(
+    authController.isClient,
+    hackathonsController.unsubscribeUser
+);
+
+app.route('/hackathons/:id/status').put(hackathonsController.changeHackathonStatus);
+
 /**
  * Listen
  */

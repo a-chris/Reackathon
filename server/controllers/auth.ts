@@ -6,12 +6,18 @@ import sendWelcomeEmail from '../utils/email';
 const DEFAULT_SALT_ROUNDS = 10;
 
 export function isLogged(req: Request, res: Response, next: NextFunction) {
+    console.log('TCL: isLogged: ', req.session?.user != null);
     if (req.session?.user) next();
     else return res.sendStatus(401);
 }
 
 export function isOrganization(req: Request, res: Response, next: NextFunction) {
-    if (req.session?.user != null && req.session?.user?.role === 'organization') next();
+    if (req.session?.user?.role === 'ORGANIZATION') next();
+    else return res.sendStatus(401);
+}
+
+export function isClient(req: Request, res: Response, next: NextFunction) {
+    if (req.session?.user?.role === 'CLIENT') next();
     else return res.sendStatus(401);
 }
 
@@ -24,9 +30,9 @@ export function info(req: Request, res: Response) {
         if (storedUser == null || err != null) {
             return res.sendStatus(401);
         }
-        const sanitizedUser = sanitizeUser(storedUser);
-        if (req.session) req.session.user = sanitizedUser;
-        res.json(sanitizeUser(storedUser));
+        if (req.session) req.session.user = storedUser;
+        console.log('TCL: info -> req.session', req.session);
+        res.json(storedUser);
     });
 }
 
@@ -42,9 +48,8 @@ export function login(req: Request, res: Response) {
         if (!bcrypt.compareSync(password, storedUser.password)) {
             return res.sendStatus(401);
         }
-        const sanitizedUser = sanitizeUser(storedUser);
-        if (req.session) req.session.user = sanitizedUser;
-        res.json(sanitizeUser(storedUser));
+        if (req.session) req.session.user = storedUser;
+        res.json(storedUser);
     });
 }
 
@@ -56,10 +61,9 @@ export function signup(req: Request, res: Response) {
     }
     UserDb.create({ ...newUser, password: bcrypt.hashSync(password, DEFAULT_SALT_ROUNDS) })
         .then((storedUser: User) => {
-            const sanitizedUser = sanitizeUser(storedUser);
-            if (req.session) req.session.user = sanitizedUser;
+            if (req.session) req.session.user = storedUser;
             sendWelcomeEmail(storedUser.email);
-            res.json(sanitizedUser);
+            res.json(storedUser);
         })
         .catch((err) => {
             const { code, errmsg } = err;
@@ -74,17 +78,4 @@ export function logout(req: Request, res: Response) {
         if (err != null) return res.json({ error: err });
         res.sendStatus(200);
     });
-}
-
-/**
- * Hides private fields of User.
- */
-function sanitizeUser(user: User) {
-    return user;
-    // const { username, name, role } = user;
-    // return {
-    //     username,
-    //     name,
-    //     role,
-    // };
 }

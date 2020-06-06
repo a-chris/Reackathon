@@ -1,11 +1,11 @@
+import { Button, ButtonGroup, Stack } from '@chakra-ui/core';
 import React from 'react';
-import { Stack, Button, ButtonGroup } from '@chakra-ui/core';
-import { red_dark, red_light, orange, yellow, orange_dark, gray, white } from '../../utils/colors';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { useHistory, Link } from 'react-router-dom';
-import { AppContext } from '../../AppContext';
-import { UserRole } from '../../models/Models';
-import { logout } from '../../services/LoginService';
+import { AppContext } from '../AppContext';
+import { UserRole } from '../models/Models';
+import { logout } from '../services/AuthService';
+import colors from '../utils/colors';
 
 const menuItems: { name: string; path: string }[] = [
     {
@@ -55,7 +55,7 @@ export default function Header() {
         },
         {
             name: 'Profilo',
-            path: '/profile',
+            path: `/profile/${appContext?.state?.user?.username}`,
             role: [UserRole.CLIENT, UserRole.ORGANIZATION],
         },
         {
@@ -88,9 +88,9 @@ export default function Header() {
                                     key={el.path}
                                     h='1.8em'
                                     variant='ghost'
-                                    // color={white}
-                                    color={index % 2 === 0 ? yellow : orange_dark}
-                                    // boxShadow={'-3px 4px 3px ' + gray}
+                                    // color={colors.white}
+                                    color={index % 2 === 0 ? colors.yellow : colors.orange_dark}
+                                    // boxShadow={'-3px 4px 3px ' + colors.gray}
                                     onClick={() =>
                                         el.action ? el.action() : onMenuClick(el.path)
                                     }>
@@ -109,9 +109,9 @@ export default function Header() {
                                     pl={6}
                                     pr={6}
                                     // variant='outline'
-                                    color={white}
-                                    bg={index % 2 === 0 ? yellow : orange_dark}
-                                    boxShadow={'-3px 4px 3px ' + gray}
+                                    color={colors.white}
+                                    bg={index % 2 === 0 ? colors.yellow : colors.orange_dark}
+                                    boxShadow={'-3px 4px 3px ' + colors.gray}
                                     onClick={() => onMenuClick(el.path)}>
                                     {el.name}
                                 </Button>
@@ -129,7 +129,7 @@ const StyledNavBar = styled.div`
     overflow: hidden;
     text-align: left;
     padding: 5px 25px;
-    box-shadow: 0px 0px 4px ${red_dark};
+    box-shadow: 0px 0px 4px ${colors.red_dark};
 `;
 
 const StyledMenu = styled.div`
@@ -142,9 +142,9 @@ const StyledLogo = styled.h1`
 `;
 
 const StyledLogoOrange = styled.span`
-    color: ${orange};
+    color: ${colors.orange};
 `;
 
 const StyledLogoRed = styled.span`
-    color: ${red_light};
+    color: ${colors.red_light};
 `;

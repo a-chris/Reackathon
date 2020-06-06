@@ -1,36 +1,35 @@
-import React from 'react';
-import styled from 'styled-components';
-import DatePicker from 'react-datepicker';
-import * as _ from 'lodash';
-import moment from 'moment';
 import {
-    PseudoBox,
-    Stack,
     Accordion,
-    AccordionItem,
     AccordionHeader,
-    Box,
     AccordionIcon,
+    AccordionItem,
     AccordionPanel,
-    Textarea,
-    Input,
+    Box,
     Button,
     FormControl,
     FormErrorMessage,
     FormLabel,
+    Input,
+    PseudoBox,
     Text,
+    Textarea,
 } from '@chakra-ui/core';
+import * as _ from 'lodash';
+import moment from 'moment';
+import React from 'react';
+import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { createHackathon } from '../../services/HackathonService';
-import { User, Location, HackathonStatus, NewHackathon } from '../../models/Models';
+import { HackathonStatus, NewHackathon, User } from '../../models/Models';
 // TODO find a better solution
-import { fakeOrganization, fakeLocation } from '../../models/TempDemoModels';
-import { yellow, gray, orange_light, white } from '../../utils/colors';
+import { fakeLocation, fakeOrganization } from '../../models/TempDemoModels';
+import { createHackathon } from '../../services/HackathonService';
+import colors from '../../utils/colors';
 
 const AccordionHeaderStyle = {
     fontWeight: '700',
-    bg: yellow,
+    bg: colors.yellow,
     borderRadius: 5,
 };
 
@@ -152,7 +151,7 @@ export default function HackathonManagement() {
                                 value={hackathonData.name}
                                 onChange={onChangeValue}
                                 placeholder='clicca per modificare...'
-                                border={'1px solid ' + gray}
+                                border={'1px solid ' + colors.gray}
                                 borderRadius='0.25em'
                                 p={2}
                                 pl={4}
@@ -326,7 +325,7 @@ export default function HackathonManagement() {
                 isDisabled={!allValuesValid}
                 m={3}
                 mb={0}
-                borderColor={orange_light}
+                borderColor={colors.orange_light}
                 border='2px'
                 variant='outline'
                 onClick={onHackathonCreation}
@@ -343,7 +342,7 @@ export default function HackathonManagement() {
 }
 
 const StyledHackathonContainer = styled.div`
-    background-color: ${white};
+    background-color: ${colors.white};
     margin: 2%;
     border: 3px solid #e2e8f0;
     border-radius: 10px;
@@ -355,8 +354,4 @@ const StyleDataPickerDiv = styled.div`
     border-radius: 0.25rem;
     width: fit-content;
     padding: 8px;
-`;
-
-const StyledLabel = styled.label`
-    font-weight: 400;
 `;

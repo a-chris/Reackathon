@@ -21,9 +21,9 @@ const GroupSchema = new mongoose.Schema({
 });
 
 const AttendantSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    group: { type: mongoose.Schema.Types.ObjectId, ref: 'Group', required: false },
-    pendingGroups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
+    group: { type: Number, required: false },
+    pendingGroups: { type: [Number], required: false },
 });
 
 const AttendantsRequirementsSchema = new mongoose.Schema({
@@ -41,7 +41,7 @@ const HackathonSchema = new mongoose.Schema({
     name: String,
     description: String,
     organization: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    attendants: [AttendantSchema],
+    attendants: { type: [AttendantSchema], unique: true },
     attendantsRequirements: AttendantsRequirementsSchema,
     group: [GroupSchema],
     startDate: Date,
@@ -75,10 +75,14 @@ export type Group = mongoose.Document & {
     teamSize: { type: number; min: 1 };
 };
 
+/*
+ * Take care to this issue:
+ * https://github.com/DefinitelyTyped/DefinitelyTyped/issues/44752
+ */
 export type Attendant = mongoose.Document & {
     user: User;
-    group: Group | undefined;
-    pendingGroups: Group[];
+    group?: number;
+    pendingGroups?: number[];
 };
 
 export type Hackathon = mongoose.Document & {

@@ -16,8 +16,8 @@ import {
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { login, LoginData } from '../../services/LoginService';
-import { white, orange, orange_dark, orange_light } from '../../utils/colors';
+import { login, LoginData } from '../../services/AuthService';
+import colors from '../../utils/colors';
 
 export default function Login() {
     const appContext = React.useContext(AppContext);
@@ -55,25 +55,25 @@ export default function Login() {
                 <Box
                     overflow='visible'
                     borderWidth='1px'
-                    borderColor={orange_dark}
+                    borderColor={colors.orange_dark}
                     rounded='md'
                     w='90%'
                     h='100px'
                     m='auto'
-                    bg={orange_light}
+                    bg={colors.orange_light}
                     zIndex={1}>
                     <Heading
                         h='100%'
                         as='h1'
                         size='xl'
                         p='25px'
-                        color={white}
+                        color={colors.white}
                         verticalAlign='middle'
-                        boxShadow={'0px 2px 5px' + orange_dark}>
+                        boxShadow={'0px 2px 5px' + colors.orange_dark}>
                         Login
                     </Heading>
                 </Box>
-                <Box overflow='hidden' borderWidth='1px' rounded='md' pt='70px' bg={white}>
+                <Box overflow='hidden' borderWidth='1px' rounded='md' pt='70px' bg={colors.white}>
                     <Stack spacing={3} p={8}>
                         <FormControl>
                             <InputGroup size='md'>
@@ -124,8 +124,8 @@ export default function Login() {
                     </Stack>
 
                     <Button
-                        bg={orange_light}
-                        color={white}
+                        bg={colors.orange_light}
+                        color={colors.white}
                         isLoading={loading}
                         type='submit'
                         margin={3}
@@ -133,7 +133,7 @@ export default function Login() {
                         Accedi
                     </Button>
                     <Text p={5} fontSize='0.9em'>
-                        Oppure <Link color={orange}>registrati</Link>
+                        Oppure <Link color={colors.orange}>registrati</Link>
                     </Text>
                 </Box>
             </Stack>

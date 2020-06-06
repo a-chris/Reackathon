@@ -43,7 +43,6 @@ const sanitizeFilters = (filters: any): FilterType => {
 export function findHackathons(req: Request, res: Response) {
     const query = req.query;
     let filters = sanitizeFilters(query);
-    console.log('findHackathons -> filters', filters);
 
     HackathonDb.find(filters, (err, hackathons) => {
         res.json(hackathons);
@@ -114,4 +113,35 @@ export function changeHackathonStatus(req: Request, res: Response) {
             }
         );
     });
+}
+
+export async function subscribeUser(req: Request, res: Response) {
+    const user = req.session?.user;
+    const hackathonId = req.params?.id;
+
+    const hackathon = await HackathonDb.findById(hackathonId);
+    if (hackathon?.attendants.find((a) => a.user._id == user._id) == null) {
+        /*
+         * as any required due to:
+         * https://github.com/DefinitelyTyped/DefinitelyTyped/issues/44752
+         */
+        hackathon?.attendants.push({
+            user: { _id: user._id },
+        } as any);
+        return res.json(await hackathon?.save());
+    } else {
+        return res.json(hackathon);
+    }
+}
+
+export async function unsubscribeUser(req: Request, res: Response) {
+    const user = req.session?.user;
+    const hackathonId = req.params?.id;
+
+    const hackathon = await HackathonDb.findById(hackathonId);
+    if (hackathon != null) {
+        hackathon.attendants = hackathon.attendants.filter((a) => a.user._id != user._id);
+        return res.json(await hackathon?.save());
+    }
+    return res.json(hackathon);
 }

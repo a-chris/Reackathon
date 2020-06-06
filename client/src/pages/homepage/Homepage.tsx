@@ -4,7 +4,7 @@ import { getHackathons } from '../../services/HackathonService';
 import { Hackathon } from '../../models/Models';
 import { Stack, PseudoBox, Grid, Box, Heading, Image } from '@chakra-ui/core';
 import { Link } from 'react-router-dom';
-import { yellow } from '../../utils/colors';
+import colors from '../../utils/colors';
 
 const initialFilter = { country: 'Italy' };
 
@@ -21,7 +21,7 @@ export default function Homepage() {
 
     return (
         <Box w={'100%'} h={'100%'}>
-            <Box h={'100%'} bg={yellow}>
+            <Box h={'100%'} bg={colors.yellow}>
                 {cities.size > 0 && (
                     <Box p={8}>
                         <Heading as='h2' p={10}>

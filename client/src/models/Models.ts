@@ -18,13 +18,23 @@ export type Badge = {
     partecipation: number;
 };
 
+export type Experience = {
+    role: string;
+    company: string;
+    from?: Date;
+    to?: Date;
+};
+
 export type User = {
     username: string;
     password: string;
     name: string;
     email: string;
+    avatar?: string;
     role: UserRole;
     badge?: Badge;
+    skills?: string[];
+    experiences?: Experience[];
 };
 
 export type Location = {
@@ -44,16 +54,10 @@ export type Prize = {
     extra: string;
 };
 
-export type Group = {
-    name: string;
-    leader: User;
-    teamSize: number;
-};
-
 export type Attendant = {
     user: User;
-    group: Group | undefined;
-    pendingGroups: Group[];
+    group: number;
+    pendingGroups: number[];
 };
 
 export type NewHackathon = {
@@ -74,6 +78,5 @@ export type NewHackathon = {
 export type Hackathon = NewHackathon & {
     _id: string;
     attendants: Attendant[];
-    groups: Group[];
     status: HackathonStatus;
 };
