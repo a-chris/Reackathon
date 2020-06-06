@@ -17,7 +17,7 @@ import Login from './pages/login/Login';
 import OrganizationBoard from './pages/organization/OrganizationBoard';
 import Profile from './pages/profile/Profile';
 import Signup from './pages/signup/Signup';
-import { getUserInfo } from './services/AuthService';
+import { getLocalUser } from './services/UserService';
 import { LOGIN_ACTION } from './utils/constants';
 
 /*
@@ -27,6 +27,7 @@ moment.locale('it');
 
 export default function App() {
     const [state, dispatch] = React.useReducer(reducer, {});
+    console.log('TCL: App -> state', state);
 
     const onLoggedIn = React.useCallback((user: User) => {
         dispatch({ type: LOGIN_ACTION.LOGGED_IN, payload: user });
@@ -37,16 +38,24 @@ export default function App() {
     }, []);
 
     React.useEffect(() => {
-        const loginInfo = localStorage.getItem('loginInfo');
-        let username = null;
-        if (loginInfo) {
-            username = JSON.parse(loginInfo).username;
+        const localUser = getLocalUser();
+        if (localUser != null) {
+            onLoggedIn(localUser);
+        } else {
+            onLogout();
         }
-        if (username) {
-            getUserInfo(username)
-                .then((user) => onLoggedIn(user))
-                .catch(() => onLogout());
-        }
+        // TODO: remove later
+        // const loginInfo = localStorage.getItem('loginInfo');
+        // console.log('TCL: App -> loginInfo', loginInfo);
+        // let username = null;
+        // if (loginInfo) {
+        //     username = JSON.parse(loginInfo).username;
+        // }
+        // if (username) {
+        //     getUserInfo(username)
+        //         .then((user) => onLoggedIn(user))
+        //         .catch(() => onLogout());
+        // }
     }, [onLoggedIn, onLogout]);
 
     return (
@@ -58,30 +67,18 @@ export default function App() {
                         <Header />
                         <Switch>
                             <Route exact path='/' component={Homepage} />
-                            <RestrictedRoute
-                                exact
-                                path='/login'
-                                component={Login}
-                                user={state.user}
-                            />
-                            <RestrictedRoute
-                                exact
-                                path='/signup'
-                                component={Signup}
-                                user={state.user}
-                            />
+                            <RestrictedRoute exact path='/login' component={Login} />
+                            <RestrictedRoute exact path='/signup' component={Signup} />
                             <RestrictedRoute
                                 exact
                                 path='/org'
                                 component={OrganizationBoard}
-                                user={state.user}
                                 allowedFor={[UserRole.ORGANIZATION]}
                             />
                             <RestrictedRoute
                                 exact
                                 path='/hackathons/create'
                                 component={HackathonManagement}
-                                user={state.user}
                                 allowedFor={[UserRole.ORGANIZATION]}
                             />
                             <Route exact path='/hackathons/:id' component={HackathonDetail} />
@@ -97,11 +94,11 @@ export default function App() {
 }
 
 interface RestrictedRouteProps extends RouteProps {
-    user?: User;
     allowedFor?: UserRole[];
 }
 
-const RestrictedRoute: React.FC<RestrictedRouteProps> = ({ user, allowedFor, ...restOfProps }) => {
+const RestrictedRoute: React.FC<RestrictedRouteProps> = ({ allowedFor, ...restOfProps }) => {
+    const user = getLocalUser();
     let canRoute = false;
     if (user?.role != null && allowedFor != null) {
         canRoute = allowedFor.includes(user.role);

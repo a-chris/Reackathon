@@ -3,6 +3,20 @@ import { Experience, User } from '../models/Models';
 import { BASE_URL } from './Constants';
 
 const USERS_API = `${BASE_URL}/users`;
+const LOCAL_USER = 'loginInfo';
+
+export function getLocalUser(): User | null {
+    const localInfo = localStorage.getItem('loginInfo');
+    return localInfo == null ? null : JSON.parse(localInfo);
+}
+
+export function setLocalUser(user: User | null) {
+    if (user == null) {
+        localStorage.removeItem(LOCAL_USER);
+    } else {
+        localStorage.setItem(LOCAL_USER, JSON.stringify(user));
+    }
+}
 
 export function getUserDetail(username: string): Promise<User> {
     return new Promise((resolve, reject) =>

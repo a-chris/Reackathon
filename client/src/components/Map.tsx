@@ -1,17 +1,19 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { GoogleMap, Marker, withGoogleMap, withScriptjs } from 'react-google-maps';
 import MarkerClusterer from 'react-google-maps/lib/components/addons/MarkerClusterer';
-import { withProps, compose, withHandlers } from 'recompose';
-import { GOOGLE_KEY } from '../utils/constants';
-import { withGoogleMap, GoogleMap, withScriptjs, Marker } from 'react-google-maps';
+import { useHistory } from 'react-router-dom';
+import { compose, withHandlers, withProps } from 'recompose';
 import { Hackathon } from '../models/Models';
-// import Geocode from "react-geocode";
-// Geocode.setApiKey("AIzaSyDGe5vjL8wBmilLzoJ0jNIwe9SAuH2xS_0");
-// Geocode.enableDebug();
+import { GOOGLE_KEY } from '../utils/constants';
 
 type MapProps = {
-    hackathons: Hackathon[] | undefined;
-    style?: { width: string };
+    hackathons?: Hackathon[];
+    style?: {};
+};
+
+const defaultMapStyle = {
+    height: `100%`,
+    width: '50%',
 };
 
 export function MapContainer({ hackathons, style }: MapProps) {
@@ -24,9 +26,7 @@ export function MapContainer({ hackathons, style }: MapProps) {
                 GOOGLE_KEY +
                 '&libraries=geometry,drawing,places',
             loadingElement: <div style={{ height: `100%` }} />,
-            containerElement: (
-                <div style={{ height: `100%`, width: style?.width ? style.width : '50%' }} />
-            ),
+            containerElement: <div style={style || defaultMapStyle} />,
             mapElement: <div style={{ height: `100%` }} />,
         }),
         withHandlers({

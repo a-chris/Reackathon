@@ -14,16 +14,34 @@ export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
 export function getHackathon(id: string): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
-            .get('http://localhost:5000/hackathons/' + id)
+            .get(`http://localhost:5000/hackathons/${id}`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
 }
 
-export function createHackathon(hackathonData: NewHackathon): Promise<NewHackathon> {
+export function createHackathon(hackathonData: NewHackathon): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
             .post('http://localhost:5000/hackathons', hackathonData)
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}
+
+export function subscribeToHackathon(idHackathon: string): Promise<Hackathon> {
+    return new Promise((resolve, reject) =>
+        axios
+            .put(`http://localhost:5000/hackathons/${idHackathon}/sub`)
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}
+
+export function unsubscribeToHackathon(idHackathon: string): Promise<Hackathon> {
+    return new Promise((resolve, reject) =>
+        axios
+            .put(`http://localhost:5000/hackathons/${idHackathon}/unsub`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );

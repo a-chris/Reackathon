@@ -1,6 +1,7 @@
 import React from 'react';
-import { LOGIN_ACTION } from './utils/constants';
 import { User } from './models/Models';
+import { setLocalUser } from './services/UserService';
+import { LOGIN_ACTION } from './utils/constants';
 
 export interface AppStore {
     state?: AppState;
@@ -28,22 +29,25 @@ export const reducer = (state: AppState, action: Action): AppState => {
         case LOGIN_ACTION.LOGIN_REQUEST:
             return { ...state };
         case LOGIN_ACTION.LOGGED_IN:
-            localStorage.setItem(
-                'loginInfo',
-                JSON.stringify({ username: action.payload.username })
-            );
+            setLocalUser(action.payload);
+            // localStorage.setItem(
+            //     'loginInfo',
+            //     JSON.stringify({ username: action.payload.username })
+            // );
             return {
                 ...state,
                 user: action.payload,
             };
         case LOGIN_ACTION.LOGIN_FAIL:
-            localStorage.removeItem('loginInfo');
+            setLocalUser(null);
+            // localStorage.removeItem('loginInfo');
             return {
                 ...state,
                 user: undefined,
             };
         case LOGIN_ACTION.LOGOUT:
-            localStorage.removeItem('loginInfo');
+            setLocalUser(null);
+            // localStorage.removeItem('loginInfo');
             return {
                 ...state,
                 user: undefined,

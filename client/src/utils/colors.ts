@@ -4,6 +4,7 @@ const colors = {
     white: '#ffffff',
     gray: '#e2e8f0',
     gray_light: '#F5F5F5',
+    gray_dark: '#718096',
     black: '#000000',
     black_almost: '#090909',
     orange: '#ea6619',
@@ -13,6 +14,9 @@ const colors = {
     red_dark: '#bd4f38',
     red_light: '#e6504f',
     green: '#319795',
+    blue_night: '#06133d',
+    blue: '#0b1b4c',
+    gold: '#D69E2E',
 };
 
 export default colors;

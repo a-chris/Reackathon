@@ -5,25 +5,36 @@ const HackathonAction = ['pending', 'started', 'finished'];
 
 type FilterType = {
     city?: string;
+    province?: string;
+    district?: string;
     country?: string;
-    state?: string;
-    name?: string;
+    from?: string;
+    to?: string;
+    status?: string;
 };
 
 const mapFiltersToString = (filterName: string) => {
     switch (filterName) {
         case 'city':
-            return 'location.city';
+        case 'province':
+        case 'district':
         case 'country':
-            return 'location.country';
-        case 'name':
-            return 'name';
+            return 'location.' + filterName;
         default:
-            return undefined;
+            return filterName;
     }
 };
 
-const HACKATHON_FIELDS = new Set(['city', 'country', 'name']);
+const HACKATHON_FIELDS = new Set([
+    'city',
+    'province',
+    'district',
+    'country',
+    'state',
+    'from',
+    'to',
+    'status',
+]);
 
 const sanitizeFilters = (filters: any): FilterType => {
     const sanitizedFilters: any = {};

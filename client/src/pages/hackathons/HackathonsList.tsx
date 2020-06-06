@@ -9,10 +9,15 @@ import colors from '../../utils/colors';
 
 type RouteParams = {
     city?: string;
-    address?: string;
+    province?: string;
+    district?: string;
+    country?: string;
+    from?: string;
+    to?: string;
+    status?: HackathonStatus;
 };
 
-const ROUTE_PARAMS = new Set(['city', 'address']);
+const ROUTE_PARAMS = new Set(['city', 'province', 'district', 'country', 'from', 'to', 'status']);
 
 export default function HackathonsList() {
     const [hackathons, setHackathons] = React.useState<Hackathon[]>([]);
@@ -32,8 +37,8 @@ export default function HackathonsList() {
     }, [filters]);
 
     return (
-        <Box w={'100%'} h={'100%'}>
-            <SimpleGrid w={'100%'} h={'100%'} columns={[1, 1, 2]} spacing={10}>
+        <Box w={'100%'} h={'90%'}>
+            <SimpleGrid w={'100%'} h={'100%'} columns={[1, 1, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box color={colors.red_light}>
                         <Heading as='h2' size='lg'>
@@ -45,7 +50,8 @@ export default function HackathonsList() {
                             p={2}
                             color='gray.500'
                             border={'2px solid ' + colors.gray}
-                            textAlign='left'>
+                            textAlign='left'
+                            key={index}>
                             <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
                                 <Heading as='h3' size='lg'>
                                     {hackathon.name}
@@ -53,7 +59,7 @@ export default function HackathonsList() {
                                 <Box color='gray.400'>{hackathon.description}</Box>
                                 <Box d='flex' alignItems='baseline' justifyContent='space-between'>
                                     <Box
-                                        color='gray.500'
+                                        color={colors.gray_dark}
                                         fontWeight='semibold'
                                         letterSpacing='wide'
                                         fontSize='xs'
@@ -68,7 +74,10 @@ export default function HackathonsList() {
                     ))}
                 </Stack>
                 <Box w={'100%'} p={2}>
-                    <MapContainer hackathons={hackathons} style={{ width: '100%' }} />
+                    <MapContainer
+                        hackathons={hackathons}
+                        style={{ height: '100%', width: '100%' }}
+                    />
                 </Box>
             </SimpleGrid>
         </Box>
@@ -94,7 +103,7 @@ function StatusBadge(hackathon: Hackathon) {
 
     switch (status) {
         case HackathonStatus.PENDING:
-            if (maxAttendants && actualAttendants < maxAttendants) {
+            if (!maxAttendants || (maxAttendants && actualAttendants < maxAttendants)) {
                 color = 'yellow';
                 text = 'iscriviti';
             } else {

@@ -9,6 +9,7 @@ import { User, UserRole, Location } from './Models';
 // );
 
 export const fakeOrganization: User = {
+    _id: 'aaaaaaaaa',
     username: 'VeryBigOrganization',
     password: '123456',
     name: 'Very Big Organization',

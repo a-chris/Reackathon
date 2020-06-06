@@ -32,6 +32,25 @@
                     }
                 }
             },
+            "Experience": {
+                "type": "object",
+                "properties": {
+                    "role": {
+                        "type": "string"
+                    },
+                    "company": {
+                        "type": "string"
+                    },
+                    "from": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "to": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
             "User": {
                 "type": "object",
                 "properties": {
@@ -59,6 +78,16 @@
                     "badge": {
                         "type": "object",
                         "$ref": "#/components/schemas/Badge"
+                    },
+                    "experiences": {
+                        "type": "array",
+                        "$ref": "#/components/schemas/Experience"
+                    },
+                    "skills": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     }
                 }
             },
@@ -108,6 +137,57 @@
                     }
                 }
             },
+            "Group": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "uniqueItems": true,
+                        "example": "Best team ever"
+                    },
+                    "leader": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "teamSize": {
+                        "type": "number",
+                        "minimum": 1,
+                        "example": 5
+                    }
+                }
+            },
+            "Attendants": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/User"
+                    },
+                    "group": {
+                        "type": "object",
+                        "$ref": "#/components/schemas/Group",
+                        "required": false
+                    },
+                    "pendingGroups": {
+                        "type": "array",
+                        "$ref": "#/components/schemas/Group"
+                    }
+                }
+            },
+            "AttendantsRequirements": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "type": "string"
+                    },
+                    "maxNum": {
+                        "type": "number"
+                    },
+                    "minNum": {
+                        "type": "number"
+                    }
+                }
+            },
             "HackathonStatus": {
                 "type": "string",
                 "enum": ["pending", "started", "finished"]
@@ -131,7 +211,7 @@
                         "type": "array",
                         "items": {
                             "type": "object",
-                            "$ref": "#/components/schemas/User"
+                            "$ref": "#/components/schemas/Attendants"
                         }
                     },
                     "startDate": {

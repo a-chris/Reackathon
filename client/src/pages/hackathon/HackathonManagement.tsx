@@ -23,7 +23,7 @@ import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { HackathonStatus, NewHackathon, User } from '../../models/Models';
 // TODO find a better solution
-import { fakeLocation, fakeOrganization } from '../../models/TempDemoModels';
+import { fakeLocation } from '../../models/TempDemoModels';
 import { createHackathon } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 
@@ -38,7 +38,7 @@ const initialPrizeData = {
     extra: '',
 };
 
-const initialHackathonData = (user: User = fakeOrganization) => {
+function initialHackathonData(user: User) {
     const date = moment();
     return {
         name: '',
@@ -53,12 +53,13 @@ const initialHackathonData = (user: User = fakeOrganization) => {
         prize: initialPrizeData,
         status: HackathonStatus.PENDING,
     };
-};
+}
 
 export default function HackathonManagement() {
     const appContext = React.useContext(AppContext);
+    console.log('TCL: HackathonManagement -> appContext.state', appContext.state);
     const [hackathonData, setHackathonData] = React.useState<NewHackathon>(
-        initialHackathonData(appContext.state!.user)
+        initialHackathonData(appContext.state!.user!)
     );
     const [loading, setLoading] = React.useState<boolean>(false);
     const [allValuesValid, setAllValuesValid] = React.useState<boolean>(false); //TODO add validation effect and set initial value to false
@@ -130,7 +131,7 @@ export default function HackathonManagement() {
     return (
         <StyledHackathonContainer>
             <PseudoBox fontSize='1.8em' fontWeight='semibold' m={3} textAlign='left'>
-                Creazione dell'Hackathon
+                Creazione Hackathon
             </PseudoBox>
 
             <Accordion defaultIndex={[0]} allowMultiple>
