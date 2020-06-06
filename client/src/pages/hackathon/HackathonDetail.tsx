@@ -1,3 +1,5 @@
+import React from 'react';
+import { useParams, Link } from 'react-router-dom';
 import {
     Box,
     Button,
@@ -20,11 +22,11 @@ import {
     TabPanels,
     Tabs,
     Text,
+    Tag,
 } from '@chakra-ui/core';
 import moment from 'moment';
-import React from 'react';
-import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import * as _ from 'lodash';
 import { AppContext } from '../../AppContext';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { Attendant, Hackathon } from '../../models/Models';
@@ -33,7 +35,7 @@ import {
     subscribeToHackathon,
     unsubscribeToHackathon,
 } from '../../services/HackathonService';
-import colors from '../../utils/colors';
+import colors, { getRandomVariantColorString } from '../../utils/colors';
 
 type RouteParams = {
     id: string;
@@ -68,7 +70,7 @@ export default function HackathonDetail() {
     React.useEffect(() => {
         if (appContext.state?.user != null) {
             const attendant = hackathonData?.attendants.find(
-                (attendant) => attendant.user._id == appContext.state!.user!._id
+                (attendant) => attendant.user._id === appContext.state!.user!._id
             );
             setAttendant(attendant);
             console.log(appContext.state.user._id);
@@ -126,22 +128,24 @@ export default function HackathonDetail() {
                             </Box>
                         </StyledDateContainer>
                         <Flex alignItems='center' justifyContent='flex-end'>
-                            {appContext.state?.user != null && attendant != null ? (
-                                <Stack>
-                                    <StyledBlueButton onClick={onHackathonUnsubscibe}>
-                                        Disiscriviti
-                                    </StyledBlueButton>
-                                    {attendant.group == null && (
-                                        <StyledBlueButton onClick={() => console.log('click')}>
-                                            Crea gruppo
-                                        </StyledBlueButton>
-                                    )}
-                                </Stack>
-                            ) : (
-                                <StyledBlueButton onClick={onHackathonSubscribe}>
-                                    Iscriviti
-                                </StyledBlueButton>
-                            )}
+                            {appContext.state?.user != null &&
+                                (attendant != null ? (
+                                    <Stack>
+                                        <StyledBlueButtonPadded onClick={onHackathonUnsubscibe}>
+                                            Disiscriviti
+                                        </StyledBlueButtonPadded>
+                                        {attendant.group == null && (
+                                            <StyledBlueButtonPadded
+                                                onClick={() => console.log('click')}>
+                                                Crea gruppo
+                                            </StyledBlueButtonPadded>
+                                        )}
+                                    </Stack>
+                                ) : (
+                                    <StyledBlueButtonPadded onClick={onHackathonSubscribe}>
+                                        Iscriviti
+                                    </StyledBlueButtonPadded>
+                                ))}
                         </Flex>
                     </SimpleGrid>
                 </Box>
@@ -159,7 +163,10 @@ export default function HackathonDetail() {
                                 <Information hackathon={hackathonData} />
                             </TabPanel>
                             <TabPanel>
-                                <Attendants attendants={hackathonData.attendants} />
+                                <Attendants
+                                    attendants={hackathonData.attendants}
+                                    isUserLogged={appContext.state?.user != null}
+                                />
                             </TabPanel>
                         </TabPanels>
                     </Tabs>
@@ -239,13 +246,69 @@ const Information: React.FC<{ hackathon: Hackathon }> = ({ hackathon }) => {
     );
 };
 
-const Attendants: React.FC<{ attendants: Attendant[] }> = ({ attendants }) => {
+const Attendants: React.FC<{ attendants: Attendant[]; isUserLogged: boolean }> = ({
+    attendants,
+    isUserLogged,
+}) => {
+    // const [filterGroup];
+    const orderedAttendants = _.orderBy(attendants, ['group'], ['asc']);
     return (
         <StyledBottomBoxContainer>
             {attendants.length === 0 ? (
                 <Text fontSize='lg'>Ancora nessun iscritto</Text>
             ) : (
-                <Box></Box>
+                <Box>
+                    {orderedAttendants.map((attendant, index) => (
+                        <Link to={`/profile/${attendant.user.username}`} key={index}>
+                            <StyledAttendantBox>
+                                <StyledAttendantInfoBox>
+                                    <Box>
+                                        <Heading as='h3' size='md'>
+                                            {attendant.user.username}
+                                        </Heading>
+                                        <StyledBadgeFlex>
+                                            <Icon name='star' size='12px' />
+                                            <Text>{attendant.user.badge?.win}</Text>
+
+                                            <Icon name='moon' size='12px' ml={2} />
+                                            <Text>{attendant.user.badge?.partecipation}</Text>
+                                        </StyledBadgeFlex>
+                                    </Box>
+                                    <Stack
+                                        isInline
+                                        textAlign={['center', 'center', 'left']}
+                                        alignItems='center'>
+                                        {attendant.group != null ? (
+                                            <Text>Membro di un gruppo</Text>
+                                        ) : (
+                                            <Text>Utente senza gruppo</Text>
+                                        )}
+                                        {isUserLogged && (
+                                            <StyledBlueButton size='sm'>
+                                                Invia richiesta
+                                            </StyledBlueButton>
+                                        )}
+                                    </Stack>
+                                </StyledAttendantInfoBox>
+
+                                <Box>
+                                    {_.take(
+                                        attendant.user.skills?.filter((skill) => skill.length < 30),
+                                        5
+                                    ).map((skill, index) => (
+                                        <Tag
+                                            size='lg'
+                                            m='2px'
+                                            variantColor={getRandomVariantColorString()}
+                                            key={index}>
+                                            {skill}
+                                        </Tag>
+                                    ))}
+                                </Box>
+                            </StyledAttendantBox>
+                        </Link>
+                    ))}
+                </Box>
             )}
         </StyledBottomBoxContainer>
     );
@@ -275,8 +338,34 @@ const StyledBottomBoxContainer = styled(Box).attrs({
 const StyledBlueButton = styled(Button).attrs({
     bg: colors.blue_night,
     color: colors.white,
+    rounded: 'md',
+})``;
+
+const StyledBlueButtonPadded = styled(StyledBlueButton).attrs({
     margin: 5,
     pl: '2.5rem',
     pr: '2.5rem',
-    rounded: 'md',
 })``;
+
+const StyledAttendantBox = styled(Box).attrs({
+    p: '2%',
+})`
+    border: 1px solid ${colors.blue_night};
+`;
+
+const StyledAttendantInfoBox = styled(Box).attrs({
+    pb: ['10px', '10px', '4px'],
+    display: { md: 'flex' },
+})`
+    justify-content: space-between;
+`;
+
+const StyledBadgeFlex = styled(Flex)`
+    align-items: center;
+    & > * {
+        margin: 2px;
+    }
+    & > p {
+        color: ${colors.gray_dark};
+    }
+`;
