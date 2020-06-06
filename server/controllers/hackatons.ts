@@ -65,12 +65,14 @@ export function findHackathon(req: Request, res: Response) {
     if (hackathonId == null) {
         return res.sendStatus(400);
     }
-    HackathonDb.findOne({ '_id': hackathonId }, (err, hackathon) => {
-        if (hackathon == null) {
-            return res.sendStatus(400);
-        }
-        res.json(hackathon);
-    });
+    HackathonDb.findOne({ '_id': hackathonId })
+        .populate('attendants.user')
+        .exec((err, hackathon) => {
+            if (hackathon == null) {
+                return res.sendStatus(400);
+            }
+            res.json(hackathon);
+        });
 }
 
 export function saveHackathons(req: Request, res: Response) {
