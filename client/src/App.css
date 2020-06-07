@@ -36,12 +36,3 @@
         transform: rotate(360deg);
     }
 }
-
-#background {
-    /* background-image: url('./public/background/5.jpg'); */
-    background-color: #ffffff;
-    background-position: cover;
-    background-size: cover;
-    height: 87%;
-    backdrop-filter: sepia(20%);
-}
