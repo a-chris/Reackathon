@@ -14,12 +14,6 @@ const LocationSchema = new mongoose.Schema({
     long: Number,
 });
 
-const GroupSchema = new mongoose.Schema({
-    name: { type: String, unique: true, sparse: true },
-    leader: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    teamSize: { type: Number, min: 1 },
-});
-
 const AttendantSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
     group: { type: Number, required: false },
@@ -43,7 +37,6 @@ const HackathonSchema = new mongoose.Schema({
     organization: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     attendants: { type: [AttendantSchema], unique: true },
     attendantsRequirements: AttendantsRequirementsSchema,
-    group: [GroupSchema],
     startDate: Date,
     endDate: Date,
     status: { type: String, enum: ['pending', 'started', 'finished'] },
@@ -69,12 +62,6 @@ export type Prize = mongoose.Document & {
     extra: string;
 };
 
-export type Group = mongoose.Document & {
-    name: string;
-    leader: User;
-    teamSize: { type: number; min: 1 };
-};
-
 /*
  * Take care to this issue:
  * https://github.com/DefinitelyTyped/DefinitelyTyped/issues/44752
@@ -96,7 +83,6 @@ export type Hackathon = mongoose.Document & {
         maxNum: number | undefined;
         minNum: number | undefined;
     };
-    groups: Group[];
     startDate: Date;
     endDate: Date;
     status: string;

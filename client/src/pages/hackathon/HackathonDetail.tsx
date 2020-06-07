@@ -23,27 +23,34 @@ import {
     Tabs,
     Text,
     Tag,
+    Avatar,
+    AlertDialog,
+    AlertDialogOverlay,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogBody,
+    AlertDialogFooter,
 } from '@chakra-ui/core';
 import moment from 'moment';
 import styled from 'styled-components';
 import * as _ from 'lodash';
 import { AppContext } from '../../AppContext';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
-import { Attendant, Hackathon } from '../../models/Models';
+import { Attendant, Hackathon, User } from '../../models/Models';
 import {
     getHackathon,
     subscribeToHackathon,
     unsubscribeToHackathon,
 } from '../../services/HackathonService';
-import colors, { getRandomVariantColorString } from '../../utils/colors';
+import colors, { getRandomVariantColorString, getRandomColorString } from '../../utils/colors';
 
 type RouteParams = {
     id: string;
 };
 
-type AttendantsProgress = {
-    text: String;
-    value: number;
+type AttendantsProps = {
+    attendants: Attendant[];
+    currentAttendant?: Attendant;
 };
 
 function toDateString(date: Date) {
@@ -60,8 +67,12 @@ export default function HackathonDetail() {
     const appContext = React.useContext(AppContext);
     const [hackathonData, setHackathonData] = React.useState<Hackathon>();
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
+    const [isAlertOpen, setAlertOpen] = React.useState<boolean>();
+    const cancelRef = React.useRef<HTMLElement>(null);
     const params = useParams<RouteParams>();
     const idHackathon = params.id;
+
+    const onAlertClose = () => setAlertOpen(false);
 
     React.useEffect(() => {
         getHackathon(idHackathon).then((hackathon) => setHackathonData(hackathon));
@@ -73,7 +84,6 @@ export default function HackathonDetail() {
                 (attendant) => attendant.user._id === appContext.state!.user!._id
             );
             setAttendant(attendant);
-            console.log(appContext.state.user._id);
         }
     }, [hackathonData, appContext]);
 
@@ -84,12 +94,13 @@ export default function HackathonDetail() {
     }, [idHackathon]);
 
     const onHackathonUnsubscibe = React.useCallback(() => {
+        setAlertOpen(false);
         unsubscribeToHackathon(idHackathon)
             .then((hackathon) => setHackathonData(hackathon))
             .catch((error) => console.log(error));
     }, [idHackathon]);
 
-    return hackathonData == null ? (
+    return hackathonData == null || cancelRef == null ? (
         <div />
     ) : (
         <OverlappedBoxes
@@ -131,15 +142,15 @@ export default function HackathonDetail() {
                             {appContext.state?.user != null &&
                                 (attendant != null ? (
                                     <Stack>
-                                        <StyledBlueButtonPadded onClick={onHackathonUnsubscibe}>
+                                        <StyledBlueButtonPadded onClick={() => setAlertOpen(true)}>
                                             Disiscriviti
                                         </StyledBlueButtonPadded>
-                                        {attendant.group == null && (
+                                        {/* {attendant.group == null && (
                                             <StyledBlueButtonPadded
                                                 onClick={() => console.log('click')}>
                                                 Crea gruppo
                                             </StyledBlueButtonPadded>
-                                        )}
+                                        )} */}
                                     </Stack>
                                 ) : (
                                     <StyledBlueButtonPadded onClick={onHackathonSubscribe}>
@@ -148,6 +159,29 @@ export default function HackathonDetail() {
                                 ))}
                         </Flex>
                     </SimpleGrid>
+
+                    <AlertDialog
+                        isOpen={isAlertOpen}
+                        leastDestructiveRef={cancelRef}
+                        onClose={onAlertClose}>
+                        <AlertDialogOverlay />
+                        <AlertDialogContent>
+                            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                                Stai per cancellarti dall'Hackathon
+                            </AlertDialogHeader>
+
+                            <AlertDialogBody>Sei sicuro di voler procedere?</AlertDialogBody>
+
+                            <AlertDialogFooter>
+                                <Button ref={cancelRef} onClick={onAlertClose}>
+                                    Annulla
+                                </Button>
+                                <Button variantColor='red' onClick={onHackathonUnsubscibe} ml={3}>
+                                    Disiscriviti
+                                </Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </Box>
             )}
             BottomContent={() => (
@@ -165,7 +199,7 @@ export default function HackathonDetail() {
                             <TabPanel>
                                 <Attendants
                                     attendants={hackathonData.attendants}
-                                    isUserLogged={appContext.state?.user != null}
+                                    currentAttendant={attendant}
                                 />
                             </TabPanel>
                         </TabPanels>
@@ -246,12 +280,14 @@ const Information: React.FC<{ hackathon: Hackathon }> = ({ hackathon }) => {
     );
 };
 
-const Attendants: React.FC<{ attendants: Attendant[]; isUserLogged: boolean }> = ({
-    attendants,
-    isUserLogged,
-}) => {
-    // const [filterGroup];
+const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAttendant }) => {
     const orderedAttendants = _.orderBy(attendants, ['group'], ['asc']);
+    const groupsColorMapping = _.uniq(
+        attendants
+            .filter((attendant) => attendant.group != null)
+            .map((attendant) => attendant.group)
+    ).map((groupNumber: number) => ({ group: groupNumber, color: getRandomColorString() }));
+
     return (
         <StyledBottomBoxContainer>
             {attendants.length === 0 ? (
@@ -259,60 +295,92 @@ const Attendants: React.FC<{ attendants: Attendant[]; isUserLogged: boolean }> =
             ) : (
                 <Box>
                     {orderedAttendants.map((attendant, index) => (
-                        <Link to={`/profile/${attendant.user.username}`} key={index}>
-                            <StyledAttendantBox>
-                                <StyledAttendantInfoBox>
-                                    <Box>
-                                        <Heading as='h3' size='md'>
-                                            {attendant.user.username}
-                                        </Heading>
-                                        <StyledBadgeFlex>
-                                            <Icon name='star' size='12px' />
-                                            <Text>{attendant.user.badge?.win}</Text>
-
-                                            <Icon name='moon' size='12px' ml={2} />
-                                            <Text>{attendant.user.badge?.partecipation}</Text>
-                                        </StyledBadgeFlex>
-                                    </Box>
-                                    <Stack
-                                        isInline
-                                        textAlign={['center', 'center', 'left']}
-                                        alignItems='center'>
-                                        {attendant.group != null ? (
-                                            <Text>Membro di un gruppo</Text>
-                                        ) : (
-                                            <Text>Utente senza gruppo</Text>
-                                        )}
-                                        {isUserLogged && (
-                                            <StyledBlueButton size='sm'>
-                                                Invia richiesta
-                                            </StyledBlueButton>
-                                        )}
-                                    </Stack>
-                                </StyledAttendantInfoBox>
-
+                        <StyledAttendantBox
+                            borderColor={getColor(attendant.group, groupsColorMapping)}
+                            key={index}>
+                            <StyledAttendantInfoBox>
                                 <Box>
-                                    {_.take(
-                                        attendant.user.skills?.filter((skill) => skill.length < 30),
-                                        5
-                                    ).map((skill, index) => (
-                                        <Tag
-                                            size='lg'
-                                            m='2px'
-                                            variantColor={getRandomVariantColorString()}
-                                            key={index}>
-                                            {skill}
-                                        </Tag>
-                                    ))}
+                                    <Link to={`/profile/${attendant.user.username}`}>
+                                        <Stack isInline alignItems='center'>
+                                            <Avatar
+                                                name={attendant.user.username}
+                                                src={attendant.user.avatar}
+                                                pr='3px'
+                                            />
+                                            <Heading as='h3' size='md'>
+                                                {attendant.user.username}
+                                            </Heading>
+                                        </Stack>
+                                    </Link>
+                                    <StyledBadgeFlex>
+                                        <Icon name='star' size='12px' />
+                                        <Text>{attendant.user.badge?.win}</Text>
+
+                                        <Icon name='moon' size='12px' ml={2} />
+                                        <Text>{attendant.user.badge?.partecipation}</Text>
+                                    </StyledBadgeFlex>
                                 </Box>
-                            </StyledAttendantBox>
-                        </Link>
+                                <Stack
+                                    isInline
+                                    textAlign={['center', 'center', 'left']}
+                                    alignItems='center'
+                                    spacing='2px'>
+                                    {attendant.group != null ? (
+                                        <Text>Gruppo #{attendant.group}</Text>
+                                    ) : (
+                                        <Text>Utente senza gruppo</Text>
+                                    )}
+                                    {currentAttendant &&
+                                        getGroupButtons(currentAttendant, attendant)}
+                                </Stack>
+                            </StyledAttendantInfoBox>
+
+                            <Box>
+                                {_.take(
+                                    attendant.user.skills?.filter((skill) => skill.length < 30),
+                                    5
+                                ).map((skill, index) => (
+                                    <Tag
+                                        size='lg'
+                                        m='2px'
+                                        variantColor={getRandomVariantColorString()}
+                                        key={index}>
+                                        {skill}
+                                    </Tag>
+                                ))}
+                            </Box>
+                        </StyledAttendantBox>
                     ))}
                 </Box>
             )}
         </StyledBottomBoxContainer>
     );
 };
+
+function getColor(
+    group: number | undefined,
+    groupsColorMapping: { group: number; color: string }[]
+) {
+    return group == null
+        ? getRandomColorString()
+        : _.values(groupsColorMapping).find((obj) => obj.group === group)?.color;
+}
+
+function getGroupButtons(currentAttendant: Attendant, attendantInList: Attendant) {
+    let text = '';
+    if (attendantInList.user._id === currentAttendant.user._id) {
+        return null;
+    }
+    if (currentAttendant.group == null && attendantInList.group == null) {
+        text = 'Crea gruppo';
+    } else if (currentAttendant.group == null && attendantInList.group != null) {
+        text = 'Unisciti al gruppo';
+    } else if (currentAttendant.group != null && attendantInList.group != null) {
+        text = 'Invita nel tuo gruppo';
+    }
+    if (text) return <StyledBlueButton size='sm'>{text}</StyledBlueButton>;
+    return;
+}
 
 const StyledDateContainer = styled(Stack).attrs({
     isInline: true,
@@ -349,8 +417,10 @@ const StyledBlueButtonPadded = styled(StyledBlueButton).attrs({
 
 const StyledAttendantBox = styled(Box).attrs({
     p: '2%',
+    m: 1,
 })`
-    border: 1px solid ${colors.blue_night};
+    border-width: 2px;
+    border-style: solid;
 `;
 
 const StyledAttendantInfoBox = styled(Box).attrs({

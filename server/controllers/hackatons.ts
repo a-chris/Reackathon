@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { HackathonDb } from '../models/Hackathon';
+import { HackathonDb, Attendant } from '../models/Hackathon';
 
 const HackathonAction = ['pending', 'started', 'finished'];
 
@@ -140,10 +140,11 @@ export async function subscribeUser(req: Request, res: Response) {
          */
         hackathon?.attendants.push({
             user: { _id: user._id },
-        } as any);
-        return res.json(await hackathon?.save());
+        } as Attendant);
+        await hackathon?.save();
+        return res.json(await HackathonDb.findById(hackathonId).populate('attendants.user'));
     } else {
-        return res.json(hackathon);
+        return res.json(hackathon.populate('attendants.user'));
     }
 }
 
@@ -151,7 +152,7 @@ export async function unsubscribeUser(req: Request, res: Response) {
     const user = req.session?.user;
     const hackathonId = req.params?.id;
 
-    const hackathon = await HackathonDb.findById(hackathonId);
+    const hackathon = await HackathonDb.findById(hackathonId).populate('attendants.user');
     if (hackathon != null) {
         hackathon.attendants = hackathon.attendants.filter((a) => a.user._id != user._id);
         return res.json(await hackathon?.save());
