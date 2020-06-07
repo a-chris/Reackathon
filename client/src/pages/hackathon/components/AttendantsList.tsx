@@ -1,8 +1,8 @@
 import React from 'react';
-import colors, { getRandomVariantColorString, getRandomColorString } from '../../../utils/colors';
+import { getRandomVariantColorString, getRandomColorString } from '../../../utils/colors';
 import { Attendant } from '../../../models/Models';
 import _ from 'lodash';
-import { Box, Stack, Avatar, Heading, Icon, Tag, Flex, Text } from '@chakra-ui/core';
+import { Box, Stack, Avatar, Heading, Tag, Text } from '@chakra-ui/core';
 import { StyledBottomBoxContainer, StyledBlueButton } from './StyledComponents';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';

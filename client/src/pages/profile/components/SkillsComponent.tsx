@@ -6,9 +6,7 @@ import {
     Input,
     InputGroup,
     InputRightElement,
-    Stack,
     Tag,
-    Text,
     Heading,
     Icon,
 } from '@chakra-ui/core';

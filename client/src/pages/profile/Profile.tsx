@@ -8,6 +8,7 @@ import {
     Text,
     useDisclosure,
     Heading,
+    Icon,
 } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
 import { useParams } from 'react-router';
@@ -151,6 +152,7 @@ export default function Profile() {
                             <Flex justify='center'>
                                 <Button mb='15px' onClick={onOpen}>
                                     Aggiungi esperienze
+                                    <Icon name='add' ml={2} />
                                 </Button>
                             </Flex>
                         )}
