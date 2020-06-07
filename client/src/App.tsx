@@ -81,6 +81,12 @@ export default function App() {
                                 component={HackathonManagement}
                                 allowedFor={[UserRole.ORGANIZATION]}
                             />
+                            <RestrictedRoute
+                                exact
+                                path='/hackathons/update/:id'
+                                component={HackathonManagement}
+                                allowedFor={[UserRole.ORGANIZATION]}
+                            />
                             <Route exact path='/hackathons/:id' component={HackathonDetail} />
                             <Route path='/hackathons' component={HackathonsList} />
                             <Route exact path='/profile/:username' component={Profile} />

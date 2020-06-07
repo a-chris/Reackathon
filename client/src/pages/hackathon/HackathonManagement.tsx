@@ -13,19 +13,19 @@ import {
     PseudoBox,
     Text,
     Textarea,
+    Stack,
 } from '@chakra-ui/core';
 import * as _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { HackathonStatus, NewHackathon, User } from '../../models/Models';
+import { HackathonStatus, NewHackathon, User, Hackathon } from '../../models/Models';
 // TODO find a better solution
 import { fakeLocation } from '../../models/TempDemoModels';
-import { createHackathon } from '../../services/HackathonService';
+import { createHackathon, getHackathon } from '../../services/HackathonService';
 import colors from '../../utils/colors';
+import { useParams, useHistory } from 'react-router-dom';
 
 const AccordionHeaderStyle = {
     fontWeight: '700',
@@ -55,17 +55,36 @@ function initialHackathonData(user: User) {
     };
 }
 
+type Props = { id?: string };
+
 export default function HackathonManagement() {
     const appContext = React.useContext(AppContext);
-    console.log('TCL: HackathonManagement -> appContext.state', appContext.state);
+    const params = useParams<Props>();
+    const idHackathon = params.id;
+    const history = useHistory();
+
     const [hackathonData, setHackathonData] = React.useState<NewHackathon>(
         initialHackathonData(appContext.state!.user!)
     );
     const [loading, setLoading] = React.useState<boolean>(false);
-    const [allValuesValid, setAllValuesValid] = React.useState<boolean>(false); //TODO add validation effect and set initial value to false
+    const [allValuesValid, setAllValuesValid] = React.useState<boolean>(false);
     const [dateError, setDateError] = React.useState<boolean>(false);
     const [missingData, setMissingData] = React.useState<string[]>([]);
     // const [prizeError, setPrizeError] = React.useState<boolean>(false);
+
+    React.useEffect(() => {
+        if (idHackathon) {
+            getHackathon(idHackathon).then((hackathon) => {
+                setHackathonData(hackathon);
+                console.log('HackathonManagement -> hackathon', hackathon);
+            });
+        }
+    }, [idHackathon]);
+
+    React.useEffect(() => {
+        const allValid = _.every(new Set([dateError])) && missingData.length === 0;
+        setAllValuesValid(allValid);
+    }, [dateError, missingData]);
 
     React.useEffect(() => {
         const allValid = _.every(new Set([dateError])) && missingData.length === 0;
@@ -82,10 +101,10 @@ export default function HackathonManagement() {
 
     React.useEffect(() => {
         if (hackathonData.startDate && hackathonData.endDate) {
-            const tomorrow = moment().add(1, 'days').toDate().getTime();
+            const tomorrow = moment().add(1, 'days');
             let error =
-                hackathonData.startDate.getTime() < tomorrow ||
-                hackathonData.startDate.getTime() >= hackathonData.endDate.getTime();
+                moment(hackathonData.startDate) < tomorrow ||
+                moment(hackathonData.startDate) >= moment(hackathonData.endDate);
             setDateError(error);
         }
     }, [hackathonData.startDate, hackathonData.endDate]);
@@ -114,8 +133,42 @@ export default function HackathonManagement() {
         }
     };
 
-    const onDateChange = (date: Date, name: string) => {
-        setHackathonData((curr) => ({ ...curr, [name]: date }));
+    const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event?.target;
+        console.log('onTimeChange -> value', value);
+
+        if (name != null && value != null && new Set(['startDate', 'endDate']).has(name)) {
+            setHackathonData((curr) => {
+                const newDate = new Date(name === 'startDate' ? curr.startDate : curr.endDate);
+                const hours = value.substring(0, 2);
+                const minutes = value.substring(3, 5);
+                newDate.setHours(+hours);
+                newDate.setMinutes(+minutes);
+
+                return { ...curr, [name]: newDate };
+            });
+        }
+    };
+
+    const onDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event?.target;
+        console.log('onDateChange -> name', name);
+        console.log('onDateChange -> value', value);
+
+        if (name != null && value != null && new Set(['startDate', 'endDate']).has(name)) {
+            setHackathonData((curr) => {
+                const newDate = new Date(name === 'startDate' ? curr.startDate : curr.endDate);
+                const day = new Date(value).getDate();
+                const month = new Date(value).getMonth();
+                const year = new Date(value).getFullYear();
+                newDate.setDate(day);
+                newDate.setMonth(month);
+                newDate.setFullYear(year);
+                console.log('onDateChange -> newDate', newDate);
+
+                return { ...curr, [name]: newDate };
+            });
+        }
     };
 
     const onHackathonCreation = React.useCallback(() => {
@@ -123,7 +176,7 @@ export default function HackathonManagement() {
         createHackathon(hackathonData)
             .then((hackathon) => {
                 setLoading(false);
-                console.log(hackathon); //TODO handle
+                history.push(`/hackathons/${hackathon._id}`);
             })
             .catch((error) => console.log(error));
     }, [hackathonData]);
@@ -131,7 +184,7 @@ export default function HackathonManagement() {
     return (
         <StyledHackathonContainer>
             <PseudoBox fontSize='1.8em' fontWeight='semibold' m={3} textAlign='left'>
-                Creazione Hackathon
+                {idHackathon ? 'Modifica' : 'Creazione'} Hackathon
             </PseudoBox>
 
             <Accordion defaultIndex={[0]} allowMultiple>
@@ -181,41 +234,75 @@ export default function HackathonManagement() {
                     </AccordionHeader>
                     <AccordionPanel pb={4}>
                         <FormControl isInvalid={dateError}>
-                            <Box display={{ md: 'flex' }}>
-                                <FormControl isRequired textAlign='left' pr={4}>
-                                    <FormLabel htmlFor='startDate'>Data di inizio</FormLabel>
-                                    <StyleDataPickerDiv>
-                                        <DatePicker
-                                            id='startDate'
-                                            showTimeSelect
-                                            showTimeInput
-                                            selected={hackathonData.startDate}
-                                            onChange={(date: Date) =>
-                                                onDateChange(date, 'startDate')
-                                            }
-                                            dateFormat='dd/MM/yyyy HH:mm'
-                                        />
-                                    </StyleDataPickerDiv>
-                                </FormControl>
-                                <FormControl isRequired textAlign='left'>
-                                    <FormLabel htmlFor='endDate'>Data di fine</FormLabel>
-                                    <StyleDataPickerDiv>
-                                        <DatePicker
-                                            id='endDate'
-                                            showTimeSelect
-                                            showTimeInput
-                                            selected={hackathonData.endDate}
-                                            onChange={(date: Date) => onDateChange(date, 'endDate')}
-                                            dateFormat='dd/MM/yyyy HH:mm'
-                                        />
-                                    </StyleDataPickerDiv>
-                                </FormControl>
+                            <Stack>
+                                <Box display={{ md: 'flex' }}>
+                                    <StyleDataDiv>
+                                        <FormControl isRequired textAlign='left' p={1}>
+                                            <FormLabel htmlFor='startDate'>
+                                                Data di inizio
+                                            </FormLabel>
+                                            <Input
+                                                size='sm'
+                                                placeholder='Data inizio'
+                                                type='date'
+                                                name='startDate'
+                                                onChange={onDateChange}
+                                                value={moment(hackathonData.startDate).format(
+                                                    'yyyy-MM-DD'
+                                                )}
+                                            />
+                                        </FormControl>
 
+                                        <FormControl isRequired textAlign='left' p={1}>
+                                            <FormLabel htmlFor='startDate'>Ora di inizio</FormLabel>
+                                            <Input
+                                                size='sm'
+                                                placeholder='Ora di inizio'
+                                                type='time'
+                                                name='startDate'
+                                                onChange={onTimeChange}
+                                                value={moment(hackathonData.startDate).format(
+                                                    'HH:mm'
+                                                )}
+                                            />
+                                        </FormControl>
+                                    </StyleDataDiv>
+
+                                    <StyleDataDiv>
+                                        <FormControl isRequired textAlign='left' p={1}>
+                                            <FormLabel htmlFor='endDate'>Data di fine</FormLabel>
+                                            <Input
+                                                size='sm'
+                                                placeholder='Data fine'
+                                                type='date'
+                                                name='endDate'
+                                                onChange={onDateChange}
+                                                value={moment(hackathonData.endDate).format(
+                                                    'yyyy-MM-DD'
+                                                )}
+                                            />
+                                        </FormControl>
+
+                                        <FormControl isRequired textAlign='left' p={1}>
+                                            <FormLabel htmlFor='endDate'>Ora di fine</FormLabel>
+                                            <Input
+                                                size='sm'
+                                                placeholder='Ora di fine'
+                                                type='time'
+                                                name='endDate'
+                                                onChange={onTimeChange}
+                                                value={moment(hackathonData.endDate).format(
+                                                    'HH:mm'
+                                                )}
+                                            />
+                                        </FormControl>
+                                    </StyleDataDiv>
+                                </Box>
                                 <FormErrorMessage>
                                     {`L'Hackathon deve essere creato almeno un giorno prima dell'inizio dell'evento,\
                                      e la data di inizio deve essere inferiore a quella di fine.`}
                                 </FormErrorMessage>
-                            </Box>
+                            </Stack>
                             <FormControl isRequired textAlign='left'>
                                 <FormLabel htmlFor='location'>Luogo</FormLabel>
                                 <Input
@@ -348,11 +435,9 @@ const StyledHackathonContainer = styled.div`
     border: 3px solid #e2e8f0;
     border-radius: 10px;
     padding: 10px;
+    text-align: center;
 `;
 
-const StyleDataPickerDiv = styled.div`
-    border: 1px solid #e2e8f0;
-    border-radius: 0.25rem;
-    width: fit-content;
+const StyleDataDiv = styled.div`
     padding: 8px;
 `;
