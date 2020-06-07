@@ -6,6 +6,7 @@ import { Box, Stack, Avatar, Heading, Icon, Tag, Flex, Text } from '@chakra-ui/c
 import { StyledBottomBoxContainer, StyledBlueButton } from './StyledComponents';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import UserBadge from '../../../components/UserBadge';
 
 type AttendantsProps = {
     attendants: Attendant[];
@@ -44,13 +45,7 @@ export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAtten
                                             </Heading>
                                         </Stack>
                                     </Link>
-                                    <StyledBadgeFlex>
-                                        <Icon name='star' size='12px' />
-                                        <Text>{attendant.user.badge?.win}</Text>
-
-                                        <Icon name='moon' size='12px' ml={2} />
-                                        <Text>{attendant.user.badge?.partecipation}</Text>
-                                    </StyledBadgeFlex>
+                                    <UserBadge user={attendant.user} />
                                 </Box>
                                 <Stack
                                     isInline
@@ -127,16 +122,6 @@ const StyledAttendantInfoBox = styled(Box).attrs({
     display: { md: 'flex' },
 })`
     justify-content: space-between;
-`;
-
-const StyledBadgeFlex = styled(Flex)`
-    align-items: center;
-    & > * {
-        margin: 2px;
-    }
-    & > p {
-        color: ${colors.gray_dark};
-    }
 `;
 
 export const StyledBlueButtonPadded = styled(StyledBlueButton).attrs({
