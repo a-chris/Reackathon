@@ -20,10 +20,12 @@ import {
     TabPanels,
     Tabs,
     Text,
+    useToast,
 } from '@chakra-ui/core';
 import moment from 'moment';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
@@ -33,6 +35,8 @@ import {
     subscribeToHackathon,
     unsubscribeToHackathon,
 } from '../../services/HackathonService';
+import socketClient from '../../socket/socket';
+import SocketEvent, { HackathonSocketData } from '../../socket/SocketEvent';
 import colors from '../../utils/colors';
 
 type RouteParams = {
@@ -59,33 +63,68 @@ export default function HackathonDetail() {
     const [hackathonData, setHackathonData] = React.useState<Hackathon>();
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
     const params = useParams<RouteParams>();
-    const idHackathon = params.id;
+    const toast = useToast();
+    const hackathonId = params.id;
+
+    useEffectOnce(() => {
+        if (appContext.state?.user?.role === 'ORGANIZATION') {
+            socketClient.emit('org_room', appContext.state.user.username);
+        }
+    });
 
     React.useEffect(() => {
-        getHackathon(idHackathon).then((hackathon) => setHackathonData(hackathon));
-    }, [idHackathon]);
+        if (appContext.state?.user?.role === 'ORGANIZATION') {
+            socketClient.on(appContext.state.user.username, (data: HackathonSocketData) => {
+                if (data.event === SocketEvent.USER_SUB) {
+                    toast({
+                        position: 'top-right',
+                        title: 'Nuova notifica',
+                        description: 'Un nuovo utente si è iscritto.',
+                        status: 'success',
+                        isClosable: true,
+                    });
+                } else {
+                    toast({
+                        position: 'top-right',
+                        title: 'Nuova notifica',
+                        description: 'Un utente si è disiscritto.',
+                        status: 'info',
+                        isClosable: true,
+                    });
+                }
+                if (hackathonId === data.id) {
+                    // Update the current hackathon
+                    console.log('UPDATE HACKATHON');
+                    getHackathon(data.id).then((hackathon) => setHackathonData(hackathon));
+                }
+            });
+        }
+    }, [appContext.state, hackathonId, toast]);
+
+    React.useEffect(() => {
+        getHackathon(hackathonId).then((hackathon) => setHackathonData(hackathon));
+    }, [hackathonId]);
 
     React.useEffect(() => {
         if (appContext.state?.user != null) {
             const attendant = hackathonData?.attendants.find(
-                (attendant) => attendant.user._id == appContext.state!.user!._id
+                (attendant) => attendant.user._id === appContext.state!.user!._id
             );
             setAttendant(attendant);
-            console.log(appContext.state.user._id);
         }
     }, [hackathonData, appContext]);
 
     const onHackathonSubscribe = React.useCallback(() => {
-        subscribeToHackathon(idHackathon)
+        subscribeToHackathon(hackathonId)
             .then((hackathon) => setHackathonData(hackathon))
             .catch((error) => console.log(error));
-    }, [idHackathon]);
+    }, [hackathonId]);
 
     const onHackathonUnsubscibe = React.useCallback(() => {
-        unsubscribeToHackathon(idHackathon)
+        unsubscribeToHackathon(hackathonId)
             .then((hackathon) => setHackathonData(hackathon))
             .catch((error) => console.log(error));
-    }, [idHackathon]);
+    }, [hackathonId]);
 
     return hackathonData == null ? (
         <div />

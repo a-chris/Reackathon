@@ -44,19 +44,13 @@ export default function App() {
         } else {
             onLogout();
         }
-        // TODO: remove later
-        // const loginInfo = localStorage.getItem('loginInfo');
-        // console.log('TCL: App -> loginInfo', loginInfo);
-        // let username = null;
-        // if (loginInfo) {
-        //     username = JSON.parse(loginInfo).username;
-        // }
-        // if (username) {
-        //     getUserInfo(username)
-        //         .then((user) => onLoggedIn(user))
-        //         .catch(() => onLogout());
-        // }
     }, [onLoggedIn, onLogout]);
+
+    React.useEffect(() => {
+        if (state.user == null) return;
+
+        // TODO: add socket functions (?)
+    }, [state.user]);
 
     return (
         <div className='App'>

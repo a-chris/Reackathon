@@ -29,19 +29,19 @@ export function createHackathon(hackathonData: NewHackathon): Promise<Hackathon>
     );
 }
 
-export function subscribeToHackathon(idHackathon: string): Promise<Hackathon> {
+export function subscribeToHackathon(hackathonId: string): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
-            .put(`http://localhost:5000/hackathons/${idHackathon}/sub`)
+            .put(`http://localhost:5000/hackathons/${hackathonId}/sub`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
 }
 
-export function unsubscribeToHackathon(idHackathon: string): Promise<Hackathon> {
+export function unsubscribeToHackathon(hackathonId: string): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
-            .put(`http://localhost:5000/hackathons/${idHackathon}/unsub`)
+            .put(`http://localhost:5000/hackathons/${hackathonId}/unsub`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
