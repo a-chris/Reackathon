@@ -32,7 +32,6 @@ export const Information: React.FC<{ hackathon: Hackathon }> = ({ hackathon }) =
             <Heading as='h3' size='md'>
                 Informazioni sugli iscritti
             </Heading>
-            {/* <Flex align-items='center'> */}
             <SimpleGrid columns={[2, 2, 4, 4]}>
                 <Stat>
                     <StatNumber>{hackathon.attendants.length}</StatNumber>

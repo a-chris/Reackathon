@@ -1,41 +1,26 @@
-import {
-    Avatar,
-    Box,
-    Button,
-    Divider,
-    Flex,
-    Stack,
-    Text,
-    useDisclosure,
-    Heading,
-    Icon,
-} from '@chakra-ui/core';
+import { Avatar, Box, Button, Flex, Stack, Text, Heading } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
 import { useParams } from 'react-router';
 import 'react-vertical-timeline-component/style.min.css';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { Experience, User } from '../../models/Models';
+import { Experience, User, UserRole } from '../../models/Models';
 import {
     getUserDetail,
     saveClientExperiences,
     saveClientSkills,
     uploadAvatar,
 } from '../../services/UserService';
-import colors from '../../utils/colors';
-import ExperienceModal from './components/ExperiencesModal';
-import ExperiencesTimeline from './components/ExperiencesTimeline';
-import SkillsComponent from './components/SkillsComponent';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import UserBadge from '../../components/UserBadge';
+import ClientProfileInfo from './components/ClientProfileInfo';
+import HackathonProfileInfo from './components/HackathonProfileInfo';
 
 export default function Profile() {
     const { username } = useParams();
     const appContext = React.useContext(AppContext);
     const [user, setUser] = React.useState<User>();
-    const [isEditingSkills, setIsEditingSkills] = React.useState(false);
     const [hasPendingRemove, setHasPendingRemove] = React.useState(false);
-    const { isOpen, onOpen, onClose } = useDisclosure();
 
     React.useEffect(() => {
         getUserDetail(username).then((userDetail) => {
@@ -76,20 +61,7 @@ export default function Profile() {
         onSaveExperiences(experiencesToSave);
     };
 
-    const onCancelExperiencesAdding = React.useCallback(() => {
-        onClose();
-    }, [onClose]);
-
-    const onEditSkills = () => {
-        setIsEditingSkills(true);
-    };
-
-    const onCancelSkillsEditing = () => {
-        setIsEditingSkills(false);
-    };
-
     const onSaveSkills = (skills: string[]) => {
-        setIsEditingSkills(false);
         saveClientSkills(username, skills).then((user) => {
             if (user != null) setUser(user);
         });
@@ -134,44 +106,17 @@ export default function Profile() {
             )}
             BottomContent={() => (
                 <Stack align='center' pt='10px'>
-                    {/* <Stack align='center' boxShadow='0px 2px 5px black'> */}
-                    <SkillsComponent
-                        skills={user?.skills ?? []}
-                        canBeEdited={isProfileOwner}
-                        isEditable={isEditingSkills}
-                        onCancel={onCancelSkillsEditing}
-                        onEdit={onEditSkills}
-                        onSave={onSaveSkills}
-                    />
-                    <Divider w='95%' borderColor={colors.gold} />
-                    <Box w='80%'>
-                        <Heading as='h3' size='md' p={2}>
-                            Esperienze
-                        </Heading>
-                        {isProfileOwner && (
-                            <Flex justify='center'>
-                                <Button mb='15px' onClick={onOpen}>
-                                    Aggiungi esperienze
-                                    <Icon name='add' ml={2} />
-                                </Button>
-                            </Flex>
-                        )}
-                        {user?.experiences != null && user?.experiences?.length > 0 && (
-                            <ExperiencesTimeline
-                                canBeEdited={isProfileOwner}
-                                experiences={user.experiences}
-                                onSave={onSaveExperiences}
-                                onRemove={onRemoveExperience}
-                            />
-                        )}
-                    </Box>
-                    {isProfileOwner && (
-                        <ExperienceModal
-                            isOpen={isOpen}
-                            onClose={onClose}
-                            onSave={onAddExperiences}
-                            onCancel={onCancelExperiencesAdding}
+                    {user?.role === UserRole.CLIENT ? (
+                        <ClientProfileInfo
+                            user={user}
+                            isProfileOwner={isProfileOwner}
+                            onRemoveExperience={onRemoveExperience}
+                            onSaveExperiences={onSaveExperiences}
+                            onAddExperiences={onAddExperiences}
+                            onSaveSkills={onSaveSkills}
                         />
+                    ) : (
+                        <HackathonProfileInfo userId={user?._id} isProfileOwner={isProfileOwner} />
                     )}
                 </Stack>
             )}
