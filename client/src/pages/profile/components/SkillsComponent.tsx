@@ -9,6 +9,8 @@ import {
     Stack,
     Tag,
     Text,
+    Heading,
+    Icon,
 } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
 import { getRandomVariantColorString } from '../../../utils/colors';
@@ -53,20 +55,25 @@ export default function SkillsComponent(props: SkillsComponentProps) {
     };
 
     return (
-        <Box w='100%'>
-            <Flex>
-                <Text>Competenze:</Text>
-                <Stack spacing={4} isInline>
-                    {skills.map((skill, index) =>
-                        props.isEditable ? (
-                            <InputGroup key={index}>
-                                <Input
-                                    size='sm'
-                                    name={index.toString()}
-                                    value={skill}
-                                    onChange={onChangeValue}
-                                />
-                                <InputRightElement width='4rem'>
+        <Box w='80%'>
+            <Heading as='h3' size='md' p={2}>
+                Competenze
+            </Heading>
+            <Flex flexWrap='wrap' alignItems='center'>
+                {skills.map((skill, index) =>
+                    props.isEditable ? (
+                        <InputGroup key={index} p={1} w='min-content'>
+                            <Input
+                                w='min-content'
+                                size='sm'
+                                name={index.toString()}
+                                value={skill}
+                                onChange={onChangeValue}
+                            />
+                            <InputRightElement
+                                width='4rem'
+                                alignItems='center'
+                                children={
                                     <IconButton
                                         size='xs'
                                         variant='solid'
@@ -74,39 +81,44 @@ export default function SkillsComponent(props: SkillsComponentProps) {
                                         icon='delete'
                                         onClick={() => onRemove(index)}
                                     />
-                                </InputRightElement>
-                            </InputGroup>
-                        ) : (
-                            <Tag size='lg' variantColor={getRandomVariantColorString()} key={index}>
-                                {skill}
-                            </Tag>
-                        )
-                    )}
-                    {props.isEditable && (
-                        <IconButton
-                            isRound
-                            icon='add'
-                            size='sm'
-                            aria-label='Aggiungi una nuova competenza'
-                            onClick={onAdd}
-                        />
-                    )}
-                </Stack>
+                                }
+                            />
+                        </InputGroup>
+                    ) : (
+                        <Tag
+                            size='lg'
+                            variantColor={getRandomVariantColorString()}
+                            m={1}
+                            key={index}>
+                            {skill}
+                        </Tag>
+                    )
+                )}
+                {props.isEditable && (
+                    <IconButton
+                        isRound
+                        icon='add'
+                        size='sm'
+                        aria-label='Aggiungi una nuova competenza'
+                        onClick={onAdd}
+                    />
+                )}
             </Flex>
             {props.canBeEdited && (
                 <>
                     {props.isEditable ? (
                         <Flex>
-                            <Button mb='15px' onClick={props.onCancel}>
+                            <Button m={1} mb='15px' onClick={props.onCancel}>
                                 ANNULLA
                             </Button>
-                            <Button mb='15px' onClick={onSave}>
+                            <Button m={1} mb='15px' onClick={onSave}>
                                 SALVA
                             </Button>
                         </Flex>
                     ) : (
                         <Button mb='15px' onClick={props.onEdit}>
                             Modifica competenze
+                            <Icon name='edit' ml={1} />
                         </Button>
                     )}
                 </>

@@ -1,4 +1,14 @@
-import { Avatar, Box, Button, Divider, Flex, Stack, Text, useDisclosure } from '@chakra-ui/core';
+import {
+    Avatar,
+    Box,
+    Button,
+    Divider,
+    Flex,
+    Stack,
+    Text,
+    useDisclosure,
+    Heading,
+} from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
 import { useParams } from 'react-router';
 import 'react-vertical-timeline-component/style.min.css';
@@ -15,6 +25,8 @@ import colors from '../../utils/colors';
 import ExperienceModal from './components/ExperiencesModal';
 import ExperiencesTimeline from './components/ExperiencesTimeline';
 import SkillsComponent from './components/SkillsComponent';
+import OverlappedBoxes from '../../components/OverlappedBoxes';
+import UserBadge from '../../components/UserBadge';
 
 export default function Profile() {
     const { username } = useParams();
@@ -86,65 +98,82 @@ export default function Profile() {
 
     // TODO: improve this
     const avatarUrl =
-        user?.avatar != null ? 'http://localhost:5000/avatar/' + user?.avatar : undefined;
+        user?.avatar != null ? 'http:localhost:5000/avatar/' + user?.avatar : undefined;
 
     return (
-        <Flex w='100%' minH='100%' bg={colors.gray_light} align='center' direction='column' pb='20'>
-            <Flex w='80%' align='center' justify='center' direction='row'>
-                <Flex bg='green.300' direction='column'>
-                    <Avatar size='xl' name={user?.name} src={avatarUrl} />
-                    {isProfileOwner && (
-                        <UploadButton variantColor='teal' size='xs'>
-                            <label>
-                                <input type='file' onChange={onAvatarUpload} />
-                                upload
-                            </label>
-                        </UploadButton>
-                    )}
+        <OverlappedBoxes
+            mainStackStyle={{ w: ['90%', '90%', '70%', '70%'] }}
+            topBoxStyle={{ w: ['90%', '90%', '80%', '80%'], p: 2 }}
+            TopContent={() => (
+                <Flex align='center' justify='space-evenly' flexWrap='wrap' textAlign='center'>
+                    <Stack direction='column'>
+                        <Avatar size='xl' name={user?.name} src={avatarUrl} />
+                        {isProfileOwner && (
+                            <UploadButton variantColor='teal' size='xs'>
+                                <label>
+                                    <input type='file' onChange={onAvatarUpload} />
+                                    upload
+                                </label>
+                            </UploadButton>
+                        )}
+                    </Stack>
+                    <Box pl={'1'} minW='60%'>
+                        <Heading as='h1' size='xl'>
+                            {user?.username}
+                        </Heading>
+                        {user?.badge && (
+                            <UserBadge user={user} styleProps={{ m: 'auto', w: 'fit-content' }} />
+                        )}
+                        <Heading as='h2' size='lg' fontWeight='500'>
+                            {user?.name}
+                        </Heading>
+                        <Text>{user?.email}</Text>
+                    </Box>
                 </Flex>
-                <Box w='70%' bg='blue.300' pl={['5', '10', '20']}>
-                    <Text fontSize='xl'>{user?.username}</Text>
-                    <Text fontSize='lg'>{user?.name}</Text>
-                    <Text>{user?.email}</Text>
-                </Box>
-            </Flex>
-            <Stack w='90%' align='center' boxShadow='0px 2px 5px black'>
-                <SkillsComponent
-                    skills={user?.skills ?? []}
-                    canBeEdited={isProfileOwner}
-                    isEditable={isEditingSkills}
-                    onCancel={onCancelSkillsEditing}
-                    onEdit={onEditSkills}
-                    onSave={onSaveSkills}
-                />
-                <Divider w='95%' />
-                <Box w='80%'>
+            )}
+            BottomContent={() => (
+                <Stack align='center' pt='10px'>
+                    {/* <Stack align='center' boxShadow='0px 2px 5px black'> */}
+                    <SkillsComponent
+                        skills={user?.skills ?? []}
+                        canBeEdited={isProfileOwner}
+                        isEditable={isEditingSkills}
+                        onCancel={onCancelSkillsEditing}
+                        onEdit={onEditSkills}
+                        onSave={onSaveSkills}
+                    />
+                    <Divider w='95%' borderColor={colors.gold} />
+                    <Box w='80%'>
+                        <Heading as='h3' size='md' p={2}>
+                            Esperienze
+                        </Heading>
+                        {isProfileOwner && (
+                            <Flex justify='center'>
+                                <Button mb='15px' onClick={onOpen}>
+                                    Aggiungi esperienze
+                                </Button>
+                            </Flex>
+                        )}
+                        {user?.experiences != null && user?.experiences?.length > 0 && (
+                            <ExperiencesTimeline
+                                canBeEdited={isProfileOwner}
+                                experiences={user.experiences}
+                                onSave={onSaveExperiences}
+                                onRemove={onRemoveExperience}
+                            />
+                        )}
+                    </Box>
                     {isProfileOwner && (
-                        <Flex justify='center'>
-                            <Button mb='15px' onClick={onOpen}>
-                                Aggiungi esperienze
-                            </Button>
-                        </Flex>
-                    )}
-                    {user?.experiences != null && user?.experiences?.length > 0 && (
-                        <ExperiencesTimeline
-                            canBeEdited={isProfileOwner}
-                            experiences={user.experiences}
-                            onSave={onSaveExperiences}
-                            onRemove={onRemoveExperience}
+                        <ExperienceModal
+                            isOpen={isOpen}
+                            onClose={onClose}
+                            onSave={onAddExperiences}
+                            onCancel={onCancelExperiencesAdding}
                         />
                     )}
-                </Box>
-            </Stack>
-            {isProfileOwner && (
-                <ExperienceModal
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    onSave={onAddExperiences}
-                    onCancel={onCancelExperiencesAdding}
-                />
+                </Stack>
             )}
-        </Flex>
+        />
     );
 }
 
