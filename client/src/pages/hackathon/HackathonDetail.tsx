@@ -159,22 +159,23 @@ export default function HackathonDetail() {
                     {hackathonData?.status !== HackathonStatus.ARCHIVED ? (
                         hackathonData?.status !== HackathonStatus.FINISHED ? (
                             <Menu>
-                                <MenuButton as={Button}>
+                                <MenuButton as={Button} alignItems='center'>
                                     Gestisci
-                                    <Icon name='chevron-down' pl='2px' size='28px' p='0' />
+                                    <Icon name='chevron-down' ml='2px' size='26px' p='0' />
                                 </MenuButton>
                                 <MenuList>
-                                    <MenuItem>
+                                    <MenuItem alignItems='center'>
                                         <Link to={`/hackathons/update/${idHackathon}`}>
                                             Modifica
-                                            <Icon name='external-link' pl='2px' />
+                                            <Icon name='external-link' ml='2px' size='20px' />
                                         </Link>
                                     </MenuItem>
                                     <MenuItem
+                                        alignItems='center'
                                         onClick={() => onChangeStatus(HackathonStatus.ARCHIVED)}
                                         color={colors.red_dark}>
                                         Cancella evento
-                                        <Icon name='warning-2' pl='2px' />
+                                        <Icon name='warning-2' ml='2px' size='20px' />
                                     </MenuItem>
                                 </MenuList>
                             </Menu>
