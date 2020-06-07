@@ -39,7 +39,7 @@ const HackathonSchema = new mongoose.Schema({
     attendantsRequirements: AttendantsRequirementsSchema,
     startDate: Date,
     endDate: Date,
-    status: { type: String, enum: ['pending', 'started', 'finished'] },
+    status: { type: String, enum: ['pending', 'started', 'finished', 'archived'] },
     location: LocationSchema,
     prize: PrizeSchema,
 });

@@ -190,7 +190,7 @@
             },
             "HackathonStatus": {
                 "type": "string",
-                "enum": ["pending", "started", "finished"]
+                "enum": ["pending", "started", "finished", "archived"]
             },
             "Hackathon": {
                 "type": "object",

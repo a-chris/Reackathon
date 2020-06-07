@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { HackathonDb, Attendant } from '../models/Hackathon';
 
-const HackathonAction = ['pending', 'started', 'finished'];
+const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 
 type FilterType = {
     city?: string;
@@ -104,7 +104,7 @@ export function saveHackathons(req: Request, res: Response) {
 
 export function changeHackathonStatus(req: Request, res: Response) {
     const hackathonId = req.params?.id;
-    const action = req.query?.action?.toString();
+    const action = req.body.params?.action?.toString();
 
     if (hackathonId == null || action == null || !HackathonAction.includes(action)) {
         return res.sendStatus(400);

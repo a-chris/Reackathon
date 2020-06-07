@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Hackathon, NewHackathon } from '../models/Models';
+import { Hackathon, NewHackathon, HackathonStatus } from '../models/Models';
 
 export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
     // TODO: add params
@@ -42,6 +42,20 @@ export function unsubscribeToHackathon(idHackathon: string): Promise<Hackathon> 
     return new Promise((resolve, reject) =>
         axios
             .put(`http://localhost:5000/hackathons/${idHackathon}/unsub`)
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}
+
+export function changeHackathonStatus(
+    idHackathon: string,
+    status: HackathonStatus
+): Promise<Hackathon> {
+    return new Promise((resolve, reject) =>
+        axios
+            .put(`http://localhost:5000/hackathons/${idHackathon}/status`, {
+                params: { action: status },
+            })
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );

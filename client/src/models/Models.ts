@@ -7,6 +7,7 @@ export enum HackathonStatus {
     PENDING = 'pending',
     STARTED = 'started',
     FINISHED = 'finished',
+    ARCHIVED = 'archived',
 }
 
 export function isUserRole(value: string): value is keyof typeof UserRole {
