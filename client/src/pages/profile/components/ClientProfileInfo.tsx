@@ -3,7 +3,6 @@ import SkillsComponent from './SkillsComponent';
 import { Divider, Box, Heading, Flex, Button, Icon, useDisclosure } from '@chakra-ui/core';
 import colors from '../../../utils/colors';
 import ExperiencesTimeline from './ExperiencesTimeline';
-import HackathonsTimeline from './HackathonsTimeline';
 import ExperienceModal from './ExperiencesModal';
 import { User, Experience } from '../../../models/Models';
 

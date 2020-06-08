@@ -20,7 +20,7 @@ import moment from 'moment';
 import React from 'react';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { HackathonStatus, NewHackathon, User, Hackathon } from '../../models/Models';
+import { HackathonStatus, NewHackathon, User } from '../../models/Models';
 // TODO find a better solution
 import { fakeLocation } from '../../models/TempDemoModels';
 import { createHackathon, getHackathon } from '../../services/HackathonService';
@@ -70,7 +70,7 @@ export default function HackathonManagement() {
     const [allValuesValid, setAllValuesValid] = React.useState<boolean>(false);
     const [dateError, setDateError] = React.useState<boolean>(false);
     const [missingData, setMissingData] = React.useState<string[]>([]);
-    // const [prizeError, setPrizeError] = React.useState<boolean>(false);
+    // const [prizeError, setPrizeError] = React.useState<boolean>(false); TODO
 
     React.useEffect(() => {
         if (idHackathon) {
@@ -179,7 +179,7 @@ export default function HackathonManagement() {
                 history.push(`/hackathons/${hackathon._id}`);
             })
             .catch((error) => console.log(error));
-    }, [hackathonData]);
+    }, [hackathonData, history]);
 
     return (
         <StyledHackathonContainer>

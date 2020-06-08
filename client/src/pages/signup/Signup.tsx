@@ -17,7 +17,6 @@ import {
 } from '@chakra-ui/core';
 import * as _ from 'lodash';
 import React, { ChangeEvent } from 'react';
-import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { isUserRole, UserRole } from '../../models/Models';
 import { signup, SignupData, usernameAlreadyExists } from '../../services/AuthService';

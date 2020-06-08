@@ -151,11 +151,6 @@ const StyledLogo = styled(Box).attrs({
     margin: 0;
 `;
 
-const StyledLogoH = styled.h1`
-    font-family: Expansiva;
-    font-size: 300%;
-`;
-
 const StyledLogoOrange = styled.span`
     color: ${colors.blue_light};
 `;
