@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 const colors = {
     white: '#ffffff',
     gray: '#e2e8f0',
-    gray_light: '#F5F5F5',
-    gray_dark: '#718096',
+    gray_light: '#4E5A6A',
+    gray_dark: '#595959',
     gray_darker: '#4d5156',
     black: '#000000',
     black_almost: '#090909',
@@ -18,7 +18,7 @@ const colors = {
     blue_night: '#06133d',
     blue_light: '#1d3073',
     blue: '#0b1b4c',
-    gold: '#D69E2E',
+    gold: '#DB0000',
 };
 
 export default colors;

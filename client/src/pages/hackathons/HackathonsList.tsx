@@ -54,15 +54,18 @@ export default function HackathonsList() {
                             textAlign='left'
                             key={index}>
                             <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
-                                <Heading as='h3' size='lg' color={colors.gray_darker}>
+                                <Heading as='h2' size='lg' color={colors.gray_darker}>
                                     {hackathon.name}
                                 </Heading>
-                                <Text color='gray.400'>
+                                <Text color={colors.gray_light}>
                                     {hackathon.description.substring(0, 150)}...
                                 </Text>
 
                                 <Box mt={1} mb={1}>
-                                    <Text fontSize='sm' fontWeight='semibold'>
+                                    <Text
+                                        fontSize='sm'
+                                        fontWeight='semibold'
+                                        color={colors.gray_dark}>
                                         {toDateString(hackathon.startDate)} -{' '}
                                         {toDateString(hackathon.endDate)}
                                     </Text>
@@ -133,7 +136,7 @@ function StatusBadge(hackathon: Hackathon) {
     if (text === '') return;
 
     return (
-        <Badge variant='outline' rounded='full' mr={3} variantColor={color}>
+        <Badge rounded='full' mr={3} variantColor={color}>
             {text}
         </Badge>
     );

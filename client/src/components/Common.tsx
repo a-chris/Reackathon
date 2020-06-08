@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/core';
+import { Box, FormLabel } from '@chakra-ui/core';
 import styled from 'styled-components';
 
 interface BoxWithSpacedChildrenProps {
@@ -21,4 +21,10 @@ export const StyledCenteredContainer = styled(Box)<AlignmentProps>`
     transform: translateY(${(props) => props?.translateY});
     width: 100%;
     text-align: center;
+`;
+
+export const StyledLabel = styled(FormLabel)`
+    width: 100%;
+    font-size: 80%;
+    padding-bottom: 0px;
 `;

@@ -62,13 +62,16 @@ export default function Homepage() {
                                     Trova l'Hackathon che fa per te
                                 </Heading>
                                 <Box>
-                                    <Select
-                                        onChange={onFilterChange}
-                                        placeholder='Seleziona una città'>
-                                        {Array.from(cities).map((city) => (
-                                            <option key={city} value={city} label={city} />
-                                        ))}
-                                    </Select>
+                                    <label>
+                                        Seleziona una città
+                                        <Select
+                                            onChange={onFilterChange}
+                                            placeholder='Seleziona una città'>
+                                            {Array.from(cities).map((city) => (
+                                                <option key={city} value={city} label={city} />
+                                            ))}
+                                        </Select>
+                                    </label>
                                     <Link
                                         to={
                                             selectedCity != null
@@ -104,6 +107,7 @@ export default function Homepage() {
                                         boxShadow={`-1px 2px 10px ${colors.blue_night}`}>
                                         <Box
                                             h={'200px'}
+                                            bg={colors.blue_light}
                                             backgroundImage={`url('./images/cities/${city.toLowerCase()}.jpg')`}
                                             backgroundPosition='bottom'
                                             {...BackgroundImageStyleProps}

@@ -60,41 +60,43 @@ export default function App() {
 
     return (
         <div className='App'>
-            <ThemeProvider theme={theme}>
-                <AppContext.Provider value={{ state, onLoggedIn, onLogout }}>
-                    <CSSReset />
-                    <HashRouter>
-                        <Header />
-                        <Switch>
-                            <Route exact path='/' component={Homepage} />
-                            <RestrictedRoute exact path='/login' component={Login} />
-                            <RestrictedRoute exact path='/signup' component={Signup} />
-                            <RestrictedRoute
-                                exact
-                                path='/org'
-                                component={OrganizationBoard}
-                                allowedFor={[UserRole.ORGANIZATION]}
-                            />
-                            <RestrictedRoute
-                                exact
-                                path='/hackathons/create'
-                                component={HackathonManagement}
-                                allowedFor={[UserRole.ORGANIZATION]}
-                            />
-                            <RestrictedRoute
-                                exact
-                                path='/hackathons/update/:id'
-                                component={HackathonManagement}
-                                allowedFor={[UserRole.ORGANIZATION]}
-                            />
-                            <Route exact path='/hackathons/:id' component={HackathonDetail} />
-                            <Route path='/hackathons' component={HackathonsList} />
-                            <Route exact path='/profile/:username' component={Profile} />
-                            <Route component={PageNotFound} />
-                        </Switch>
-                    </HashRouter>
-                </AppContext.Provider>
-            </ThemeProvider>
+            <div role='main'>
+                <ThemeProvider theme={theme}>
+                    <AppContext.Provider value={{ state, onLoggedIn, onLogout }}>
+                        <CSSReset />
+                        <HashRouter>
+                            <Header />
+                            <Switch>
+                                <Route exact path='/' component={Homepage} />
+                                <RestrictedRoute exact path='/login' component={Login} />
+                                <RestrictedRoute exact path='/signup' component={Signup} />
+                                <RestrictedRoute
+                                    exact
+                                    path='/org'
+                                    component={OrganizationBoard}
+                                    allowedFor={[UserRole.ORGANIZATION]}
+                                />
+                                <RestrictedRoute
+                                    exact
+                                    path='/hackathons/create'
+                                    component={HackathonManagement}
+                                    allowedFor={[UserRole.ORGANIZATION]}
+                                />
+                                <RestrictedRoute
+                                    exact
+                                    path='/hackathons/update/:id'
+                                    component={HackathonManagement}
+                                    allowedFor={[UserRole.ORGANIZATION]}
+                                />
+                                <Route exact path='/hackathons/:id' component={HackathonDetail} />
+                                <Route path='/hackathons' component={HackathonsList} />
+                                <Route exact path='/profile/:username' component={Profile} />
+                                <Route component={PageNotFound} />
+                            </Switch>
+                        </HashRouter>
+                    </AppContext.Provider>
+                </ThemeProvider>
+            </div>
         </div>
     );
 }
