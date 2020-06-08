@@ -20,10 +20,10 @@ import React, { ChangeEvent } from 'react';
 import { AppContext } from '../../AppContext';
 import { isUserRole, UserRole } from '../../models/Models';
 import { signup, SignupData, usernameAlreadyExists } from '../../services/AuthService';
-import { StyledCenteredContainer } from '../../components/Common';
 import colors from '../../utils/colors';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { Link } from 'react-router-dom';
+import { StyledLabel } from '../../components/Common';
 
 const initialSignupData = {
     username: '',
@@ -42,13 +42,26 @@ export default function Signup() {
     const [usernameError, setUsernameError] = React.useState<string>('');
     const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false);
     const [passwordError, setPasswordError] = React.useState<boolean>(false);
-    const [passwordConfirmError, setPasswordConfirmError] = React.useState<boolean>(false);
+    const [passwordConfirmError, setPasswordConfirmError] = React.useState<boolean>();
     const [allValuesValid, setAllValuesValid] = React.useState<boolean>(false);
+    const [missingData, setMissingData] = React.useState<string[]>([]);
 
     React.useEffect(() => {
-        const allValid = _.every(new Set([passwordError, passwordConfirmError, usernameError]));
+        const allValid =
+            _.every([!passwordError, !passwordConfirmError, !usernameError]) &&
+            missingData.length === 0;
         setAllValuesValid(allValid);
-    }, [passwordError, passwordConfirmError, usernameError]);
+        console.log('Signup -> allValid', allValid);
+    }, [passwordError, passwordConfirmError, usernameError, missingData]);
+
+    React.useEffect(() => {
+        console.log('Signup -> missingData', missingData);
+        setMissingData(
+            Object.entries(signupData)
+                .filter((el) => el[1] === undefined || el[1] === '')
+                .map((el) => el[0])
+        );
+    }, [signupData]); //TODO optimize
 
     const onChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event?.target;
@@ -88,157 +101,171 @@ export default function Signup() {
     };
 
     const onSignup = React.useCallback(() => {
-        console.log(signupData);
-        setLoading(true);
-        signup(signupData)
-            .then((user) => {
-                setLoading(false);
-                if (appContext?.onLoggedIn != null) {
-                    appContext.onLoggedIn(user);
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-                setLoading(false);
-            });
+        if (passwordConfirmError == null) {
+            setPasswordConfirmError(true);
+        } else {
+            console.log(signupData);
+            setLoading(true);
+            signup(signupData)
+                .then((user) => {
+                    setLoading(false);
+                    if (appContext?.onLoggedIn != null) {
+                        appContext.onLoggedIn(user);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    setLoading(false);
+                });
+        }
     }, [appContext, signupData]);
 
     return (
-        <StyledCenteredContainer translateY='-40%'>
-            <OverlappedBoxes
-                mainStackStyle={{ width: ['90%', '80%', '50%', '40%'] }}
-                removeDefaultPadding
-                topBoxStyle={{ bg: colors.blue_night }}
-                TopContent={() => (
-                    <Heading
-                        h='100%'
-                        as='h1'
-                        size='xl'
-                        p='25px'
-                        verticalAlign='middle'
-                        color={colors.white}>
-                        Registrazione
-                    </Heading>
-                )}
-                BottomContent={() => (
-                    <Box>
-                        <Stack spacing={3} p={8}>
-                            <FormControl isRequired isInvalid={usernameError.length > 0}>
-                                <InputGroup size='md'>
-                                    <InputLeftElement children={<Icon name='sun' />} />
-                                    <Input
-                                        type='text'
-                                        placeholder='Username'
-                                        defaultValue=''
-                                        variant='flushed'
-                                        name='username'
-                                        onChange={onChangeValue}
-                                        onBlur={validateUsername}
+        <OverlappedBoxes
+            mainStackStyle={{ width: ['90%', '80%', '50%', '40%'] }}
+            topBoxStyle={{ bg: colors.blue_night }}
+            TopContent={() => (
+                <Heading
+                    h='100%'
+                    as='h1'
+                    size='xl'
+                    p='25px'
+                    textAlign='center'
+                    color={colors.white}>
+                    Registrazione
+                </Heading>
+            )}
+            BottomContent={() => (
+                <Box>
+                    <Stack spacing={3} p={8}>
+                        <FormControl isInvalid={usernameError.length > 0} isRequired>
+                            <StyledLabel htmlFor='username'>Username</StyledLabel>
+                            <InputGroup size='md'>
+                                <InputLeftElement children={<Icon name='sun' />} />
+                                <Input
+                                    type='text'
+                                    placeholder='Username'
+                                    defaultValue=''
+                                    variant='flushed'
+                                    name='username'
+                                    id='username'
+                                    onChange={onChangeValue}
+                                    onBlur={validateUsername}
+                                />
+                                {signupData?.username?.length > 0 && (
+                                    <InputRightElement
+                                        children={
+                                            usernameError ? (
+                                                <Icon name='not-allowed' color='red.500' />
+                                            ) : (
+                                                <Icon name='check' color='green.500' />
+                                            )
+                                        }
                                     />
-                                    {signupData?.username?.length > 0 && (
-                                        <InputRightElement
-                                            children={
-                                                usernameError ? (
-                                                    <Icon name='not-allowed' color='red.500' />
-                                                ) : (
-                                                    <Icon name='check' color='green.500' />
-                                                )
-                                            }
-                                        />
-                                    )}
-                                </InputGroup>
-                                <FormErrorMessage>{usernameError}</FormErrorMessage>
-                            </FormControl>
-                            <FormControl isInvalid={passwordError}>
-                                <InputGroup size='md'>
-                                    <InputLeftElement children={<Icon name='lock' />} />
-                                    <Input
-                                        type={passwordVisible ? 'text' : 'password'}
-                                        placeholder='Password'
-                                        defaultValue=''
-                                        pr='4.5rem'
-                                        variant='flushed'
-                                        name='password'
-                                        onChange={onChangeValue}
-                                        onBlur={validatePassword}
+                                )}
+                            </InputGroup>
+                            <FormErrorMessage>{usernameError}</FormErrorMessage>
+                        </FormControl>
+                        <FormControl isInvalid={passwordError} isRequired>
+                            <StyledLabel htmlFor='password'>Password</StyledLabel>
+                            <InputGroup size='md'>
+                                <InputLeftElement children={<Icon name='lock' />} />
+                                <Input
+                                    type={passwordVisible ? 'text' : 'password'}
+                                    placeholder='Password'
+                                    defaultValue=''
+                                    pr='4.5rem'
+                                    variant='flushed'
+                                    name='password'
+                                    id='password'
+                                    onChange={onChangeValue}
+                                    onBlur={validatePassword}
+                                />
+                                <InputRightElement width='4.5rem'>
+                                    <IconButton
+                                        h='1.75rem'
+                                        size='sm'
+                                        onClick={togglePasswordVisibility}
+                                        aria-label={passwordVisible ? 'Hide' : 'Show'}
+                                        icon={passwordVisible ? 'view' : 'view-off'}
                                     />
-                                    <InputRightElement width='4.5rem'>
-                                        <IconButton
-                                            h='1.75rem'
-                                            size='sm'
-                                            onClick={togglePasswordVisibility}
-                                            aria-label={passwordVisible ? 'Hide' : 'Show'}
-                                            icon={passwordVisible ? 'view' : 'view-off'}
-                                        />
-                                    </InputRightElement>
-                                </InputGroup>
-                                <FormErrorMessage>
-                                    {`La password deve essere lunga almeno ${MIN_PASSWORD_LENGTH} caratteri.`}
-                                </FormErrorMessage>
-                            </FormControl>
-                            <FormControl isInvalid={passwordConfirmError}>
-                                <InputGroup size='md'>
-                                    <InputLeftElement children={<Icon name='lock' />} />
-                                    <Input
-                                        type={passwordVisible ? 'text' : 'password'}
-                                        placeholder='Password di conferma'
-                                        defaultValue=''
-                                        pr='4.5rem'
-                                        variant='flushed'
-                                        name='passwordConfirm'
-                                        onBlur={validateConfirmPassword}
+                                </InputRightElement>
+                            </InputGroup>
+                            <FormErrorMessage>
+                                {`La password deve essere lunga almeno ${MIN_PASSWORD_LENGTH} caratteri.`}
+                            </FormErrorMessage>
+                        </FormControl>
+                        <FormControl isInvalid={passwordConfirmError} isRequired>
+                            <StyledLabel htmlFor='passwordConfirm'>Conferma Password</StyledLabel>
+                            <InputGroup size='md'>
+                                <InputLeftElement children={<Icon name='lock' />} />
+                                <Input
+                                    type={passwordVisible ? 'text' : 'password'}
+                                    placeholder='Password di conferma'
+                                    defaultValue=''
+                                    pr='4.5rem'
+                                    variant='flushed'
+                                    name='passwordConfirm'
+                                    id='passwordConfirm'
+                                    onBlur={validateConfirmPassword}
+                                />
+                                <InputRightElement width='4.5rem'>
+                                    <IconButton
+                                        h='1.75rem'
+                                        size='sm'
+                                        onClick={togglePasswordVisibility}
+                                        aria-label={passwordVisible ? 'Hide' : 'Show'}
+                                        icon={passwordVisible ? 'view' : 'view-off'}
                                     />
-                                    <InputRightElement width='4.5rem'>
-                                        <IconButton
-                                            h='1.75rem'
-                                            size='sm'
-                                            onClick={togglePasswordVisibility}
-                                            aria-label={passwordVisible ? 'Hide' : 'Show'}
-                                            icon={passwordVisible ? 'view' : 'view-off'}
-                                        />
-                                    </InputRightElement>
-                                </InputGroup>
-                                <FormErrorMessage>Le password non coincidono.</FormErrorMessage>
-                            </FormControl>
-                            <FormControl>
-                                <InputGroup size='md'>
-                                    <InputLeftElement children={<Icon name='email' />} />
-                                    <Input
-                                        type='text'
-                                        placeholder='Email'
-                                        defaultValue=''
-                                        variant='flushed'
-                                        name='email'
-                                        onChange={onChangeValue}
-                                    />
-                                </InputGroup>
-                            </FormControl>
-                            <FormControl>
-                                <InputGroup size='md'>
-                                    <InputLeftElement children={<Icon name='spinner' />} />
-                                    <Input
-                                        type='text'
-                                        placeholder='Nome'
-                                        defaultValue=''
-                                        variant='flushed'
-                                        name='name'
-                                        onChange={onChangeValue}
-                                    />
-                                </InputGroup>
-                            </FormControl>
-                            <RadioGroup
-                                isInline
-                                value={signupData.role.toString()}
-                                name='role'
-                                onChange={onRoleChangeValue}>
-                                <Radio value='CLIENT' variantColor='yellow'>
-                                    Partecipante
-                                </Radio>
-                                <Radio value='ORGANIZATION' variantColor='yellow '>
-                                    Organizzatore
-                                </Radio>
-                            </RadioGroup>
-                        </Stack>
+                                </InputRightElement>
+                            </InputGroup>
+                            <FormErrorMessage>Le password non coincidono.</FormErrorMessage>
+                        </FormControl>
+                        <FormControl isRequired>
+                            <StyledLabel htmlFor='email'>Email</StyledLabel>
+                            <InputGroup size='md'>
+                                <InputLeftElement children={<Icon name='email' />} />
+                                <Input
+                                    type='text'
+                                    placeholder='Email'
+                                    defaultValue=''
+                                    variant='flushed'
+                                    name='email'
+                                    id='email'
+                                    onChange={onChangeValue}
+                                />
+                            </InputGroup>
+                        </FormControl>
+                        <FormControl isRequired>
+                            <StyledLabel htmlFor='name'>Nome e Cognome</StyledLabel>
+                            <InputGroup size='md'>
+                                <InputLeftElement children={<Icon name='spinner' />} />
+                                <Input
+                                    type='text'
+                                    placeholder='Nome'
+                                    defaultValue=''
+                                    variant='flushed'
+                                    name='name'
+                                    id='name'
+                                    onChange={onChangeValue}
+                                />
+                            </InputGroup>
+                        </FormControl>
+                        <RadioGroup
+                            isInline
+                            value={signupData.role.toString()}
+                            name='role'
+                            textAlign='center'
+                            onChange={onRoleChangeValue}>
+                            <Radio value='CLIENT' variantColor='yellow'>
+                                Partecipante
+                            </Radio>
+                            <Radio value='ORGANIZATION' variantColor='yellow'>
+                                Organizzatore
+                            </Radio>
+                        </RadioGroup>
+                    </Stack>
+                    <Box textAlign='center'>
                         <Button
                             isDisabled={!allValuesValid}
                             bg={colors.blue_night}
@@ -248,17 +275,17 @@ export default function Signup() {
                             onClick={onSignup}>
                             Registrati
                         </Button>
-                        <Text p={3} fontSize='0.9em'>
-                            Oppure{' '}
-                            <Link to='/login'>
-                                <span style={{ color: colors.gold }}>
-                                    <b>accedi</b>
-                                </span>
-                            </Link>
-                        </Text>
                     </Box>
-                )}
-            />
-        </StyledCenteredContainer>
+                    <Text p={3} fontSize='0.9em' textAlign='center'>
+                        Oppure{' '}
+                        <Link to='/login'>
+                            <span style={{ color: colors.gold }}>
+                                <b>accedi</b>
+                            </span>
+                        </Link>
+                    </Text>
+                </Box>
+            )}
+        />
     );
 }

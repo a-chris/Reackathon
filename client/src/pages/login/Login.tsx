@@ -17,7 +17,7 @@ import React, { ChangeEvent } from 'react';
 import { AppContext } from '../../AppContext';
 import { login, LoginData } from '../../services/AuthService';
 import colors from '../../utils/colors';
-import { StyledCenteredContainer } from '../../components/Common';
+import { StyledCenteredContainer, StyledLabel } from '../../components/Common';
 import { Link } from 'react-router-dom';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 
@@ -81,6 +81,7 @@ export default function Login() {
                     <Box>
                         <Stack spacing={3} p={8}>
                             <FormControl isInvalid={isLoginInvalid}>
+                                <StyledLabel htmlFor='username'>Username</StyledLabel>
                                 <InputGroup size='md'>
                                     <InputLeftElement children={<Icon name='spinner' />} />
                                     <Input
@@ -89,9 +90,13 @@ export default function Login() {
                                         defaultValue=''
                                         variant='flushed'
                                         name='username'
+                                        id='username'
                                         onChange={onChangeValue}
                                     />
                                 </InputGroup>
+                            </FormControl>
+                            <FormControl isInvalid={isLoginInvalid}>
+                                <StyledLabel htmlFor='password'>Password</StyledLabel>
                                 <InputGroup size='md'>
                                     <InputLeftElement children={<Icon name='lock' />} />
                                     <Input
@@ -101,6 +106,7 @@ export default function Login() {
                                         pr='4.5rem'
                                         variant='flushed'
                                         name='password'
+                                        id='password'
                                         onChange={onChangeValue}
                                     />
                                     <InputRightElement width='4.5rem'>
