@@ -14,6 +14,11 @@ import {
     Text,
     Textarea,
     Stack,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    NumberIncrementStepper,
+    NumberDecrementStepper,
 } from '@chakra-ui/core';
 import * as _ from 'lodash';
 import moment from 'moment';
@@ -29,8 +34,9 @@ import { useParams, useHistory } from 'react-router-dom';
 
 const AccordionHeaderStyle = {
     fontWeight: '700',
-    bg: colors.yellow,
-    borderRadius: 5,
+    bg: colors.blue_night,
+    color: colors.white,
+    borderRadius: 3,
 };
 
 const initialPrizeData = {
@@ -70,7 +76,6 @@ export default function HackathonManagement() {
     const [allValuesValid, setAllValuesValid] = React.useState<boolean>(false);
     const [dateError, setDateError] = React.useState<boolean>(false);
     const [missingData, setMissingData] = React.useState<string[]>([]);
-    // const [prizeError, setPrizeError] = React.useState<boolean>(false); TODO
 
     React.useEffect(() => {
         if (idHackathon) {
@@ -87,17 +92,12 @@ export default function HackathonManagement() {
     }, [dateError, missingData]);
 
     React.useEffect(() => {
-        const allValid = _.every(new Set([dateError])) && missingData.length === 0;
-        setAllValuesValid(allValid);
-    }, [dateError, missingData]);
-
-    React.useEffect(() => {
         setMissingData(
             Object.entries(hackathonData)
                 .filter((el) => el[1] === undefined || el[1] === '')
                 .map((el) => el[0])
         );
-    }, [hackathonData]);
+    }, [hackathonData]); //TODO optimize
 
     React.useEffect(() => {
         if (hackathonData.startDate && hackathonData.endDate) {
@@ -135,7 +135,6 @@ export default function HackathonManagement() {
 
     const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event?.target;
-        console.log('onTimeChange -> value', value);
 
         if (name != null && value != null && new Set(['startDate', 'endDate']).has(name)) {
             setHackathonData((curr) => {
@@ -152,8 +151,6 @@ export default function HackathonManagement() {
 
     const onDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event?.target;
-        console.log('onDateChange -> name', name);
-        console.log('onDateChange -> value', value);
 
         if (name != null && value != null && new Set(['startDate', 'endDate']).has(name)) {
             setHackathonData((curr) => {
@@ -164,7 +161,6 @@ export default function HackathonManagement() {
                 newDate.setDate(day);
                 newDate.setMonth(month);
                 newDate.setFullYear(year);
-                console.log('onDateChange -> newDate', newDate);
 
                 return { ...curr, [name]: newDate };
             });
@@ -183,12 +179,12 @@ export default function HackathonManagement() {
 
     return (
         <StyledHackathonContainer>
-            <PseudoBox fontSize='1.8em' fontWeight='semibold' m={3} textAlign='left'>
+            <PseudoBox as='h1' fontSize='1.8em' fontWeight='semibold' m={3} textAlign='left'>
                 {idHackathon ? 'Modifica' : 'Creazione'} Hackathon
             </PseudoBox>
 
             <Accordion defaultIndex={[0]} allowMultiple>
-                <AccordionItem>
+                <StyledAccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
                         <Box flex='1' textAlign='left'>
                             Descrizione dell'evento
@@ -223,9 +219,9 @@ export default function HackathonManagement() {
                             />
                         </FormControl>
                     </AccordionPanel>
-                </AccordionItem>
+                </StyledAccordionItem>
 
-                <AccordionItem>
+                <StyledAccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
                         <Box flex='1' textAlign='left'>
                             Orari e location
@@ -246,6 +242,7 @@ export default function HackathonManagement() {
                                                 placeholder='Data inizio'
                                                 type='date'
                                                 name='startDate'
+                                                id='startDate'
                                                 onChange={onDateChange}
                                                 value={moment(hackathonData.startDate).format(
                                                     'yyyy-MM-DD'
@@ -254,12 +251,13 @@ export default function HackathonManagement() {
                                         </FormControl>
 
                                         <FormControl isRequired textAlign='left' p={1}>
-                                            <FormLabel htmlFor='startDate'>Ora di inizio</FormLabel>
+                                            <FormLabel htmlFor='startTime'>Ora di inizio</FormLabel>
                                             <Input
                                                 size='sm'
                                                 placeholder='Ora di inizio'
                                                 type='time'
                                                 name='startDate'
+                                                id='startTime'
                                                 onChange={onTimeChange}
                                                 value={moment(hackathonData.startDate).format(
                                                     'HH:mm'
@@ -276,6 +274,7 @@ export default function HackathonManagement() {
                                                 placeholder='Data fine'
                                                 type='date'
                                                 name='endDate'
+                                                id='endDate'
                                                 onChange={onDateChange}
                                                 value={moment(hackathonData.endDate).format(
                                                     'yyyy-MM-DD'
@@ -284,12 +283,13 @@ export default function HackathonManagement() {
                                         </FormControl>
 
                                         <FormControl isRequired textAlign='left' p={1}>
-                                            <FormLabel htmlFor='endDate'>Ora di fine</FormLabel>
+                                            <FormLabel htmlFor='endTime'>Ora di fine</FormLabel>
                                             <Input
                                                 size='sm'
                                                 placeholder='Ora di fine'
                                                 type='time'
                                                 name='endDate'
+                                                id='endTime'
                                                 onChange={onTimeChange}
                                                 value={moment(hackathonData.endDate).format(
                                                     'HH:mm'
@@ -321,9 +321,9 @@ export default function HackathonManagement() {
                             </FormControl>
                         </FormControl>
                     </AccordionPanel>
-                </AccordionItem>
+                </StyledAccordionItem>
 
-                <AccordionItem>
+                <StyledAccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
                         <Box flex='1' textAlign='left'>
                             Requisiti per partecipare
@@ -374,9 +374,9 @@ export default function HackathonManagement() {
                             </FormControl>
                         </Box>
                     </AccordionPanel>
-                </AccordionItem>
+                </StyledAccordionItem>
 
-                <AccordionItem>
+                <StyledAccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
                         <Box flex='1' textAlign='left'>
                             Premi
@@ -386,13 +386,17 @@ export default function HackathonManagement() {
                     <AccordionPanel pb={4}>
                         <FormControl isRequired textAlign='left'>
                             <FormLabel htmlFor='startDate'>Premio in denaro</FormLabel>
-                            <Input
-                                id='amount'
-                                name='amount'
-                                type='number'
-                                value={hackathonData.prize.amount}
-                                onChange={onChangePrize}
-                            />
+                            <NumberInput step={5} defaultValue={0} min={0}>
+                                <NumberInputField
+                                    id='amount'
+                                    name='amount'
+                                    onChange={onChangePrize}
+                                />
+                                <NumberInputStepper>
+                                    <NumberIncrementStepper />
+                                    <NumberDecrementStepper />
+                                </NumberInputStepper>
+                            </NumberInput>
                         </FormControl>
 
                         <FormControl textAlign='left' pr={4}>
@@ -405,7 +409,7 @@ export default function HackathonManagement() {
                             />
                         </FormControl>
                     </AccordionPanel>
-                </AccordionItem>
+                </StyledAccordionItem>
             </Accordion>
 
             <Button
@@ -413,7 +417,8 @@ export default function HackathonManagement() {
                 isDisabled={!allValuesValid}
                 m={3}
                 mb={0}
-                borderColor={colors.orange_light}
+                borderColor={colors.blue_night}
+                color={colors.black}
                 border='2px'
                 variant='outline'
                 onClick={onHackathonCreation}
@@ -436,6 +441,10 @@ const StyledHackathonContainer = styled.div`
     border-radius: 10px;
     padding: 10px;
     text-align: center;
+`;
+
+const StyledAccordionItem = styled(AccordionItem)`
+    padding-bottom: 5px;
 `;
 
 const StyleDataDiv = styled.div`
