@@ -111,10 +111,11 @@ export default function Header() {
                                     h='1.8em'
                                     pl={6}
                                     pr={6}
-                                    // variant='outline'
-                                    color={colors.white}
-                                    bg={index % 2 === 0 ? colors.yellow : colors.orange_dark}
-                                    boxShadow={'-3px 4px 3px ' + colors.gray}
+                                    variant='outline'
+                                    // color={colors.white}
+                                    color={index % 2 === 0 ? colors.blue_light : colors.gold}
+                                    borderColor={index % 2 === 0 ? colors.blue_light : colors.gold}
+                                    // boxShadow={'-3px 4px 3px ' + colors.gray}
                                     onClick={() => onMenuClick(el.path)}>
                                     {el.name}
                                 </Button>
@@ -128,7 +129,6 @@ export default function Header() {
 }
 
 const StyledNavBar = styled(Box).attrs({
-    // p: 5px 25px;
     pt: '5px',
     pl: ['6px', '10px', '20px', '25px'],
     pr: ['2px', '10px', '20px', '25px'],
@@ -141,6 +141,7 @@ const StyledNavBar = styled(Box).attrs({
 
 const StyledMenu = styled.div`
     text-align: left;
+    padding-bottom: 5px;
 `;
 
 const StyledLogo = styled(Box).attrs({
