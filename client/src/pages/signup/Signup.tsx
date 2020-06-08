@@ -10,7 +10,6 @@ import {
     InputGroup,
     InputLeftElement,
     InputRightElement,
-    Link,
     Radio,
     RadioGroup,
     Stack,
@@ -25,6 +24,7 @@ import { signup, SignupData, usernameAlreadyExists } from '../../services/AuthSe
 import { StyledCenteredContainer } from '../../components/Common';
 import colors from '../../utils/colors';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
+import { Link } from 'react-router-dom';
 
 const initialSignupData = {
     username: '',
@@ -108,6 +108,7 @@ export default function Signup() {
         <StyledCenteredContainer translateY='-40%'>
             <OverlappedBoxes
                 mainStackStyle={{ width: ['90%', '80%', '50%', '40%'] }}
+                removeDefaultPadding
                 topBoxStyle={{ bg: colors.blue_night }}
                 TopContent={() => (
                     <Heading
@@ -231,13 +232,18 @@ export default function Signup() {
                                 value={signupData.role.toString()}
                                 name='role'
                                 onChange={onRoleChangeValue}>
-                                <Radio value='CLIENT'>Partecipante</Radio>
-                                <Radio value='ORGANIZATION'>Organizzatore</Radio>
+                                <Radio value='CLIENT' variantColor='yellow'>
+                                    Partecipante
+                                </Radio>
+                                <Radio value='ORGANIZATION' variantColor='yellow '>
+                                    Organizzatore
+                                </Radio>
                             </RadioGroup>
                         </Stack>
                         <Button
                             isDisabled={!allValuesValid}
-                            variantColor='blue'
+                            bg={colors.blue_night}
+                            color={colors.white}
                             isLoading={loading}
                             type='submit'
                             onClick={onSignup}>
@@ -245,8 +251,10 @@ export default function Signup() {
                         </Button>
                         <Text p={3} fontSize='0.9em'>
                             Oppure{' '}
-                            <Link color={colors.gold} href='#/login'>
-                                accedi
+                            <Link to='/login'>
+                                <span style={{ color: colors.gold }}>
+                                    <b>accedi</b>
+                                </span>
                             </Link>
                         </Text>
                     </Box>

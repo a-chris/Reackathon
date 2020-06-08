@@ -64,6 +64,7 @@ export default function Login() {
         <StyledCenteredContainer translateY='-40%'>
             <OverlappedBoxes
                 mainStackStyle={{ width: ['90%', '80%', '50%', '40%'] }}
+                removeDefaultPadding
                 topBoxStyle={{ bg: colors.blue_night }}
                 TopContent={() => (
                     <Heading
@@ -138,7 +139,9 @@ export default function Login() {
                         <Text p={5} fontSize='0.9em'>
                             Oppure{' '}
                             <Link to='/signup'>
-                                <span style={{ color: colors.gold }}>registrati</span>
+                                <span style={{ color: colors.gold }}>
+                                    <b>registrati</b>
+                                </span>
                             </Link>
                         </Text>
                     </Box>

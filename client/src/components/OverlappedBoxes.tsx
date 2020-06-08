@@ -8,6 +8,7 @@ type Boxes = {
     mainStackStyle?: StackProps;
     topBoxStyle?: BoxProps;
     bottomBoxStyle?: BoxProps;
+    removeDefaultPadding?: boolean;
 };
 
 export default function OverlappedBoxes(props: Boxes) {
@@ -16,8 +17,7 @@ export default function OverlappedBoxes(props: Boxes) {
             spacing='-70px'
             width={['90%', '80%', '50%', '40%']}
             m='auto'
-            pt='5%'
-            pb='5%'
+            {...(props.removeDefaultPadding ? {} : { pt: '5%', pb: '5%' })}
             {...props.mainStackStyle}>
             <Box
                 overflow='visible'
