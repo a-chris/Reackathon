@@ -3,11 +3,16 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+import axe from 'react-axe';
+
+if (process.env.NODE_ENV !== 'production') {
+    axe(React, ReactDOM, 2000);
+}
 
 ReactDOM.render(
-    <React.StrictMode>
-        <App />,
-    </React.StrictMode>,
+    // <React.StrictMode>
+    <App />,
+    // </React.StrictMode>,
     document.getElementById('root')
 );
 
