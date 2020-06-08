@@ -55,7 +55,6 @@ export default function Signup() {
     }, [passwordError, passwordConfirmError, usernameError, missingData]);
 
     React.useEffect(() => {
-        console.log('Signup -> missingData', missingData);
         setMissingData(
             Object.entries(signupData)
                 .filter((el) => el[1] === undefined || el[1] === '')
@@ -118,7 +117,7 @@ export default function Signup() {
                     setLoading(false);
                 });
         }
-    }, [appContext, signupData]);
+    }, [appContext, signupData, passwordConfirmError]);
 
     return (
         <OverlappedBoxes
