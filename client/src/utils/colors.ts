@@ -5,6 +5,7 @@ const colors = {
     gray: '#e2e8f0',
     gray_light: '#F5F5F5',
     gray_dark: '#718096',
+    gray_darker: '#4d5156',
     black: '#000000',
     black_almost: '#090909',
     orange: '#ea6619',
@@ -15,6 +16,7 @@ const colors = {
     red_light: '#e6504f',
     green: '#319795',
     blue_night: '#06133d',
+    blue_light: '#1d3073',
     blue: '#0b1b4c',
     gold: '#D69E2E',
 };

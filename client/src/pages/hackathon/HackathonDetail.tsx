@@ -27,7 +27,6 @@ import {
     MenuItem,
     Badge,
 } from '@chakra-ui/core';
-import moment from 'moment';
 import { AppContext } from '../../AppContext';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { Attendant, Hackathon, User, UserRole, HackathonStatus } from '../../models/Models';
@@ -45,18 +44,11 @@ import {
     StyledBlueButton,
     StyledTitleBox,
 } from './components/StyledComponents';
+import { toDateString, toTimeString } from '../../utils/functions';
 
 type RouteParams = {
     id: string;
 };
-
-function toDateString(date: Date) {
-    return moment(date).format('DD/MM/YYYY');
-}
-
-function toTimeString(date: Date) {
-    return moment(date).format('HH:mm');
-}
 
 const HackathonTabs = ['Informazioni', 'Iscritti'];
 

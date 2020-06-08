@@ -15,6 +15,7 @@ import OverlappedBoxes from '../../components/OverlappedBoxes';
 import UserBadge from '../../components/UserBadge';
 import ClientProfileInfo from './components/ClientProfileInfo';
 import HackathonProfileInfo from './components/HackathonProfileInfo';
+import colors from '../../utils/colors';
 
 export default function Profile() {
     const { username } = useParams();
@@ -80,12 +81,18 @@ export default function Profile() {
             TopContent={() => (
                 <Flex align='center' justify='space-evenly' flexWrap='wrap' textAlign='center'>
                     <Stack direction='column'>
-                        <Avatar size='xl' name={user?.name} src={avatarUrl} />
+                        <Avatar
+                            size='xl'
+                            name={user?.name}
+                            src={avatarUrl}
+                            color={colors.white}
+                            bg={colors.gold}
+                        />
                         {isProfileOwner && (
-                            <UploadButton variantColor='teal' size='xs'>
+                            <UploadButton size='xs' fontSize='sm'>
                                 <label>
                                     <input type='file' onChange={onAvatarUpload} />
-                                    upload
+                                    Carica foto
                                 </label>
                             </UploadButton>
                         )}

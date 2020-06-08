@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Stack } from '@chakra-ui/core';
+import { Button, ButtonGroup, Stack, Box, Flex } from '@chakra-ui/core';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -76,7 +76,7 @@ export default function Header() {
                             <StyledLogoRed>kathon</StyledLogoRed>
                         </StyledLogo>
                     </Link>
-                    <div>
+                    <Flex justify='flex-end' flexWrap='wrap'>
                         {loginMenu
                             .filter(
                                 (el) =>
@@ -85,11 +85,14 @@ export default function Header() {
                             )
                             .map((el, index) => (
                                 <Button
+                                    mr={1}
+                                    pl='5px'
+                                    pr='5px'
                                     key={el.path}
                                     h='1.8em'
                                     variant='ghost'
                                     // color={colors.white}
-                                    color={index % 2 === 0 ? colors.yellow : colors.orange_dark}
+                                    color={index % 2 === 0 ? colors.gold : colors.blue_light}
                                     // boxShadow={'-3px 4px 3px ' + colors.gray}
                                     onClick={() =>
                                         el.action ? el.action() : onMenuClick(el.path)
@@ -97,7 +100,7 @@ export default function Header() {
                                     {el.name}
                                 </Button>
                             ))}
-                    </div>
+                    </Flex>
                 </Stack>
                 {appContext.state?.user?.role === UserRole.ORGANIZATION && (
                     <StyledMenu>
@@ -124,27 +127,39 @@ export default function Header() {
     );
 }
 
-const StyledNavBar = styled.div`
+const StyledNavBar = styled(Box).attrs({
+    // p: 5px 25px;
+    pt: '5px',
+    pl: ['6px', '10px', '20px', '25px'],
+    pr: ['2px', '10px', '20px', '25px'],
+})`
     width: 100%;
     overflow: hidden;
     text-align: left;
-    padding: 5px 25px;
-    box-shadow: 0px 0px 4px ${colors.red_dark};
+    box-shadow: 0px 0px 4px ${colors.blue_light};
 `;
 
 const StyledMenu = styled.div`
     text-align: left;
 `;
 
-const StyledLogo = styled.h1`
+const StyledLogo = styled(Box).attrs({
+    fontSize: ['26px', '28px', '48px', '48px'],
+})`
+    font-family: Expansiva;
+    font-weight: 400;
+    margin: 0;
+`;
+
+const StyledLogoH = styled.h1`
     font-family: Expansiva;
     font-size: 300%;
 `;
 
 const StyledLogoOrange = styled.span`
-    color: ${colors.orange};
+    color: ${colors.blue_light};
 `;
 
 const StyledLogoRed = styled.span`
-    color: ${colors.red_light};
+    color: ${colors.gold};
 `;

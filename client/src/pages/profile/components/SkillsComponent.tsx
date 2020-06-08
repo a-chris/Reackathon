@@ -103,7 +103,7 @@ export default function SkillsComponent(props: SkillsComponentProps) {
                 )}
             </Flex>
             {props.canBeEdited && (
-                <>
+                <Flex justifyContent='center' pt={2}>
                     {props.isEditable ? (
                         <Flex>
                             <Button m={1} mb='15px' onClick={props.onCancel}>
@@ -119,7 +119,7 @@ export default function SkillsComponent(props: SkillsComponentProps) {
                             <Icon name='edit' ml={1} />
                         </Button>
                     )}
-                </>
+                </Flex>
             )}
         </Box>
     );

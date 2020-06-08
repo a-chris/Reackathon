@@ -35,7 +35,7 @@ export default function OverlappedBoxes(props: Boxes) {
             </Box>
             <Box
                 overflow='hidden'
-                borderWidth='1px'
+                borderWidth='3px'
                 rounded='md'
                 pt='70px'
                 bg={colors.white}

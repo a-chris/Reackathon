@@ -1,4 +1,4 @@
-import { Badge, Box, Heading, SimpleGrid, Stack } from '@chakra-ui/core';
+import { Badge, Box, Heading, SimpleGrid, Stack, Text } from '@chakra-ui/core';
 import queryString from 'query-string';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { MapContainer } from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
+import { toDateString } from '../../utils/functions';
 
 type RouteParams = {
     city?: string;
@@ -40,8 +41,8 @@ export default function HackathonsList() {
         <Box w={'100%'} h={'90%'}>
             <SimpleGrid w={'100%'} h={'100%'} columns={[1, 1, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
-                    <Box color={colors.red_light}>
-                        <Heading as='h2' size='lg'>
+                    <Box textAlign='center'>
+                        <Heading as='h1' size='xl' color={colors.blue_light} p={1}>
                             Hackathons
                         </Heading>
                     </Box>
@@ -53,10 +54,19 @@ export default function HackathonsList() {
                             textAlign='left'
                             key={index}>
                             <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
-                                <Heading as='h3' size='lg'>
+                                <Heading as='h3' size='lg' color={colors.gray_darker}>
                                     {hackathon.name}
                                 </Heading>
-                                <Box color='gray.400'>{hackathon.description}</Box>
+                                <Text color='gray.400'>
+                                    {hackathon.description.substring(0, 150)}...
+                                </Text>
+
+                                <Box mt={1} mb={1}>
+                                    <Text fontSize='sm' fontWeight='semibold'>
+                                        {toDateString(hackathon.startDate)} -{' '}
+                                        {toDateString(hackathon.endDate)}
+                                    </Text>
+                                </Box>
                                 <Box d='flex' alignItems='baseline' justifyContent='space-between'>
                                     <Box
                                         color={colors.gray_dark}
@@ -105,7 +115,7 @@ function StatusBadge(hackathon: Hackathon) {
         case HackathonStatus.PENDING:
             if (!maxAttendants || (maxAttendants && actualAttendants < maxAttendants)) {
                 color = 'yellow';
-                text = 'iscriviti';
+                text = 'iscrizioni aperte';
             } else {
                 color = 'red';
                 text = 'iscrizioni chiuse';
