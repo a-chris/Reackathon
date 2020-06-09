@@ -3,12 +3,14 @@ import queryString from 'query-string';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MapContainer } from '../../components/Map';
-import { Hackathon, HackathonStatus } from '../../models/Models';
+import { Hackathon, HackathonStatus, UserRole } from '../../models/Models';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 import { toDateString } from '../../utils/functions';
+import { AppContext } from '../../AppContext';
 
 type RouteParams = {
+    organization?: string;
     city?: string;
     province?: string;
     district?: string;
@@ -18,20 +20,34 @@ type RouteParams = {
     status?: HackathonStatus;
 };
 
-const ROUTE_PARAMS = new Set(['city', 'province', 'district', 'country', 'from', 'to', 'status']);
+const ROUTE_PARAMS = new Set([
+    'organization',
+    'city',
+    'province',
+    'district',
+    'country',
+    'from',
+    'to',
+    'status',
+]);
 
 export default function HackathonsList() {
+    const appContext = React.useContext(AppContext);
+    console.log('HackathonsList -> appContext', appContext);
+    const location = useLocation();
     const [hackathons, setHackathons] = React.useState<Hackathon[]>([]);
     const [filters, setFilters] = React.useState<RouteParams>();
-    const location = useLocation();
 
     React.useEffect(() => {
         const urlFilters = sanitizeRouteParams(queryString.parse(location.search));
         setFilters((curr) => {
-            const val = { ...curr, ...urlFilters };
-            return val;
+            // add or replace organization id with logged organization id
+            if (appContext.state?.user?.role === UserRole.ORGANIZATION) {
+                urlFilters.organization = appContext.state.user._id;
+            }
+            return { ...curr, ...urlFilters };
         });
-    }, [location]);
+    }, [location, appContext]);
 
     React.useEffect(() => {
         getHackathons(filters).then((hackathons) => setHackathons(hackathons));
