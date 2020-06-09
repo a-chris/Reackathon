@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path';
+import socketIo from 'socket.io';
 import * as authController from './controllers/auth';
 import * as hackathonsController from './controllers/hackatons';
 import * as usersController from './controllers/users';
@@ -20,7 +21,6 @@ mongoose.connect('mongodb://192.168.1.123', {
 });
 
 const MongoStore = require('connect-mongo')(session);
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
@@ -115,7 +115,6 @@ app.route('/hackathons')
 
 app.route('/hackathons/:id').get(hackathonsController.findHackathon);
 
-//TODO: put isClient again
 app.route('/hackathons/:id/sub').put(authController.isClient, hackathonsController.subscribeUser);
 app.route('/hackathons/:id/unsub').put(
     authController.isClient,
@@ -127,4 +126,25 @@ app.route('/hackathons/:id/status').put(hackathonsController.changeHackathonStat
 /**
  * Listen
  */
-app.listen(PORT, () => console.log('Server started!'));
+const server = app.listen(PORT, () => console.log('Server started!'));
+
+const io = socketIo(server);
+app.set('io', io);
+
+/**
+ * Socket.io put here to reuse the http server
+ */
+io.on('connection', (client) => {
+    client.on('test', () => {
+        client.emit('FromAPI', new Date());
+    });
+
+    /*
+     * Create a room for a certain organization
+     * identified by the organization username
+     */
+    client.on('org_room', (username: string) => {
+        console.log('TCL: org_room', username);
+        client.join(username);
+    });
+});

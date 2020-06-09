@@ -32,6 +32,8 @@ export default function Header() {
             logout(appContext.state.user).then((success) => {
                 if (appContext?.onLogout != null) {
                     appContext.onLogout();
+                    // push the user to the homepage
+                    history.push('/');
                 }
             });
         }

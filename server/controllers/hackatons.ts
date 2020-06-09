@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { HackathonDb, Attendant } from '../models/Hackathon';
+import SocketEvent from '../models/Events';
 
 const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 
@@ -132,19 +133,27 @@ export async function subscribeUser(req: Request, res: Response) {
     const user = req.session?.user;
     const hackathonId = req.params?.id;
 
-    const hackathon = await HackathonDb.findById(hackathonId);
-    if (hackathon?.attendants.find((a) => a.user._id == user._id) == null) {
+    const hackathon = await HackathonDb.findById(hackathonId).populate('organization', 'username');
+    if (hackathon != null && hackathon?.attendants.find((a) => a.user._id == user._id) == null) {
         /*
          * as any required due to:
          * https://github.com/DefinitelyTyped/DefinitelyTyped/issues/44752
          */
-        hackathon?.attendants.push({
+        hackathon.attendants.push({
             user: { _id: user._id },
         } as Attendant);
+        /*
+         * Notify hackathon organization using socket
+         */
+        req.app.get('io').emit(hackathon.organization.username, {
+            id: hackathon._id,
+            event: SocketEvent.USER_SUB,
+        });
+
         await hackathon?.save();
         return res.json(await HackathonDb.findById(hackathonId).populate('attendants.user'));
     } else {
-        return res.json(hackathon.populate('attendants.user'));
+        return res.json(hackathon?.populate('attendants.user'));
     }
 }
 
@@ -152,10 +161,20 @@ export async function unsubscribeUser(req: Request, res: Response) {
     const user = req.session?.user;
     const hackathonId = req.params?.id;
 
-    const hackathon = await HackathonDb.findById(hackathonId).populate('attendants.user');
-    if (hackathon != null) {
+    const hackathon = await HackathonDb.findById(hackathonId)
+        .populate('organization', 'username')
+        .populate('attendants.user');
+    if (hackathon != null && hackathon?.attendants.find((a) => a.user._id == user._id) != null) {
         hackathon.attendants = hackathon.attendants.filter((a) => a.user._id != user._id);
+        /*
+         * Notify hackathon organization using socket
+         */
+        req.app.get('io').emit(hackathon.organization.username, {
+            id: hackathon._id,
+            event: SocketEvent.USER_UNSUB,
+        });
         return res.json(await hackathon?.save());
+    } else {
+        return res.json(hackathon);
     }
-    return res.json(hackathon);
 }

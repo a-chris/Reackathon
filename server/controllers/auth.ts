@@ -76,6 +76,6 @@ export function signup(req: Request, res: Response) {
 export function logout(req: Request, res: Response) {
     req.session?.destroy((err) => {
         if (err != null) return res.json({ error: err });
-        res.sendStatus(200);
+        res.status(200).clearCookie('reackathon_session').send();
     });
 }

@@ -30,24 +30,18 @@ export const reducer = (state: AppState, action: Action): AppState => {
             return { ...state };
         case LOGIN_ACTION.LOGGED_IN:
             setLocalUser(action.payload);
-            // localStorage.setItem(
-            //     'loginInfo',
-            //     JSON.stringify({ username: action.payload.username })
-            // );
             return {
                 ...state,
                 user: action.payload,
             };
         case LOGIN_ACTION.LOGIN_FAIL:
             setLocalUser(null);
-            // localStorage.removeItem('loginInfo');
             return {
                 ...state,
                 user: undefined,
             };
         case LOGIN_ACTION.LOGOUT:
             setLocalUser(null);
-            // localStorage.removeItem('loginInfo');
             return {
                 ...state,
                 user: undefined,

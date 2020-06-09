@@ -26,7 +26,9 @@ import {
     MenuList,
     MenuItem,
     Badge,
+    useToast,
 } from '@chakra-ui/core';
+import { useEffectOnce } from 'react-use';
 import { AppContext } from '../../AppContext';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { Attendant, Hackathon, User, UserRole, HackathonStatus } from '../../models/Models';
@@ -36,6 +38,8 @@ import {
     unsubscribeToHackathon,
     changeHackathonStatus,
 } from '../../services/HackathonService';
+import socketClient from '../../socket/socket';
+import SocketEvent, { HackathonSocketData } from '../../socket/SocketEvent';
 import colors from '../../utils/colors';
 import { Attendants, StyledBlueButtonPadded } from './components/AttendantsList';
 import { Information } from './components/HackathonInformation';
@@ -66,18 +70,53 @@ const statusToString = (status: HackathonStatus) => {
 export default function HackathonDetail() {
     const appContext = React.useContext(AppContext);
     const params = useParams<RouteParams>();
-    const idHackathon = params.id;
-
+    const toast = useToast();
+    const hackathonId = params.id;
     const [hackathonData, setHackathonData] = React.useState<Hackathon>();
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
     const [isAlertOpen, setAlertOpen] = React.useState<boolean>();
     const cancelRef = React.useRef<HTMLElement>(null);
 
+    useEffectOnce(() => {
+        if (appContext.state?.user?.role === 'ORGANIZATION') {
+            socketClient.emit('org_room', appContext.state.user.username);
+        }
+    });
+
+    React.useEffect(() => {
+        if (appContext.state?.user?.role === 'ORGANIZATION') {
+            socketClient.on(appContext.state.user.username, (data: HackathonSocketData) => {
+                if (data.event === SocketEvent.USER_SUB) {
+                    toast({
+                        position: 'top-right',
+                        title: 'Nuova notifica',
+                        description: 'Un nuovo utente si è iscritto.',
+                        status: 'success',
+                        isClosable: true,
+                    });
+                } else {
+                    toast({
+                        position: 'top-right',
+                        title: 'Nuova notifica',
+                        description: 'Un utente si è disiscritto.',
+                        status: 'info',
+                        isClosable: true,
+                    });
+                }
+                if (hackathonId === data.id) {
+                    // Update the current hackathon
+                    console.log('UPDATE HACKATHON');
+                    getHackathon(data.id).then((hackathon) => setHackathonData(hackathon));
+                }
+            });
+        }
+    }, [appContext.state, hackathonId, toast]);
+
     const onAlertClose = () => setAlertOpen(false);
 
     React.useEffect(() => {
-        getHackathon(idHackathon).then((hackathon) => setHackathonData(hackathon));
-    }, [idHackathon]);
+        getHackathon(hackathonId).then((hackathon) => setHackathonData(hackathon));
+    }, [hackathonId]);
 
     React.useEffect(() => {
         if (appContext.state?.user != null && appContext.state?.user.role === UserRole.CLIENT) {
@@ -89,25 +128,25 @@ export default function HackathonDetail() {
     }, [hackathonData, appContext]);
 
     const onHackathonSubscribe = React.useCallback(() => {
-        subscribeToHackathon(idHackathon)
+        subscribeToHackathon(hackathonId)
             .then((hackathon) => setHackathonData(hackathon))
             .catch((error) => console.log(error));
-    }, [idHackathon]);
+    }, [hackathonId]);
 
     const onHackathonUnsubscibe = React.useCallback(() => {
         setAlertOpen(false);
-        unsubscribeToHackathon(idHackathon)
+        unsubscribeToHackathon(hackathonId)
             .then((hackathon) => setHackathonData(hackathon))
             .catch((error) => console.log(error));
-    }, [idHackathon]);
+    }, [hackathonId]);
 
     const onChangeStatus = React.useCallback(
         (status: HackathonStatus) => {
-            changeHackathonStatus(idHackathon, status)
+            changeHackathonStatus(hackathonId, status)
                 .then((hackathon) => setHackathonData(hackathon))
                 .catch((error) => console.log(error));
         },
-        [idHackathon]
+        [hackathonId]
     );
 
     const onAssignPrize = React.useCallback(() => {}, []);
@@ -166,7 +205,7 @@ export default function HackathonDetail() {
                                 </MenuButton>
                                 <MenuList>
                                     <MenuItem alignItems='center'>
-                                        <Link to={`/hackathons/update/${idHackathon}`}>
+                                        <Link to={`/hackathons/update/${hackathonId}`}>
                                             Modifica
                                             <Icon name='external-link' ml='2px' size='20px' />
                                         </Link>
