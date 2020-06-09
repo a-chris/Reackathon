@@ -22,14 +22,14 @@ export const Information: React.FC<{ hackathon: Hackathon }> = ({ hackathon }) =
 
     return (
         <StyledBottomBoxContainer>
-            <Heading as='h3' size='md'>
+            <Heading as='h2' size='md'>
                 Descrizione dell'evento
             </Heading>
             <Text>{hackathon.description}</Text>
 
             <Divider borderColor={colors.gold} />
 
-            <Heading as='h3' size='md'>
+            <Heading as='h2' size='md'>
                 Informazioni sugli iscritti
             </Heading>
             <SimpleGrid columns={[2, 2, 4, 4]}>
@@ -67,13 +67,13 @@ export const Information: React.FC<{ hackathon: Hackathon }> = ({ hackathon }) =
             </SimpleGrid>
 
             <Divider borderColor={colors.gold} />
-            <Heading as='h3' size='md'>
+            <Heading as='h2' size='md'>
                 Requisiti richiesti per partecipare
             </Heading>
             <Text>{hackathon.attendantsRequirements.description}</Text>
             <Divider borderColor={colors.gold} />
 
-            <Heading as='h3' size='md'>
+            <Heading as='h2' size='md'>
                 Premio
             </Heading>
             <Text>€ {hackathon.prize.amount} in denaro</Text>

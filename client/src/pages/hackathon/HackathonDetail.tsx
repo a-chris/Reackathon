@@ -67,7 +67,6 @@ export default function HackathonDetail() {
     const appContext = React.useContext(AppContext);
     const params = useParams<RouteParams>();
     const idHackathon = params.id;
-    console.log(idHackathon);
 
     const [hackathonData, setHackathonData] = React.useState<Hackathon>();
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
@@ -114,7 +113,13 @@ export default function HackathonDetail() {
     const onAssignPrize = React.useCallback(() => {}, []);
 
     function getHackathonButtons(currentUser: User | undefined, attendant: Attendant | undefined) {
-        if (currentUser == null) return;
+        if (
+            currentUser == null ||
+            (currentUser.role === UserRole.ORGANIZATION &&
+                currentUser._id !== hackathonData?.organization._id)
+        ) {
+            return;
+        }
 
         if (currentUser.role === UserRole.CLIENT) {
             if (attendant == null) {
@@ -151,7 +156,11 @@ export default function HackathonDetail() {
                     {hackathonData?.status !== HackathonStatus.ARCHIVED ? (
                         hackathonData?.status !== HackathonStatus.FINISHED ? (
                             <Menu>
-                                <MenuButton as={Button} alignItems='center'>
+                                <MenuButton
+                                    alignItems='center'
+                                    p='0'
+                                    rounded='md'
+                                    border={`1px solid ${colors.blue_night}`}>
                                     Gestisci
                                     <Icon name='chevron-down' ml='2px' size='26px' p='0' />
                                 </MenuButton>
@@ -177,7 +186,7 @@ export default function HackathonDetail() {
                             </StyledBlueButton>
                         )
                     ) : (
-                        <Heading as='h3' size='lg' color={colors.red_dark}>
+                        <Heading as='h2' size='lg' color={colors.red_dark}>
                             Cancellato
                         </Heading>
                     )}
@@ -194,7 +203,7 @@ export default function HackathonDetail() {
                 mainStackStyle={{ width: ['90%'] }}
                 TopContent={() => (
                     <StyledTitleBox>
-                        <Heading as='h2' size='xl'>
+                        <Heading as='h1' size='xl'>
                             {hackathonData.name}
                         </Heading>
                         <SimpleGrid columns={[1, 1, 3, 3]} textAlign='left'>
@@ -212,11 +221,7 @@ export default function HackathonDetail() {
                                         {hackathonData.location.country}
                                     </PseudoBox>
                                 </Stack>
-                                <Badge
-                                    variant='outline'
-                                    variantColor='green'
-                                    w='fit-content'
-                                    m='auto'>
+                                <Badge variantColor='green' m='auto'>
                                     Hackathon {statusToString(hackathonData.status)}
                                 </Badge>
                             </Stack>
