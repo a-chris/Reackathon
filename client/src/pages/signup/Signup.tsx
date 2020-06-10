@@ -256,10 +256,10 @@ export default function Signup() {
                             name='role'
                             textAlign='center'
                             onChange={onRoleChangeValue}>
-                            <Radio value='CLIENT' variantColor='yellow'>
+                            <Radio value='CLIENT' variantColor='red'>
                                 Partecipante
                             </Radio>
-                            <Radio value='ORGANIZATION' variantColor='yellow'>
+                            <Radio value='ORGANIZATION' variantColor='red'>
                                 Organizzatore
                             </Radio>
                         </RadioGroup>
