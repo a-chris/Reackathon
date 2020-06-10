@@ -26,7 +26,6 @@ export default function OverlappedBoxes(props: Boxes) {
                 bg={colors.white}
                 rounded='md'
                 w='90%'
-                h='100px'
                 minH='fit-content'
                 m='auto'
                 zIndex={1}

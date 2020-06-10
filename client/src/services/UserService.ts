@@ -58,3 +58,12 @@ export function uploadAvatar(username: string, avatar: any): Promise<User> {
             .catch((error: any) => reject(error))
     );
 }
+
+export function getUsersRanking(order?: string): Promise<User[]> {
+    return new Promise((resolve, reject) =>
+        axios
+            .get(`${USERS_API}/ranking`, { params: { order } })
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}

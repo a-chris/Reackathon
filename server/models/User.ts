@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+export enum UserRole {
+    ORGANIZATION = 'ORGANIZATION',
+    CLIENT = 'CLIENT',
+}
+
 const BadgeSchema = new mongoose.Schema({
     win: {
         type: Number,
@@ -46,14 +51,14 @@ export const UserSchema = new mongoose.Schema({
     name: String,
     email: String,
     avatar: { type: String, required: false },
-    role: { type: String, enum: ['CLIENT', 'ORGANIZATION'] },
+    role: { type: String, enum: [UserRole.CLIENT, UserRole.ORGANIZATION] },
     badge: {
         type: BadgeSchema,
         required: function (this: User) {
-            return this.role === 'CLIENT';
+            return this.role === UserRole.CLIENT;
         },
         default: function (this: User) {
-            if (this.role === 'CLIENT') return BadgeSchema;
+            if (this.role === UserRole.CLIENT) return BadgeSchema;
         },
     },
     skills: {

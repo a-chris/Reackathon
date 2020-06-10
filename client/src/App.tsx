@@ -19,6 +19,7 @@ import Profile from './pages/profile/Profile';
 import Signup from './pages/signup/Signup';
 import { getLocalUser } from './services/UserService';
 import { LOGIN_ACTION } from './utils/constants';
+import Ranking from './pages/raking/Ranking';
 
 /*
  * Set moment language to italian for the whole application
@@ -85,6 +86,7 @@ export default function App() {
                                 <Route exact path='/hackathons/:id' component={HackathonDetail} />
                                 <Route path='/hackathons' component={HackathonsList} />
                                 <Route exact path='/profile/:username' component={Profile} />
+                                <Route exact path='/ranking' component={Ranking} />
                                 <Route component={PageNotFound} />
                             </Switch>
                         </HashRouter>
