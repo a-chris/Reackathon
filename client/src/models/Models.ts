@@ -69,8 +69,10 @@ export type NewHackathon = {
         description: string;
         minNum?: number;
         maxNum?: number;
+        minGroupComponents?: number;
+        maxGroupComponents?: number;
     };
-    organization: User;
+    organization: User | undefined;
     startDate: Date;
     endDate: Date;
     location: Location;
@@ -81,4 +83,5 @@ export type Hackathon = NewHackathon & {
     _id: string;
     attendants: Attendant[];
     status: HackathonStatus;
+    organization: User;
 };

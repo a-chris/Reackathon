@@ -24,6 +24,8 @@ const AttendantsRequirementsSchema = new mongoose.Schema({
     description: String,
     maxNum: { type: Number, required: false },
     minNum: { type: Number, required: false },
+    minGroupComponents: { type: Number, required: false },
+    maxGroupComponents: { type: Number, required: false },
 });
 
 const PrizeSchema = new mongoose.Schema({
@@ -82,6 +84,8 @@ export type Hackathon = mongoose.Document & {
         description: string;
         maxNum: number | undefined;
         minNum: number | undefined;
+        minGroupComponents: number | undefined;
+        maxGroupComponents: number | undefined;
     };
     startDate: Date;
     endDate: Date;

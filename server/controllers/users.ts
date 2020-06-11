@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import fs from 'fs';
 import * as _ from 'lodash';
 import path from 'path';
-import { UserDb } from '../models/User';
+import { UserDb, UserRole } from '../models/User';
 
 const USER_SECTIONS = new Set(['skills', 'experiences']);
 
@@ -90,4 +90,21 @@ export function uploadAvatar(req: Request, res: Response) {
             }
         );
     });
+}
+
+export function getUsersRanking(req: Request, res: Response) {
+    const order = req.query.order;
+
+    let sorting = {};
+    if (order === 'partecipation') {
+        sorting = { 'badge.partecipation': 'desc', 'badge.win': 'desc' };
+    } else {
+        sorting = { 'badge.win': 'desc', 'badge.partecipation': 'desc' };
+    }
+
+    UserDb.find({ role: UserRole.CLIENT })
+        .sort(sorting)
+        .exec((err, users) => {
+            res.json(users);
+        });
 }

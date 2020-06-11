@@ -98,6 +98,8 @@ app.route('/users/exist').get(usersController.usernameExists);
  */
 app.route('/users').get(authController.isOrganization, usersController.getUsers);
 
+app.route('/users/ranking').get(usersController.getUsersRanking);
+
 app.route('/users/:username')
     .get(authController.isLogged, usersController.getUserDetail)
     .post(authController.isClient, usersController.updateClient)

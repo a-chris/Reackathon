@@ -28,3 +28,18 @@ export const StyledLabel = styled(FormLabel)`
     font-size: 80%;
     padding-bottom: 0px;
 `;
+
+export const StyledUserBox = styled(Box).attrs({
+    p: '2%',
+    m: 1,
+})`
+    border-width: 2px;
+    border-style: solid;
+`;
+
+export const StyledResponsiveFlex = styled(Box).attrs({
+    pb: ['10px', '10px', '4px'],
+    display: { md: 'flex' },
+})`
+    justify-content: space-between;
+`;

@@ -26,7 +26,7 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { HackathonStatus, NewHackathon, User } from '../../models/Models';
+import { HackathonStatus, NewHackathon, UserRole } from '../../models/Models';
 // TODO find a better solution
 import { fakeLocation } from '../../models/TempDemoModels';
 import { createHackathon, getHackathon } from '../../services/HackathonService';
@@ -44,7 +44,7 @@ const initialPrizeData = {
     extra: '',
 };
 
-function initialHackathonData(user: User) {
+function initialHackathonData() {
     const date = moment();
     return {
         name: '',
@@ -52,7 +52,7 @@ function initialHackathonData(user: User) {
         attendantsRequirements: {
             description: '',
         },
-        organization: user,
+        organization: undefined,
         startDate: date.add(7, 'days').toDate(),
         endDate: date.add(1, 'days').toDate(),
         location: fakeLocation, //TODO remove fake value
@@ -69,12 +69,11 @@ export default function HackathonManagement() {
     const hackathonId = params.id;
     const history = useHistory();
 
-    const [hackathonData, setHackathonData] = React.useState<NewHackathon>(
-        initialHackathonData(appContext.state!.user!)
-    );
+    const [hackathonData, setHackathonData] = React.useState<NewHackathon>(initialHackathonData());
     const [loading, setLoading] = React.useState<boolean>(false);
     const [allValuesValid, setAllValuesValid] = React.useState<boolean>(false);
     const [dateError, setDateError] = React.useState<boolean>(false);
+    //TODO optional add min max errors and validation
     const [missingData, setMissingData] = React.useState<string[]>([]);
 
     React.useEffect(() => {
@@ -98,6 +97,12 @@ export default function HackathonManagement() {
                 .map((el) => el[0])
         );
     }, [hackathonData]); //TODO optimize
+
+    React.useEffect(() => {
+        if (appContext.state?.user && appContext.state?.user.role === UserRole.ORGANIZATION) {
+            setHackathonData((curr) => ({ ...curr, organization: appContext.state!.user }));
+        }
+    }, [appContext.state]);
 
     React.useEffect(() => {
         if (hackathonData.startDate && hackathonData.endDate) {
@@ -175,7 +180,7 @@ export default function HackathonManagement() {
                 history.push(`/hackathons/${hackathon._id}`);
             })
             .catch((error) => console.log(error));
-    }, [hackathonData, history]);
+    }, [hackathonData, history, appContext]);
 
     return (
         <StyledHackathonContainer>
@@ -331,8 +336,8 @@ export default function HackathonManagement() {
                         <AccordionIcon />
                     </AccordionHeader>
                     <AccordionPanel pb={4}>
-                        <FormControl isRequired textAlign='left'>
-                            <FormLabel htmlFor='description'>
+                        <FormControl textAlign='left'>
+                            <FormLabel htmlFor='requirements_description'>
                                 Requisiti richiesti ai partecipanti
                             </FormLabel>
                             <Textarea
@@ -346,7 +351,7 @@ export default function HackathonManagement() {
 
                         <Box display={{ md: 'flex' }}>
                             <FormControl textAlign='left' pr={4}>
-                                <FormLabel htmlFor='startDate'>
+                                <FormLabel htmlFor='minNum'>
                                     Numero minimo di partecipanti
                                 </FormLabel>
                                 <Input
@@ -360,7 +365,7 @@ export default function HackathonManagement() {
                             </FormControl>
 
                             <FormControl textAlign='left'>
-                                <FormLabel htmlFor='startDate'>
+                                <FormLabel htmlFor='maxNum'>
                                     Numero massimo di partecipanti
                                 </FormLabel>
                                 <Input
@@ -369,6 +374,41 @@ export default function HackathonManagement() {
                                     type='number'
                                     placeholder='-'
                                     value={hackathonData.attendantsRequirements.maxNum || ''}
+                                    onChange={onChangeRequirements}
+                                />
+                            </FormControl>
+                        </Box>
+                        <Box display={{ md: 'flex' }}>
+                            <FormControl textAlign='left' pr={4}>
+                                <FormLabel htmlFor='minGroupComponents'>
+                                    Numero minimo di componenti per squadra
+                                </FormLabel>
+                                <Input
+                                    id='minGroupComponents'
+                                    name='minGroupComponents'
+                                    type='number'
+                                    placeholder='-'
+                                    value={
+                                        hackathonData.attendantsRequirements.minGroupComponents ||
+                                        ''
+                                    }
+                                    onChange={onChangeRequirements}
+                                />
+                            </FormControl>
+
+                            <FormControl textAlign='left'>
+                                <FormLabel htmlFor='maxGroupComponents'>
+                                    Numero massimo di componenti per squadra
+                                </FormLabel>
+                                <Input
+                                    id='maxGroupComponents'
+                                    name='maxGroupComponents'
+                                    type='number'
+                                    placeholder='-'
+                                    value={
+                                        hackathonData.attendantsRequirements.maxGroupComponents ||
+                                        ''
+                                    }
                                     onChange={onChangeRequirements}
                                 />
                             </FormControl>
@@ -385,7 +425,7 @@ export default function HackathonManagement() {
                     </AccordionHeader>
                     <AccordionPanel pb={4}>
                         <FormControl isRequired textAlign='left'>
-                            <FormLabel htmlFor='startDate'>Premio in denaro</FormLabel>
+                            <FormLabel htmlFor='amount'>Premio in denaro</FormLabel>
                             <NumberInput step={5} defaultValue={0} min={0}>
                                 <NumberInputField
                                     id='amount'

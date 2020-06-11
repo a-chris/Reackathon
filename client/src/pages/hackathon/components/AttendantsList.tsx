@@ -7,19 +7,33 @@ import { StyledBottomBoxContainer, StyledBlueButton } from './StyledComponents';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import UserBadge from '../../../components/UserBadge';
+import { StyledResponsiveFlex, StyledUserBox } from '../../../components/Common';
 
 type AttendantsProps = {
     attendants: Attendant[];
     currentAttendant?: Attendant;
 };
 
+type GroupColor = {
+    group: number;
+    color: string;
+};
+
 export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAttendant }) => {
-    const orderedAttendants = _.orderBy(attendants, ['group'], ['asc']);
-    const groupsColorMapping = _.uniq(
-        attendants
-            .filter((attendant) => attendant.group != null)
-            .map((attendant) => attendant.group)
-    ).map((groupNumber: number) => ({ group: groupNumber, color: getRandomColorString() }));
+    const [orderedAttendants, setOrderedAttendants] = React.useState<Attendant[]>();
+    const [groupsColorMapping, setGroupsColorMapping] = React.useState<GroupColor[]>();
+
+    React.useEffect(() => {
+        const orderedAttendants = _.orderBy(attendants, ['group'], ['asc']);
+        const groupsColorMapping = _.uniq(
+            attendants
+                .filter((attendant) => attendant.group != null)
+                .map((attendant) => attendant.group)
+        ).map((groupNumber: number) => ({ group: groupNumber, color: getRandomColorString() }));
+
+        setOrderedAttendants(orderedAttendants);
+        setGroupsColorMapping(groupsColorMapping);
+    }, [attendants, currentAttendant]);
 
     return (
         <StyledBottomBoxContainer>
@@ -27,11 +41,11 @@ export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAtten
                 <Text fontSize='lg'>Ancora nessun iscritto</Text>
             ) : (
                 <Box>
-                    {orderedAttendants.map((attendant, index) => (
-                        <StyledAttendantBox
+                    {orderedAttendants?.map((attendant, index) => (
+                        <StyledUserBox
                             borderColor={getColor(attendant.group, groupsColorMapping)}
                             key={index}>
-                            <StyledAttendantInfoBox>
+                            <StyledResponsiveFlex>
                                 <Box>
                                     <Link to={`/profile/${attendant.user.username}`}>
                                         <Stack isInline alignItems='center'>
@@ -60,7 +74,7 @@ export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAtten
                                     {currentAttendant &&
                                         getGroupButtons(currentAttendant, attendant)}
                                 </Stack>
-                            </StyledAttendantInfoBox>
+                            </StyledResponsiveFlex>
 
                             <Box>
                                 {_.take(
@@ -76,7 +90,7 @@ export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAtten
                                     </Tag>
                                 ))}
                             </Box>
-                        </StyledAttendantBox>
+                        </StyledUserBox>
                     ))}
                 </Box>
             )}
@@ -84,11 +98,8 @@ export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAtten
     );
 };
 
-function getColor(
-    group: number | undefined,
-    groupsColorMapping: { group: number; color: string }[]
-) {
-    return group == null
+function getColor(group: number | undefined, groupsColorMapping: GroupColor[] | undefined) {
+    return group == null || groupsColorMapping == null
         ? getRandomColorString()
         : _.values(groupsColorMapping).find((obj) => obj.group === group)?.color;
 }
@@ -108,21 +119,6 @@ function getGroupButtons(currentAttendant: Attendant, attendantInList: Attendant
     if (text) return <StyledBlueButton size='sm'>{text}</StyledBlueButton>;
     return;
 }
-
-const StyledAttendantBox = styled(Box).attrs({
-    p: '2%',
-    m: 1,
-})`
-    border-width: 2px;
-    border-style: solid;
-`;
-
-const StyledAttendantInfoBox = styled(Box).attrs({
-    pb: ['10px', '10px', '4px'],
-    display: { md: 'flex' },
-})`
-    justify-content: space-between;
-`;
 
 export const StyledBlueButtonPadded = styled(StyledBlueButton).attrs({
     pl: '2.5rem',
