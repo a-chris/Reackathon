@@ -63,7 +63,7 @@ export function findHackathons(req: Request, res: Response) {
 
 export function findHackathon(req: Request, res: Response) {
     const hackathonId = req.params?.id;
-    if (hackathonId == null) {
+    if (hackathonzId == null) {
         return res.sendStatus(400);
     }
     HackathonDb.findOne({ '_id': hackathonId })

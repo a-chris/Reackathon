@@ -2,7 +2,7 @@ import { Box, Button, Flex, Heading, Select, SimpleGrid, Stack } from '@chakra-u
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { MapContainer } from '../../components/Map';
+import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';

@@ -2,12 +2,12 @@ import { Badge, Box, Heading, SimpleGrid, Stack, Text } from '@chakra-ui/core';
 import queryString from 'query-string';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MapContainer } from '../../components/Map';
+import { AppContext } from '../../AppContext';
+import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus, UserRole } from '../../models/Models';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 import { toDateString } from '../../utils/functions';
-import { AppContext } from '../../AppContext';
 
 type RouteParams = {
     organization?: string;
@@ -54,8 +54,8 @@ export default function HackathonsList() {
     }, [filters]);
 
     return (
-        <Box w={'100%'} h={'90%'}>
-            <SimpleGrid w={'100%'} h={'100%'} columns={[1, 1, 2]}>
+        <Box w='100%' h='90%'>
+            <SimpleGrid w='100%' h='100%' columns={[1, 1, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box textAlign='center'>
                         <Heading as='h1' size='xl' color={colors.blue_light} p={1}>
@@ -102,7 +102,7 @@ export default function HackathonsList() {
                         </Box>
                     ))}
                 </Stack>
-                <Box w={'100%'} p={2}>
+                <Box w='100%' p={2}>
                     <MapContainer
                         hackathons={hackathons}
                         style={{ height: '100%', width: '100%' }}

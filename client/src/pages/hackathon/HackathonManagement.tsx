@@ -10,19 +10,20 @@ import {
     FormErrorMessage,
     FormLabel,
     Input,
-    PseudoBox,
-    Text,
-    Textarea,
-    Stack,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
     NumberInput,
     NumberInputField,
     NumberInputStepper,
-    NumberIncrementStepper,
-    NumberDecrementStepper,
+    PseudoBox,
+    Stack,
+    Text,
+    Textarea,
 } from '@chakra-ui/core';
 import * as _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { HackathonStatus, NewHackathon, User } from '../../models/Models';
@@ -30,7 +31,6 @@ import { HackathonStatus, NewHackathon, User } from '../../models/Models';
 import { fakeLocation } from '../../models/TempDemoModels';
 import { createHackathon, getHackathon } from '../../services/HackathonService';
 import colors from '../../utils/colors';
-import { useParams, useHistory } from 'react-router-dom';
 
 const AccordionHeaderStyle = {
     fontWeight: '700',
@@ -66,7 +66,7 @@ type Props = { id?: string };
 export default function HackathonManagement() {
     const appContext = React.useContext(AppContext);
     const params = useParams<Props>();
-    const idHackathon = params.id;
+    const hackathonId = params.id;
     const history = useHistory();
 
     const [hackathonData, setHackathonData] = React.useState<NewHackathon>(
@@ -78,13 +78,13 @@ export default function HackathonManagement() {
     const [missingData, setMissingData] = React.useState<string[]>([]);
 
     React.useEffect(() => {
-        if (idHackathon) {
-            getHackathon(idHackathon).then((hackathon) => {
+        if (hackathonId) {
+            getHackathon(hackathonId).then((hackathon) => {
                 setHackathonData(hackathon);
                 console.log('HackathonManagement -> hackathon', hackathon);
             });
         }
-    }, [idHackathon]);
+    }, [hackathonId]);
 
     React.useEffect(() => {
         const allValid = _.every(new Set([dateError])) && missingData.length === 0;
@@ -180,7 +180,7 @@ export default function HackathonManagement() {
     return (
         <StyledHackathonContainer>
             <PseudoBox as='h1' fontSize='1.8em' fontWeight='semibold' m={3} textAlign='left'>
-                {idHackathon ? 'Modifica' : 'Creazione'} Hackathon
+                {hackathonId ? 'Modifica' : 'Creazione'} Hackathon
             </PseudoBox>
 
             <Accordion defaultIndex={[0]} allowMultiple>
