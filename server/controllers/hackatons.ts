@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { HackathonDb, Attendant } from '../models/Hackathon';
 import SocketEvent from '../models/Events';
+import { Attendant, HackathonDb } from '../models/Hackathon';
 
 const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 
@@ -63,7 +63,7 @@ export function findHackathons(req: Request, res: Response) {
 
 export function findHackathon(req: Request, res: Response) {
     const hackathonId = req.params?.id;
-    if (hackathonzId == null) {
+    if (hackathonId == null) {
         return res.sendStatus(400);
     }
     HackathonDb.findOne({ '_id': hackathonId })

@@ -4,7 +4,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AppContext } from '../../AppContext';
 import MapContainer from '../../components/Map';
-import { Hackathon, HackathonStatus, UserRole } from '../../models/Models';
+import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 import { toDateString } from '../../utils/functions';
@@ -32,22 +32,24 @@ const ROUTE_PARAMS = new Set([
 ]);
 
 export default function HackathonsList() {
-    const appContext = React.useContext(AppContext);
-    console.log('HackathonsList -> appContext', appContext);
     const location = useLocation();
+    const appContext = React.useContext(AppContext);
     const [hackathons, setHackathons] = React.useState<Hackathon[]>([]);
-    const [filters, setFilters] = React.useState<RouteParams>();
+    const [filters, setFilters] = React.useState<RouteParams>(
+        sanitizeRouteParams(queryString.parse(location.search))
+    );
 
-    React.useEffect(() => {
-        const urlFilters = sanitizeRouteParams(queryString.parse(location.search));
-        setFilters((curr) => {
-            // add or replace organization id with logged organization id
-            if (appContext.state?.user?.role === UserRole.ORGANIZATION) {
-                urlFilters.organization = appContext.state.user._id;
-            }
-            return { ...curr, ...urlFilters };
-        });
-    }, [location, appContext]);
+    // TODO: use this when we will add the filters in this page
+    // React.useEffect(() => {
+    //     const urlFilters = sanitizeRouteParams(queryString.parse(location.search));
+    //     setFilters((curr) => {
+    //         // add or replace organization id with logged organization id
+    //         if (appContext.state?.user?.role === UserRole.ORGANIZATION) {
+    //             urlFilters.organization = appContext.state.user._id;
+    //         }
+    //         return { ...curr, ...urlFilters };
+    //     });
+    // }, [location, appContext.state]);
 
     React.useEffect(() => {
         getHackathons(filters).then((hackathons) => setHackathons(hackathons));
@@ -112,6 +114,7 @@ export default function HackathonsList() {
         </Box>
     );
 }
+HackathonsList.whyDidYouRender = true;
 
 function sanitizeRouteParams(params: any): RouteParams {
     let newParams: any = {};

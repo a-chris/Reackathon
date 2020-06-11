@@ -1,5 +1,5 @@
 import { GoogleMap, LoadScript, Marker, MarkerClusterer } from '@react-google-maps/api';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Hackathon, Location } from '../models/Models';
@@ -20,20 +20,8 @@ const center = {
     lng: 12.5736108,
 };
 
-export function MapContainer(props: MapProps) {
+function MapContainer(props: MapProps) {
     const history = useHistory();
-    const [map, setMap] = React.useState(null);
-
-    const onLoad = React.useCallback((map) => {
-        console.log('TCL: MapContainer -> map', map);
-        // const bounds = new window.google.maps.LatLngBounds();
-        // map.fitBounds(bounds);
-        // setMap(map);
-    }, []);
-
-    const onUnmount = React.useCallback((map) => {
-        setMap(null);
-    }, []);
 
     const onMarkerClustererClick = (markerClusterer: any) => {
         const clickedMarkers = markerClusterer.getMarkers();
@@ -47,12 +35,7 @@ export function MapContainer(props: MapProps) {
 
     return (
         <LoadScript googleMapsApiKey={GOOGLE_KEY} id={_.uniqueId('gmaps-')}>
-            <GoogleMap
-                mapContainerStyle={props.style || defaultMapStyle}
-                center={center}
-                zoom={6}
-                onLoad={onLoad}
-                onUnmount={onUnmount}>
+            <GoogleMap mapContainerStyle={props.style || defaultMapStyle} center={center} zoom={6}>
                 {props.hackathons != null && (
                     <MarkerClusterer
                         onClick={onMarkerClustererClick}
@@ -62,9 +45,9 @@ export function MapContainer(props: MapProps) {
                         minimumClusterSize={2}>
                         {(clusterer) =>
                             props.hackathons != null &&
-                            props.hackathons.map((h) => (
+                            props.hackathons.map((h, index) => (
                                 <Marker
-                                    key={createKey(h.location)}
+                                    key={_.uniqueId(index.toString())}
                                     position={getPosition(h.location)}
                                     clusterer={clusterer}
                                     onClick={() => onMarkerClick(h._id)}
@@ -85,8 +68,4 @@ function getPosition(location: Location): any {
         lat: location.lat,
         lng: location.long,
     };
-}
-
-function createKey(location: Location): string {
-    return `${location.lat}${location.long}`;
 }

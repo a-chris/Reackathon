@@ -94,6 +94,7 @@ export default function App() {
         </div>
     );
 }
+App.whyDidYouRender = true;
 
 interface RestrictedRouteProps extends RouteProps {
     allowedFor?: UserRole[];
