@@ -56,9 +56,11 @@ export function findHackathons(req: Request, res: Response) {
     const query = req.query;
     let filters = sanitizeFilters(query);
 
-    HackathonDb.find(filters, (err, hackathons) => {
-        res.json(hackathons);
-    });
+    HackathonDb.find(filters)
+        .populate('organization')
+        .exec((err, hackathons) => {
+            res.json(hackathons);
+        });
 }
 
 export function findHackathon(req: Request, res: Response) {
@@ -68,6 +70,7 @@ export function findHackathon(req: Request, res: Response) {
     }
     HackathonDb.findOne({ '_id': hackathonId })
         .populate('attendants.user')
+        .populate('organization')
         .exec((err, hackathon) => {
             if (hackathon == null) {
                 return res.sendStatus(400);

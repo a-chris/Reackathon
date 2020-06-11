@@ -48,12 +48,12 @@ export function unsubscribeToHackathon(hackathonId: string): Promise<Hackathon> 
 }
 
 export function changeHackathonStatus(
-    idHackathon: string,
+    hackathonId: string,
     status: HackathonStatus
 ): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
-            .put(`http://localhost:5000/hackathons/${idHackathon}/status`, {
+            .put(`http://localhost:5000/hackathons/${hackathonId}/status`, {
                 params: { action: status },
             })
             .then((response: any) => resolve(response.data))

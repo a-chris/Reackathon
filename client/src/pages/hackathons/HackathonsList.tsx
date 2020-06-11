@@ -33,7 +33,6 @@ const ROUTE_PARAMS = new Set([
 
 export default function HackathonsList() {
     const appContext = React.useContext(AppContext);
-    console.log('HackathonsList -> appContext', appContext);
     const location = useLocation();
     const [hackathons, setHackathons] = React.useState<Hackathon[]>([]);
     const [filters, setFilters] = React.useState<RouteParams>();

@@ -31,7 +31,7 @@ import {
 import { useEffectOnce } from 'react-use';
 import { AppContext } from '../../AppContext';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
-import { Attendant, Hackathon, User, UserRole, HackathonStatus } from '../../models/Models';
+import { Attendant, Hackathon, UserRole, HackathonStatus } from '../../models/Models';
 import {
     getHackathon,
     subscribeToHackathon,
@@ -151,7 +151,9 @@ export default function HackathonDetail() {
 
     const onAssignPrize = React.useCallback(() => {}, []);
 
-    function getHackathonButtons(currentUser: User | undefined, attendant: Attendant | undefined) {
+    const getHackathonButtons = React.useCallback(() => {
+        const currentUser = appContext.state?.user;
+
         if (
             currentUser == null ||
             (currentUser.role === UserRole.ORGANIZATION &&
@@ -232,7 +234,7 @@ export default function HackathonDetail() {
                 </Stack>
             );
         }
-    }
+    }, [appContext.state?.user, attendant, hackathonData]);
 
     return hackathonData == null || cancelRef == null ? (
         <div />
@@ -280,7 +282,7 @@ export default function HackathonDetail() {
                             <Flex
                                 alignItems='center'
                                 justifyContent={['center', 'center', 'flex-end']}>
-                                {getHackathonButtons(appContext.state?.user, attendant)}
+                                {getHackathonButtons()}
                             </Flex>
                         </SimpleGrid>
                     </StyledTitleBox>
