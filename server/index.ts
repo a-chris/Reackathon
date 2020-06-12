@@ -7,6 +7,7 @@ import multer from 'multer';
 import path from 'path';
 import socketIo from 'socket.io';
 import * as authController from './controllers/auth';
+import * as filtersController from './controllers/filters';
 import * as hackathonsController from './controllers/hackatons';
 import * as usersController from './controllers/users';
 
@@ -124,6 +125,8 @@ app.route('/hackathons/:id/unsub').put(
 );
 
 app.route('/hackathons/:id/status').put(hackathonsController.changeHackathonStatus);
+
+app.route('/filters/cities').get(filtersController.getAvailableCities);
 
 /**
  * Listen

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Hackathon, NewHackathon, HackathonStatus } from '../models/Models';
+import { Hackathon, HackathonStatus, NewHackathon } from '../models/Models';
 
 export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
     // TODO: add params

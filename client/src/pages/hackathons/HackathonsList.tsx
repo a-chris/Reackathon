@@ -1,10 +1,27 @@
-import { Badge, Box, Heading, SimpleGrid, Stack, Text } from '@chakra-ui/core';
+import {
+    Accordion,
+    AccordionHeader,
+    AccordionIcon,
+    AccordionItem,
+    AccordionPanel,
+    Badge,
+    Box,
+    Flex,
+    Heading,
+    Input,
+    Select,
+    SimpleGrid,
+    Stack,
+    Text,
+} from '@chakra-ui/core';
 import queryString from 'query-string';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AppContext } from '../../AppContext';
+import { BoxWithSpacedChildren } from '../../components/Common';
 import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
+import { getAvailableCities } from '../../services/FilterService';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 import { toDateString } from '../../utils/functions';
@@ -31,80 +48,144 @@ const ROUTE_PARAMS = new Set([
     'status',
 ]);
 
+const HACKATHON_STATUSES = {
+    pending: 'In attesa',
+    started: 'In corso',
+    finished: 'Concluso',
+    archived: 'Archiviato',
+};
+
 export default function HackathonsList() {
     const location = useLocation();
     const appContext = React.useContext(AppContext);
-    const [hackathons, setHackathons] = React.useState<Hackathon[]>([]);
+    const [hackathons, setHackathons] = React.useState<Hackathon[]>();
+    const [availableCities, setAvailableCities] = React.useState<string[]>([]);
     const [filters, setFilters] = React.useState<RouteParams>(
         sanitizeRouteParams(queryString.parse(location.search))
     );
 
-    // TODO: use this when we will add the filters in this page
-    // React.useEffect(() => {
-    //     const urlFilters = sanitizeRouteParams(queryString.parse(location.search));
-    //     setFilters((curr) => {
-    //         // add or replace organization id with logged organization id
-    //         if (appContext.state?.user?.role === UserRole.ORGANIZATION) {
-    //             urlFilters.organization = appContext.state.user._id;
-    //         }
-    //         return { ...curr, ...urlFilters };
-    //     });
-    // }, [location, appContext.state]);
+    React.useEffect(() => {
+        getAvailableCities().then((cities) => setAvailableCities(cities));
+    }, []);
 
     React.useEffect(() => {
         getHackathons(filters).then((hackathons) => setHackathons(hackathons));
     }, [filters]);
 
+    const onChangeFilter = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = event.target;
+        if (name != null && value != null) {
+            const sanitizedValue = value === '' ? undefined : value;
+            setFilters((curr) => ({ ...curr, [name]: sanitizedValue }));
+        }
+    };
+
     return (
-        <Box w='100%' h='90%'>
-            <SimpleGrid w='100%' h='100%' columns={[1, 1, 2]}>
+        <Box w='100%' h='85vh'>
+            <SimpleGrid w='100%' h='100%' columns={[1, 1, 1, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box textAlign='center'>
                         <Heading as='h1' size='xl' color={colors.blue_light} p={1}>
                             Hackathons
                         </Heading>
                     </Box>
-                    {hackathons.map((hackathon, index) => (
-                        <Box
-                            p={2}
-                            color='gray.500'
-                            border={'2px solid ' + colors.gray}
-                            textAlign='left'
-                            key={index}>
-                            <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
-                                <Heading as='h2' size='lg' color={colors.gray_darker}>
-                                    {hackathon.name}
-                                </Heading>
-                                <Text color={colors.gray_light}>
-                                    {hackathon.description.substring(0, 150)}...
-                                </Text>
+                    <Accordion allowToggle>
+                        <AccordionItem>
+                            <AccordionHeader>
+                                <Box flex='1'>
+                                    <Heading as='h2' size='md' textAlign='center'>
+                                        Fitri
+                                    </Heading>
+                                </Box>
+                                <AccordionIcon />
+                            </AccordionHeader>
+                            <AccordionPanel>
+                                <SimpleGrid columns={[1, 2, 4]} spacing={[1, 1, 2]}>
+                                    <label>
+                                        <b>Città:</b>
+                                        <Select
+                                            placeholder='-'
+                                            name='city'
+                                            onChange={onChangeFilter}>
+                                            {availableCities.map((city) => (
+                                                <option value={city} key={city}>
+                                                    {city}
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </label>
+                                    <label>
+                                        <b>Status:</b>
+                                        <Select
+                                            placeholder='-'
+                                            name='status'
+                                            onChange={onChangeFilter}>
+                                            {Object.entries(HACKATHON_STATUSES).map((e) => (
+                                                <option value={e[0]} key={e[0]}>
+                                                    {e[1]}
+                                                </option>
+                                            ))}
+                                        </Select>
+                                    </label>
+                                    <label>
+                                        <b>Data di inizio:</b>
+                                        <Input type='date' name='from' onChange={onChangeFilter} />
+                                    </label>
+                                    <label>
+                                        <b>Data di fine:</b>
+                                        <Input type='date' name='to' onChange={onChangeFilter} />
+                                    </label>
+                                </SimpleGrid>
+                            </AccordionPanel>
+                        </AccordionItem>
+                    </Accordion>
+                    <BoxWithSpacedChildren space='15px'>
+                        {hackathons == null ? null : hackathons.length === 0 ? (
+                            <Text textAlign='center'>Nessun hackathon trovato.</Text>
+                        ) : (
+                            hackathons.map((hackathon, index) => (
+                                <Box
+                                    p={2}
+                                    color='gray.500'
+                                    border={'2px solid ' + colors.gray}
+                                    textAlign='left'
+                                    key={index}>
+                                    <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
+                                        <Heading as='h2' size='lg' color={colors.gray_darker}>
+                                            {hackathon.name}
+                                        </Heading>
+                                        <Text color={colors.gray_light}>
+                                            {hackathon.description.substring(0, 150)}...
+                                        </Text>
 
-                                <Box mt={1} mb={1}>
-                                    <Text
-                                        fontSize='sm'
-                                        fontWeight='semibold'
-                                        color={colors.gray_dark}>
-                                        {toDateString(hackathon.startDate)} -{' '}
-                                        {toDateString(hackathon.endDate)}
-                                    </Text>
+                                        <Box mt={1} mb={1}>
+                                            <Text
+                                                fontSize='sm'
+                                                fontWeight='semibold'
+                                                color={colors.gray_dark}>
+                                                {toDateString(hackathon.startDate)} -{' '}
+                                                {toDateString(hackathon.endDate)}
+                                            </Text>
+                                        </Box>
+                                        <Flex alignItems='baseline' justifyContent='space-between'>
+                                            <Box
+                                                color={colors.gray_dark}
+                                                fontWeight='semibold'
+                                                letterSpacing='wide'
+                                                fontSize='xs'
+                                                textTransform='uppercase'>
+                                                {hackathon.location.city} &bull;{' '}
+                                                {hackathon.location.country}
+                                            </Box>
+                                            {StatusBadge(hackathon)}
+                                        </Flex>
+                                    </Link>
                                 </Box>
-                                <Box d='flex' alignItems='baseline' justifyContent='space-between'>
-                                    <Box
-                                        color={colors.gray_dark}
-                                        fontWeight='semibold'
-                                        letterSpacing='wide'
-                                        fontSize='xs'
-                                        textTransform='uppercase'>
-                                        {hackathon.location.city} &bull;{' '}
-                                        {hackathon.location.country}
-                                    </Box>
-                                    {StatusBadge(hackathon)}
-                                </Box>
-                            </Link>
-                        </Box>
-                    ))}
+                            ))
+                        )}
+                    </BoxWithSpacedChildren>
                 </Stack>
-                <Box w='100%' p={2}>
+                <Box w='100%' d={{ xs: 'none', md: 'block' }}>
                     <MapContainer
                         hackathons={hackathons}
                         style={{ height: '100%', width: '100%' }}
@@ -114,7 +195,7 @@ export default function HackathonsList() {
         </Box>
     );
 }
-HackathonsList.whyDidYouRender = true;
+// HackathonsList.whyDidYouRender = true;
 
 function sanitizeRouteParams(params: any): RouteParams {
     let newParams: any = {};

@@ -54,7 +54,7 @@ const sanitizeFilters = (filters: any): FilterType => {
 
 export function findHackathons(req: Request, res: Response) {
     const query = req.query;
-    let filters = sanitizeFilters(query);
+    const filters = sanitizeFilters(query);
 
     HackathonDb.find(filters)
         .populate('organization')
