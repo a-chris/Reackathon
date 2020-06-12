@@ -5,15 +5,15 @@ interface BoxWithSpacedChildrenProps {
     space: string;
 }
 
-interface AlignmentProps {
-    translateY?: string;
-}
-
 export const BoxWithSpacedChildren = styled(Box)<BoxWithSpacedChildrenProps>`
     & > * {
         margin-bottom: ${(props) => props.space};
     }
 `;
+
+interface AlignmentProps {
+    translateY?: string;
+}
 
 export const StyledCenteredContainer = styled(Box)<AlignmentProps>`
     position: absolute;

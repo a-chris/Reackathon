@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Stack, Box, Flex } from '@chakra-ui/core';
+import { Box, Button, ButtonGroup, Flex, Stack } from '@chakra-ui/core';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -61,30 +61,6 @@ export default function Header() {
         );
     }, [appContext.state?.user]);
 
-    const authMenuItems: MenuItem[] = [
-        {
-            name: 'Login',
-            path: '/login',
-            role: undefined,
-        },
-        {
-            name: 'Registrati',
-            path: '/signup',
-            role: undefined,
-        },
-        {
-            name: 'Profilo',
-            path: `/profile/${appContext?.state?.user?.username}`,
-            role: [UserRole.CLIENT, UserRole.ORGANIZATION],
-        },
-        {
-            name: 'Logout',
-            path: '/',
-            role: [UserRole.CLIENT, UserRole.ORGANIZATION],
-            action: () => onLogout(),
-        },
-    ];
-
     const onLogout = React.useCallback(() => {
         if (appContext.state?.user) {
             logout(appContext.state.user).then((success) => {
@@ -96,6 +72,33 @@ export default function Header() {
             });
         }
     }, [appContext.state?.user]);
+
+    const authMenuItems: MenuItem[] = React.useMemo(
+        () => [
+            {
+                name: 'Login',
+                path: '/login',
+                role: undefined,
+            },
+            {
+                name: 'Registrati',
+                path: '/signup',
+                role: undefined,
+            },
+            {
+                name: 'Profilo',
+                path: `/profile/${appContext?.state?.user?.username}`,
+                role: [UserRole.CLIENT, UserRole.ORGANIZATION],
+            },
+            {
+                name: 'Logout',
+                path: '/',
+                role: [UserRole.CLIENT, UserRole.ORGANIZATION],
+                action: () => onLogout(),
+            },
+        ],
+        [appContext, onLogout]
+    );
 
     function onMenuClick(path: string) {
         history.push(path);
@@ -155,6 +158,7 @@ const StyledNavBar = styled(Box).attrs({
     pl: ['6px', '10px', '20px', '25px'],
     pr: ['2px', '10px', '20px', '25px'],
 })`
+    height: 15vh;
     width: 100%;
     overflow: hidden;
     text-align: left;

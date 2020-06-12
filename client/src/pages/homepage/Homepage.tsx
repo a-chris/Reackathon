@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
+import { getAvailableCities } from '../../services/FilterService';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 
@@ -19,17 +20,17 @@ const BackgroundImageStyleProps = {
 
 export default function Homepage() {
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
-    const [cities, setCities] = React.useState<Set<string>>(new Set());
+    const [cities, setCities] = React.useState<string[]>([]);
     const [selectedCity, setSelectedCity] = React.useState<string>();
 
     React.useEffect(() => {
+        getAvailableCities().then((cities) => setCities(cities));
         getHackathons(initialFilter).then((hackathons) => {
             setHackathons(hackathons);
-            setCities(new Set(hackathons.map((el) => el.location.city)));
         });
     }, []);
 
-    const citiesToDisplay = [...cities]?.slice(0, Math.min(CITY_TO_SHOW, cities.size));
+    const citiesToDisplay = [...cities]?.slice(0, Math.min(CITY_TO_SHOW, cities.length));
 
     const onFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const { value } = event?.target;
@@ -56,22 +57,22 @@ export default function Homepage() {
                         </Stack>
                     </Flex>
                     <Box bg={colors.white} w='70%' h='100%' m='auto' borderRadius='md'>
-                        <Flex textAlign='center'>
+                        <Flex>
                             <Stack spacing={8} p='8%' w='100%'>
                                 <Heading as='h2' size='lg' p={5}>
                                     Trova l'Hackathon che fa per te
                                 </Heading>
                                 <Box>
-                                    <label>
-                                        Seleziona una città
-                                        <Select
-                                            onChange={onFilterChange}
-                                            placeholder='Seleziona una città'>
-                                            {Array.from(cities).map((city) => (
-                                                <option key={city} value={city} label={city} />
-                                            ))}
-                                        </Select>
-                                    </label>
+                                    <Box textAlign='left'>
+                                        <label>
+                                            <b>Seleziona una città:</b>
+                                            <Select onChange={onFilterChange} placeholder='-'>
+                                                {Array.from(cities).map((city) => (
+                                                    <option key={city} value={city} label={city} />
+                                                ))}
+                                            </Select>
+                                        </label>
+                                    </Box>
                                     <Link
                                         to={
                                             selectedCity != null
@@ -87,13 +88,13 @@ export default function Homepage() {
                 </SimpleResponsiveGrid>
             </FlexContainer>
             <Box>
-                {cities.size > 0 && (
+                {cities?.length > 0 && (
                     <Box p={10} pb='10%' pt={30}>
                         <Heading as='h2' p={10}>
                             Scopri le città con i prossimi Hackathon
                         </Heading>
                         <SimpleGrid
-                            columns={[1, Math.min(2, cities.size), Math.min(3, cities.size)]}
+                            columns={[1, Math.min(2, cities.length), Math.min(3, cities.length)]}
                             spacing={5}
                             alignItems='center'>
                             {citiesToDisplay.map((city, index) => (
