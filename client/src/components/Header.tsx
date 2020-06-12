@@ -16,6 +16,11 @@ type MenuItem = {
 
 const actionMenuItems: MenuItem[] = [
     {
+        name: 'Dashboard',
+        path: '/org',
+        role: [UserRole.ORGANIZATION],
+    },
+    {
         name: 'Crea',
         path: '/hackathons/create',
         role: [UserRole.ORGANIZATION],
@@ -33,7 +38,7 @@ const actionMenuItems: MenuItem[] = [
     {
         name: 'Classifica',
         path: '/ranking',
-        role: [UserRole.CLIENT, UserRole.ORGANIZATION],
+        role: [UserRole.CLIENT],
     },
 ];
 
@@ -95,7 +100,7 @@ export default function Header() {
                 }
             });
         }
-    }, [appContext.state?.user]);
+    }, [appContext.state?.user, history]);
 
     function onMenuClick(path: string) {
         history.push(path);
