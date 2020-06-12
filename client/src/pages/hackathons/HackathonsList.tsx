@@ -17,7 +17,6 @@ import {
 import queryString from 'query-string';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { AppContext } from '../../AppContext';
 import { BoxWithSpacedChildren } from '../../components/Common';
 import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
@@ -57,7 +56,6 @@ const HACKATHON_STATUSES = {
 
 export default function HackathonsList() {
     const location = useLocation();
-    const appContext = React.useContext(AppContext);
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
     const [availableCities, setAvailableCities] = React.useState<string[]>([]);
     const [filters, setFilters] = React.useState<RouteParams>(
@@ -82,7 +80,7 @@ export default function HackathonsList() {
 
     return (
         <Box w='100%' h='85vh'>
-            <SimpleGrid w='100%' h='100%' columns={[1, 1, 1, 2]}>
+            <SimpleGrid w='100%' h='100%' columns={[1, 1, 2, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box textAlign='center'>
                         <Heading as='h1' size='xl' color={colors.blue_light} p={1}>
