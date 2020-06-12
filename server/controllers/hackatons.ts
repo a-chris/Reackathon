@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import SocketEvent from '../models/Events';
 import { Attendant, HackathonDb } from '../models/Hackathon';
+import { UserRole } from '../models/User';
 
 const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 
@@ -12,6 +13,13 @@ type FilterType = {
     from?: string;
     to?: string;
     status?: string;
+};
+
+export type Statistic = {
+    totalHackathons: number;
+    pendingHackathons: number;
+    totalPrize: number;
+    totalAttendants: number;
 };
 
 const mapFiltersToString = (filterName: string) => {
@@ -180,4 +188,36 @@ export async function unsubscribeUser(req: Request, res: Response) {
     } else {
         return res.json(hackathon);
     }
+}
+
+export function organizationStats(req: Request, res: Response) {
+    const user = req.session?.user;
+
+    if (user._id == null || user.role != UserRole.ORGANIZATION) {
+        return res.sendStatus(401);
+    }
+
+    const stats = {
+        totalHackathons: 0,
+        pendingHackathons: 0,
+        totalAttendants: 0,
+        totalPrize: 0,
+    };
+
+    HackathonDb.find({ organizator: user._id }).exec((err, results) => {
+        if (results.length > 0) {
+            stats.totalHackathons = results.length;
+            stats.pendingHackathons = results.filter(
+                (hackathon) => hackathon.status === 'pending'
+            ).length;
+            stats.totalAttendants = results
+                .map((hackathon) => hackathon.attendants.length)
+                .reduce((numAttendantsA, numAttendantsB) => numAttendantsA + numAttendantsB);
+            stats.totalPrize = results
+                .map((hackathon) => hackathon.prize.amount)
+                .reduce((amountA, amountB) => amountA + amountB);
+        }
+        return res.json(stats);
+    });
+    // return res.json(stats);
 }

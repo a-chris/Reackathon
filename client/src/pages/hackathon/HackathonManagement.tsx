@@ -52,7 +52,6 @@ function initialHackathonData() {
         attendantsRequirements: {
             description: '',
         },
-        organization: undefined,
         startDate: date.add(7, 'days').toDate(),
         endDate: date.add(1, 'days').toDate(),
         location: fakeLocation, //TODO remove fake value
@@ -180,7 +179,7 @@ export default function HackathonManagement() {
                 history.push(`/hackathons/${hackathon._id}`);
             })
             .catch((error) => console.log(error));
-    }, [hackathonData, history, appContext]);
+    }, [hackathonData, history]);
 
     return (
         <StyledHackathonContainer>

@@ -128,6 +128,8 @@ app.route('/hackathons/:id/status').put(hackathonsController.changeHackathonStat
 
 app.route('/filters/cities').get(filtersController.getAvailableCities);
 
+app.route('/stats').get(authController.isOrganization, hackathonsController.organizationStats);
+
 /**
  * Listen
  */
