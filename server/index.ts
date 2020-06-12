@@ -125,6 +125,8 @@ app.route('/hackathons/:id/unsub').put(
 
 app.route('/hackathons/:id/status').put(hackathonsController.changeHackathonStatus);
 
+app.route('/stats').get(authController.isOrganization, hackathonsController.organizationStats);
+
 /**
  * Listen
  */
