@@ -45,14 +45,18 @@ function MapContainer(props: MapProps) {
                         minimumClusterSize={2}>
                         {(clusterer) =>
                             props.hackathons != null &&
-                            props.hackathons.map((h, index) => (
-                                <Marker
-                                    key={_.uniqueId(index.toString())}
-                                    position={getPosition(h.location)}
-                                    clusterer={clusterer}
-                                    onClick={() => onMarkerClick(h._id)}
-                                />
-                            ))
+                            props.hackathons
+                                .filter(
+                                    (hackathon) => hackathon.location.lat && hackathon.location.long
+                                )
+                                .map((h, index) => (
+                                    <Marker
+                                        key={_.uniqueId(index.toString())}
+                                        position={getPosition(h.location)}
+                                        clusterer={clusterer}
+                                        onClick={() => onMarkerClick(h._id)}
+                                    />
+                                ))
                         }
                     </MarkerClusterer>
                 )}

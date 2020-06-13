@@ -40,15 +40,14 @@ export type User = {
 };
 
 export type Location = {
-    street: string;
-    number: number;
-    city: string;
-    province: string;
-    district: string;
-    country: string;
-    zip_code: number;
-    lat: number;
-    long: number;
+    street?: string;
+    number?: number;
+    city?: string;
+    province?: string;
+    country?: string;
+    zip_code?: number;
+    lat?: number;
+    long?: number;
 };
 
 export type Prize = {
@@ -75,7 +74,7 @@ export type NewHackathon = {
     organization?: User;
     startDate: Date;
     endDate: Date;
-    location: Location;
+    location?: Location;
     prize: Prize;
 };
 
@@ -84,6 +83,7 @@ export type Hackathon = NewHackathon & {
     attendants: Attendant[];
     status: HackathonStatus;
     organization: User;
+    location: Location;
 };
 
 export type Statistics = {
