@@ -2,7 +2,6 @@ import axios from 'axios';
 import { Hackathon, NewHackathon, HackathonStatus, Statistics } from '../models/Models';
 
 export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
-    // TODO: add params
     return new Promise((resolve, reject) =>
         axios
             .get('http://localhost:5000/hackathons', { params: filters })
@@ -65,6 +64,15 @@ export function getStatistics(): Promise<Statistics> {
     return new Promise((resolve, reject) =>
         axios
             .get(`http://localhost:5000/stats`)
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}
+
+export function getOrganizationHackathons(): Promise<Hackathon[]> {
+    return new Promise((resolve, reject) =>
+        axios
+            .get('http://localhost:5000/hackathons/org')
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );

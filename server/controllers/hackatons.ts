@@ -103,6 +103,20 @@ export function saveHackathons(req: Request, res: Response) {
     }
 }
 
+export function findOrganizationHackathons(req: Request, res: Response) {
+    const user = req.session?.user;
+
+    if (user._id == null || user.role != UserRole.ORGANIZATION) {
+        return res.sendStatus(401);
+    }
+
+    HackathonDb.find({ 'organization': user._id })
+        .populate('organization')
+        .exec((err, hackathons) => {
+            res.json(hackathons);
+        });
+}
+
 export function changeHackathonStatus(req: Request, res: Response) {
     const hackathonId = req.params?.id;
     const action = req.body.params?.action?.toString();
@@ -193,7 +207,7 @@ export function organizationStats(req: Request, res: Response) {
         totalPrize: 0,
     };
 
-    HackathonDb.find({ organizator: user._id }).exec((err, results) => {
+    HackathonDb.find({ organization: user._id }).exec((err, results) => {
         if (results.length > 0) {
             stats.totalHackathons = results.length;
             stats.pendingHackathons = results.filter(

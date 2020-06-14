@@ -12,7 +12,7 @@ import {
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Hackathon, HackathonStatus, Statistics } from '../../models/Models';
-import { getHackathons, getStatistics } from '../../services/HackathonService';
+import { getOrganizationHackathons, getStatistics } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 
 export default function OrganizationBoard() {
@@ -20,7 +20,7 @@ export default function OrganizationBoard() {
     const [stats, setStats] = React.useState<Statistics>();
 
     React.useEffect(() => {
-        getHackathons().then((hackathons) => {
+        getOrganizationHackathons().then((hackathons) => {
             setHackathons(hackathons);
         });
         getStatistics().then((stats) => {
