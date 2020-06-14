@@ -19,9 +19,7 @@ import {
     Stack,
     Text,
     Textarea,
-    Flex,
     Divider,
-    Heading,
 } from '@chakra-ui/core';
 import * as _ from 'lodash';
 import moment from 'moment';
@@ -29,9 +27,12 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { HackathonStatus, NewHackathon, UserRole } from '../../models/Models';
+import { HackathonStatus, NewHackathon, UserRole, Location } from '../../models/Models';
 import { createHackathon, getHackathon } from '../../services/HackathonService';
 import colors from '../../utils/colors';
+import AutocompleteComponent from './components/AutocompleteComponent';
+
+type Props = { id?: string };
 
 const AccordionHeaderStyle = {
     fontWeight: '700',
@@ -43,6 +44,16 @@ const AccordionHeaderStyle = {
 const initialPrizeData = {
     amount: 0,
     extra: '',
+};
+
+const locationToString = {
+    number: 'numero civico',
+    street: 'via',
+    city: 'città',
+    region: 'regione',
+    province: 'provincia',
+    country: 'stato',
+    zip_code: 'codice postale',
 };
 
 function initialHackathonData() {
@@ -61,8 +72,6 @@ function initialHackathonData() {
     };
 }
 
-type Props = { id?: string };
-
 export default function HackathonManagement() {
     const appContext = React.useContext(AppContext);
     const params = useParams<Props>();
@@ -75,6 +84,7 @@ export default function HackathonManagement() {
     const [dateError, setDateError] = React.useState<boolean>(false);
     const [groupError, setGroupError] = React.useState<boolean>(false);
     const [attensantsNumError, setAttensantsNumError] = React.useState<boolean>(false);
+    const [locationMissingFields, setLocationMissingFields] = React.useState<string[]>([]);
     //TODO optional add min max errors and validation
     const [missingData, setMissingData] = React.useState<string[]>([]);
 
@@ -90,20 +100,15 @@ export default function HackathonManagement() {
     React.useEffect(() => {
         const allValid =
             _.every(new Set([dateError, groupError, attensantsNumError])) &&
-            missingData.length === 0;
+            missingData.length === 0 &&
+            locationMissingFields.length === 0;
         setAllValuesValid(allValid);
-    }, [dateError, groupError, attensantsNumError, missingData]);
+    }, [dateError, groupError, attensantsNumError, missingData, locationMissingFields]);
 
     React.useEffect(() => {
         const missingFields = Object.entries(hackathonData)
             .filter((el) => el[1] === undefined || el[1] === '')
             .map((el) => el[0]);
-        if (hackathonData.location?.street == null) missingFields.push('street');
-        if (hackathonData.location?.number == null) missingFields.push('number');
-        if (hackathonData.location?.city == null) missingFields.push('city');
-        if (hackathonData.location?.province == null) missingFields.push('province');
-        if (hackathonData.location?.zip_code == null) missingFields.push('zip_code');
-        if (hackathonData.location?.country == null) missingFields.push('country');
 
         setMissingData(missingFields);
     }, [hackathonData]);
@@ -163,14 +168,12 @@ export default function HackathonManagement() {
         }
     };
 
-    const onChangeLocation = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event?.target;
-        if (name != null && value != null) {
-            setHackathonData((curr) => ({
-                ...curr,
-                location: { ...curr.location, [name]: value },
-            }));
-        }
+    const onChangeLocation = (location: Location | undefined, missingData: string[] | []) => {
+        setHackathonData((curr) => ({
+            ...curr,
+            location,
+        }));
+        setLocationMissingFields(missingData);
     };
 
     const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -334,112 +337,27 @@ export default function HackathonManagement() {
                                     </StyleDataDiv>
                                 </Box>
                                 <FormErrorMessage>
-                                    {`L'Hackathon deve essere creato almeno un giorno prima dell'inizio dell'evento,\
-                                     e la data di inizio deve essere inferiore a quella di fine.`}
+                                    L'Hackathon deve essere creato almeno un giorno prima
+                                    dell'inizio dell'evento, e la data di inizio deve essere
+                                    inferiore a quella di fine.
                                 </FormErrorMessage>
                             </Stack>
-
-                            <Divider borderColor={colors.gold} />
-
-                            <Heading as='h2' size='md'>
-                                Indirizzo
-                            </Heading>
-                            <Flex wrap='wrap'>
-                                <FormControl isRequired p={1}>
-                                    <FormLabel htmlFor='street'>Vai</FormLabel>
-                                    <Input
-                                        id='street'
-                                        name='street'
-                                        defaultValue={hackathonData.location?.street || ''}
-                                        onChange={onChangeLocation}
-                                        placeholder='clicca per modificare...'
-                                    />
-                                </FormControl>
-
-                                <FormControl isRequired p={1}>
-                                    <FormLabel htmlFor='number'>Numero</FormLabel>
-                                    <Input
-                                        id='number'
-                                        name='number'
-                                        type='number'
-                                        defaultValue={hackathonData.location?.number || ''}
-                                        onChange={onChangeLocation}
-                                        placeholder='clicca per modificare...'
-                                    />
-                                </FormControl>
-
-                                <FormControl isRequired p={1}>
-                                    <FormLabel htmlFor='city'>Città</FormLabel>
-                                    <Input
-                                        id='city'
-                                        name='city'
-                                        defaultValue={hackathonData.location?.city || ''}
-                                        onChange={onChangeLocation}
-                                        placeholder='clicca per modificare...'
-                                    />
-                                </FormControl>
-                                <FormControl isRequired p={1}>
-                                    <FormLabel htmlFor='province'>Provincia</FormLabel>
-                                    <Input
-                                        id='province'
-                                        name='province'
-                                        defaultValue={hackathonData.location?.province || ''}
-                                        onChange={onChangeLocation}
-                                        placeholder='clicca per modificare...'
-                                    />
-                                </FormControl>
-
-                                <FormControl isRequired p={1}>
-                                    <FormLabel htmlFor='country'>Stato</FormLabel>
-                                    <Input
-                                        id='country'
-                                        name='country'
-                                        defaultValue={hackathonData.location?.country || ''}
-                                        onChange={onChangeLocation}
-                                        placeholder='clicca per modificare...'
-                                    />
-                                </FormControl>
-
-                                <FormControl isRequired p={1}>
-                                    <FormLabel htmlFor='zip_code'>CAP</FormLabel>
-                                    <Input
-                                        id='zip_code'
-                                        name='zip_code'
-                                        defaultValue={hackathonData.location?.zip_code || ''}
-                                        onChange={onChangeLocation}
-                                        placeholder='clicca per modificare...'
-                                    />
-                                </FormControl>
-                            </Flex>
-
-                            <Text pt={5}>
-                                Inserisci anche longitudine e latitudine del luogo per vederlo sulle
-                                mappe del sito.
-                            </Text>
-                            <Flex>
-                                <FormControl p={1}>
-                                    <FormLabel htmlFor='lat'>Latitudine</FormLabel>
-                                    <Input
-                                        id='lat'
-                                        name='lat'
-                                        type='number'
-                                        defaultValue={hackathonData.location?.lat || ''}
-                                        onChange={onChangeLocation}
-                                        placeholder='clicca per modificare...'
-                                    />
-                                </FormControl>
-                                <FormControl p={1}>
-                                    <FormLabel htmlFor='long'>Longitudine</FormLabel>
-                                    <Input
-                                        id='long'
-                                        name='long'
-                                        type='number'
-                                        defaultValue={hackathonData.location?.long || ''}
-                                        onChange={onChangeLocation}
-                                        placeholder='clicca per modificare...'
-                                    />
-                                </FormControl>
-                            </Flex>
+                        </FormControl>
+                        <Divider borderColor={colors.gold} />
+                        <FormControl isInvalid={locationMissingFields.length > 0}>
+                            <FormLabel htmlFor='location'>Indirizzo</FormLabel>
+                            <AutocompleteComponent
+                                id='location'
+                                onPlaceChanged={onChangeLocation}
+                            />
+                            <FormErrorMessage>
+                                Indirizzo incompleto. Inserisci:{' '}
+                                <b>
+                                    {locationMissingFields
+                                        .map((field: any) => (locationToString as any)[field])
+                                        .join(', ')}
+                                </b>
+                            </FormErrorMessage>
                         </FormControl>
                     </AccordionPanel>
                 </StyledAccordionItem>

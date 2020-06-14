@@ -119,6 +119,9 @@
                     "province": {
                         "type": "string"
                     },
+                    "region": {
+                        "type": "string"
+                    },
                     "country": {
                         "type": "string"
                     },

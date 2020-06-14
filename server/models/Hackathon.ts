@@ -7,6 +7,7 @@ const LocationSchema = new mongoose.Schema({
     number: Number,
     city: String,
     province: String,
+    region: String,
     country: String,
     zip_code: Number,
     lat: { type: Number, required: false },
@@ -51,6 +52,7 @@ export type Location = mongoose.Document & {
     number: number;
     city: string;
     province: string;
+    region: string;
     country: string;
     zip_code: number;
     lat?: number;

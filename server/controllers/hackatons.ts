@@ -8,6 +8,7 @@ const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 type FilterType = {
     city?: string;
     province?: string;
+    region?: string;
     country?: string;
     from?: string;
     to?: string;
@@ -25,6 +26,7 @@ const mapFiltersToString = (filterName: string) => {
     switch (filterName) {
         case 'city':
         case 'province':
+        case 'region':
         case 'country':
             return 'location.' + filterName;
         default:

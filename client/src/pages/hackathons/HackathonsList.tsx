@@ -29,6 +29,7 @@ type RouteParams = {
     organization?: string;
     city?: string;
     province?: string;
+    region?: string;
     country?: string;
     from?: string;
     to?: string;
@@ -39,6 +40,7 @@ const ROUTE_PARAMS = new Set([
     'organization',
     'city',
     'province',
+    'region',
     'country',
     'from',
     'to',
