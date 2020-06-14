@@ -123,7 +123,7 @@ export function findOrganizationHackathons(req: Request, res: Response) {
         });
 }
 
-export function changeHackathonStatus(req: Request, res: Response) {
+export async function changeHackathonStatus(req: Request, res: Response) {
     const hackathonId = req.params?.id;
     const action = req.body.params?.action?.toString();
 
@@ -132,21 +132,22 @@ export function changeHackathonStatus(req: Request, res: Response) {
     }
     const nextStatusIndex = HackathonAction.findIndex((v) => v === action);
 
-    HackathonDb.findOne({ '_id': hackathonId }, (err, hackathon) => {
-        if (err != null) return res.sendStatus(400);
-        const currentStatusIndex = HackathonAction.findIndex((v) => v === hackathon?.status);
-        if (currentStatusIndex > nextStatusIndex) return res.sendStatus(400);
+    const hackathon = await HackathonDb.findById(hackathonId);
+    if (hackathon == null) return res.sendStatus(400);
 
-        HackathonDb.findOneAndUpdate(
-            { '_id': hackathonId },
-            { 'status': action },
-            { new: true },
-            (err, newHackathon) => {
-                if (err != null) return res.sendStatus(400);
-                return res.json(newHackathon);
-            }
-        );
-    });
+    const currentStatusIndex = HackathonAction.findIndex((v) => v === hackathon?.status);
+    if (currentStatusIndex > nextStatusIndex) return res.sendStatus(400);
+
+    hackathon.status = action;
+    await hackathon.save();
+
+    const newHackathon = await HackathonDb.findById(hackathonId)
+        .populate('organization')
+        .populate({
+            path: 'attendants',
+            populate: { path: 'user', select: 'username' },
+        });
+    return res.json(newHackathon);
 }
 
 export async function deleteAttendant(req: Request, res: Response) {
@@ -188,30 +189,6 @@ export async function subscribeUser(req: Request, res: Response) {
             populate: { path: 'user' },
         })
     );
-}
-
-// TODO: remove this
-export async function unsubscribeUser(req: Request, res: Response) {
-    const user = req.session?.user;
-    const hackathonId = req.params?.id;
-
-    const hackathon = await HackathonDb.findById(hackathonId)
-        .populate('organization', 'username')
-        .populate('attendants.user');
-    if (hackathon == null) return res.status(400).json({ error: 'Can not find this hackathon' });
-    if (hackathon?.attendants.find((a) => a.user._id == user._id) != null) {
-        hackathon.attendants = hackathon.attendants.filter((a) => a.user._id != user._id);
-        /*
-         * Notify hackathon organization using socket
-         */
-        req.app.get('io').emit(hackathon.organization.username, {
-            id: hackathon._id,
-            event: SocketEvent.USER_UNSUB,
-        });
-        return res.json(await hackathon?.save());
-    } else {
-        return res.json(hackathon);
-    }
 }
 
 export function organizationStats(req: Request, res: Response) {

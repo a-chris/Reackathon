@@ -130,7 +130,6 @@ export default function HackathonDetail() {
 
     const getHackathonButtons = () => {
         const currentUser = appContext.state?.user;
-
         if (
             currentUser == null ||
             (currentUser.role === UserRole.ORGANIZATION &&

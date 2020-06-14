@@ -79,7 +79,8 @@ export default function Header() {
 
     React.useEffect(() => {
         const userId = appContext.state?.user?._id;
-        if (userId != null) {
+        const isClient = appContext.state?.user?.role === 'CLIENT';
+        if (userId != null && isClient) {
             getUserAttendants(userId).then((attendants) => {
                 setInvites(mapAttendantsToInvitesData(attendants));
             });
