@@ -18,7 +18,7 @@ const colors = {
     blue_night: '#06133d',
     blue_light: '#1d3073',
     blue: '#0b1b4c',
-    gold: '#DB0000',
+    red: '#DB0000',
 };
 
 export default colors;

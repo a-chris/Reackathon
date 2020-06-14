@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { Attendant } from './Attendant';
 import { User } from './User';
 
 // Schemas definition
@@ -12,12 +13,6 @@ const LocationSchema = new mongoose.Schema({
     zip_code: Number,
     lat: Number,
     long: Number,
-});
-
-const AttendantSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true },
-    group: { type: Number, required: false },
-    pendingGroups: { type: [Number], required: false },
 });
 
 const AttendantsRequirementsSchema = new mongoose.Schema({
@@ -37,7 +32,7 @@ const HackathonSchema = new mongoose.Schema({
     name: String,
     description: String,
     organization: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    attendants: { type: [AttendantSchema], unique: true },
+    attendants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Attendant', unique: true }],
     attendantsRequirements: AttendantsRequirementsSchema,
     startDate: Date,
     endDate: Date,
@@ -64,16 +59,6 @@ export type Prize = mongoose.Document & {
     extra: string;
 };
 
-/*
- * Take care to this issue:
- * https://github.com/DefinitelyTyped/DefinitelyTyped/issues/44752
- */
-export type Attendant = mongoose.Document & {
-    user: User;
-    group?: number;
-    pendingGroups?: number[];
-};
-
 export type Hackathon = mongoose.Document & {
     _id: string;
     name: string;
@@ -82,10 +67,10 @@ export type Hackathon = mongoose.Document & {
     attendants: Attendant[];
     attendantsRequirements: {
         description: string;
-        maxNum: number | undefined;
-        minNum: number | undefined;
-        minGroupComponents: number | undefined;
-        maxGroupComponents: number | undefined;
+        maxNum?: number;
+        minNum?: number;
+        minGroupComponents?: number;
+        maxGroupComponents?: number;
     };
     startDate: Date;
     endDate: Date;

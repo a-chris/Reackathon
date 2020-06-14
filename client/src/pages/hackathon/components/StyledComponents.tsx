@@ -7,11 +7,7 @@ export const StyledTitleBox = styled(Box).attrs({
     pb: '0.5rem',
     pl: ['2%', '2%'],
     pr: ['2%', '2%'],
-})`
-    & * {
-        padding-bottom: 5px;
-    }
-`;
+})``;
 
 export const StyledBottomBoxContainer = styled(Box).attrs({
     pt: '1rem',

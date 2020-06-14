@@ -1,10 +1,10 @@
+import { Box, Button, Divider, Flex, Heading, Icon, useDisclosure } from '@chakra-ui/core';
 import React from 'react';
-import SkillsComponent from './SkillsComponent';
-import { Divider, Box, Heading, Flex, Button, Icon, useDisclosure } from '@chakra-ui/core';
+import { Experience, User } from '../../../models/Models';
 import colors from '../../../utils/colors';
-import ExperiencesTimeline from './ExperiencesTimeline';
 import ExperienceModal from './ExperiencesModal';
-import { User, Experience } from '../../../models/Models';
+import ExperiencesTimeline from './ExperiencesTimeline';
+import SkillsComponent from './SkillsComponent';
 
 interface ExperienceProps {
     user: User | undefined;
@@ -51,7 +51,7 @@ export default function ClientProfileInfo(props: ExperienceProps) {
                 onEdit={onEditSkills}
                 onSave={onSaveSkills}
             />
-            <Divider w='95%' borderColor={colors.gold} />
+            <Divider w='95%' borderColor={colors.red} />
             <Box w='80%'>
                 <Heading as='h3' size='md' p={2}>
                     Esperienze

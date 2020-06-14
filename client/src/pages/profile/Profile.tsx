@@ -1,9 +1,11 @@
-import { Avatar, Box, Button, Flex, Stack, Text, Heading } from '@chakra-ui/core';
+import { Avatar, Box, Button, Flex, Heading, Stack, Text } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
 import { useParams } from 'react-router';
 import 'react-vertical-timeline-component/style.min.css';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
+import OverlappedBoxes from '../../components/OverlappedBoxes';
+import UserBadge from '../../components/UserBadge';
 import { Experience, User, UserRole } from '../../models/Models';
 import {
     getUserDetail,
@@ -11,11 +13,9 @@ import {
     saveClientSkills,
     uploadAvatar,
 } from '../../services/UserService';
-import OverlappedBoxes from '../../components/OverlappedBoxes';
-import UserBadge from '../../components/UserBadge';
+import colors from '../../utils/colors';
 import ClientProfileInfo from './components/ClientProfileInfo';
 import HackathonProfileInfo from './components/HackathonProfileInfo';
-import colors from '../../utils/colors';
 
 export default function Profile() {
     const { username } = useParams();
@@ -86,7 +86,7 @@ export default function Profile() {
                             name={user?.name}
                             src={avatarUrl}
                             color={colors.white}
-                            bg={colors.gold}
+                            bg={colors.red}
                         />
                         {isProfileOwner && (
                             <UploadButton size='xs' fontSize='sm'>

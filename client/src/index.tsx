@@ -1,14 +1,13 @@
 import whyDidYouRender from '@welldone-software/why-did-you-render';
 import React from 'react';
-import axe from 'react-axe';
 import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 
-if (process.env.NODE_ENV !== 'production') {
-    axe(React, ReactDOM, 2000);
-}
+// if (process.env.NODE_ENV !== 'production') {
+//     axe(React, ReactDOM, 2000);
+// }
 
 whyDidYouRender(React, {
     trackHooks: true,

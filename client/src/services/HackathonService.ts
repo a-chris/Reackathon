@@ -38,15 +38,6 @@ export function subscribeToHackathon(hackathonId: string): Promise<Hackathon> {
     );
 }
 
-export function unsubscribeToHackathon(hackathonId: string): Promise<Hackathon> {
-    return new Promise((resolve, reject) =>
-        axios
-            .put(`http://localhost:5000/hackathons/${hackathonId}/unsub`)
-            .then((response: any) => resolve(response.data))
-            .catch((error: any) => reject(error))
-    );
-}
-
 export function changeHackathonStatus(
     hackathonId: string,
     status: HackathonStatus

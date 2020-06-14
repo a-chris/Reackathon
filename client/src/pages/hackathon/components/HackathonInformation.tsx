@@ -1,19 +1,19 @@
-import React from 'react';
 import {
-    Heading,
-    Divider,
-    SimpleGrid,
-    Stat,
-    StatNumber,
-    StatLabel,
-    StatHelpText,
     CircularProgress,
     CircularProgressLabel,
+    Divider,
+    Heading,
+    SimpleGrid,
+    Stat,
+    StatHelpText,
+    StatLabel,
+    StatNumber,
     Text,
 } from '@chakra-ui/core';
+import React from 'react';
 import { Hackathon } from '../../../models/Models';
-import { StyledBottomBoxContainer } from './StyledComponents';
 import colors from '../../../utils/colors';
+import { StyledBottomBoxContainer } from './StyledComponents';
 
 export const Information: React.FC<{ hackathon: Hackathon }> = ({ hackathon }) => {
     const progressValue = hackathon.attendantsRequirements.maxNum
@@ -27,7 +27,7 @@ export const Information: React.FC<{ hackathon: Hackathon }> = ({ hackathon }) =
             </Heading>
             <Text>{hackathon.description}</Text>
 
-            <Divider borderColor={colors.gold} />
+            <Divider borderColor={colors.red} />
 
             <Heading as='h2' size='md'>
                 Informazioni sugli iscritti
@@ -66,12 +66,12 @@ export const Information: React.FC<{ hackathon: Hackathon }> = ({ hackathon }) =
                 </CircularProgress>
             </SimpleGrid>
 
-            <Divider borderColor={colors.gold} />
+            <Divider borderColor={colors.red} />
             <Heading as='h2' size='md'>
                 Requisiti richiesti per partecipare
             </Heading>
             <Text>{hackathon.attendantsRequirements.description}</Text>
-            <Divider borderColor={colors.gold} />
+            <Divider borderColor={colors.red} />
 
             <Heading as='h2' size='md'>
                 Premio

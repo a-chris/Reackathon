@@ -1,11 +1,13 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
 import {
+    Badge,
     Box,
-    Button,
     Flex,
     Heading,
     Icon,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
     PseudoBox,
     SimpleGrid,
     Stack,
@@ -15,46 +17,37 @@ import {
     TabPanels,
     Tabs,
     Text,
-    AlertDialog,
-    AlertDialogOverlay,
-    AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogBody,
-    AlertDialogFooter,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    Badge,
     useToast,
 } from '@chakra-ui/core';
+import React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import { AppContext } from '../../AppContext';
+import ConfirmDialog from '../../components/ConfirmDialog';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
-import { Attendant, Hackathon, UserRole, HackathonStatus } from '../../models/Models';
+import { Attendant, Hackathon, HackathonStatus, UserRole } from '../../models/Models';
 import {
+    changeHackathonStatus,
     getHackathon,
     subscribeToHackathon,
-    unsubscribeToHackathon,
-    changeHackathonStatus,
 } from '../../services/HackathonService';
 import socketClient from '../../socket/socket';
 import SocketEvent, { HackathonSocketData } from '../../socket/SocketEvent';
 import colors from '../../utils/colors';
-import { Attendants, StyledBlueButtonPadded } from './components/AttendantsList';
+import { toDateString, toTimeString } from '../../utils/functions';
+import { AttendantsList, StyledBlueButtonPadded } from './components/AttendantsList';
 import { Information } from './components/HackathonInformation';
 import {
-    StyledDateContainer,
     StyledBlueButton,
+    StyledDateContainer,
     StyledTitleBox,
 } from './components/StyledComponents';
-import { toDateString, toTimeString } from '../../utils/functions';
 
 type RouteParams = {
     id: string;
 };
 
-const HackathonTabs = ['Informazioni', 'Iscritti'];
+const HACKATHONS_TABS = ['Informazioni', 'Iscritti'];
 
 const statusToString = (status: HackathonStatus) => {
     switch (status) {
@@ -74,7 +67,7 @@ export default function HackathonDetail() {
     const hackathonId = params.id;
     const [hackathonData, setHackathonData] = React.useState<Hackathon>();
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
-    const [isAlertOpen, setAlertOpen] = React.useState<boolean>();
+    const [isAlertOpen, setAlertOpen] = React.useState<boolean>(false);
     const cancelRef = React.useRef<HTMLElement>(null);
 
     useEffectOnce(() => {
@@ -86,20 +79,12 @@ export default function HackathonDetail() {
     React.useEffect(() => {
         if (appContext.state?.user?.role === 'ORGANIZATION') {
             socketClient.on(appContext.state.user.username, (data: HackathonSocketData) => {
-                if (data.event === SocketEvent.USER_SUB) {
+                if (data.event === SocketEvent.NEW_ATTENDANT) {
                     toast({
                         position: 'top-right',
                         title: 'Nuova notifica',
                         description: 'Un nuovo utente si è iscritto.',
                         status: 'success',
-                        isClosable: true,
-                    });
-                } else {
-                    toast({
-                        position: 'top-right',
-                        title: 'Nuova notifica',
-                        description: 'Un utente si è disiscritto.',
-                        status: 'info',
                         isClosable: true,
                     });
                 }
@@ -110,9 +95,8 @@ export default function HackathonDetail() {
                 }
             });
         }
-    }, [appContext.state, hackathonId, toast]);
-
-    const onAlertClose = () => setAlertOpen(false);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [appContext.state, hackathonId]);
 
     React.useEffect(() => {
         getHackathon(hackathonId).then((hackathon) => setHackathonData(hackathon));
@@ -133,13 +117,6 @@ export default function HackathonDetail() {
             .catch((error) => console.log(error));
     }, [hackathonId]);
 
-    const onHackathonUnsubscibe = React.useCallback(() => {
-        setAlertOpen(false);
-        unsubscribeToHackathon(hackathonId)
-            .then((hackathon) => setHackathonData(hackathon))
-            .catch((error) => console.log(error));
-    }, [hackathonId]);
-
     const onChangeStatus = React.useCallback(
         (status: HackathonStatus) => {
             changeHackathonStatus(hackathonId, status)
@@ -151,7 +128,7 @@ export default function HackathonDetail() {
 
     const onAssignPrize = React.useCallback(() => {}, []);
 
-    const getHackathonButtons = React.useCallback(() => {
+    const getHackathonButtons = () => {
         const currentUser = appContext.state?.user;
 
         if (
@@ -163,22 +140,17 @@ export default function HackathonDetail() {
         }
 
         if (currentUser.role === UserRole.CLIENT) {
-            if (attendant == null) {
-                return (
-                    <StyledBlueButtonPadded onClick={onHackathonSubscribe}>
-                        Iscriviti
-                    </StyledBlueButtonPadded>
-                );
-            } else {
-                return (
-                    <Stack>
-                        {attendant.group == null && <Text>Crea una squadra!</Text>}
-                        <StyledBlueButtonPadded onClick={() => setAlertOpen(true)}>
-                            Disiscriviti
-                        </StyledBlueButtonPadded>
-                    </Stack>
-                );
-            }
+            return attendant == null ? (
+                <StyledBlueButtonPadded onClick={() => setAlertOpen(true)}>
+                    Iscriviti
+                </StyledBlueButtonPadded>
+            ) : (
+                <Badge ml='1' fontSize='0.8em' variantColor='green'>
+                    <Text fontSize='md' fontWeight='bold'>
+                        ISCRITTO
+                    </Text>
+                </Badge>
+            );
         } else {
             return (
                 <Stack>
@@ -234,7 +206,7 @@ export default function HackathonDetail() {
                 </Stack>
             );
         }
-    }, [appContext.state?.user, attendant, hackathonData]);
+    };
 
     return hackathonData == null || cancelRef == null ? (
         <div />
@@ -267,7 +239,7 @@ export default function HackathonDetail() {
                                 </Badge>
                             </Stack>
                             <StyledDateContainer>
-                                <Icon name='calendar' size='1.5em' color={colors.gold} />
+                                <Icon name='calendar' size='1.5em' color={colors.red} />
                                 <Box textAlign='center'>
                                     <PseudoBox>
                                         Dal <b>{toDateString(hackathonData.startDate)}</b>, ore{' '}
@@ -291,7 +263,7 @@ export default function HackathonDetail() {
                     <Box>
                         <Tabs isFitted p='1%'>
                             <TabList mb='1em'>
-                                {HackathonTabs.map((tabTitle) => (
+                                {HACKATHONS_TABS.map((tabTitle) => (
                                     <Tab key={`tab-${tabTitle}`}>{tabTitle}</Tab>
                                 ))}
                             </TabList>
@@ -300,7 +272,7 @@ export default function HackathonDetail() {
                                     <Information hackathon={hackathonData} />
                                 </TabPanel>
                                 <TabPanel>
-                                    <Attendants
+                                    <AttendantsList
                                         attendants={hackathonData.attendants}
                                         currentAttendant={attendant}
                                     />
@@ -310,29 +282,12 @@ export default function HackathonDetail() {
                     </Box>
                 )}
             />
-
-            <AlertDialog
+            <ConfirmDialog
                 isOpen={isAlertOpen}
-                leastDestructiveRef={cancelRef}
-                onClose={onAlertClose}>
-                <AlertDialogOverlay />
-                <AlertDialogContent>
-                    <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-                        Stai per cancellarti dall'Hackathon
-                    </AlertDialogHeader>
-
-                    <AlertDialogBody>Sei sicuro di voler procedere?</AlertDialogBody>
-
-                    <AlertDialogFooter>
-                        <Button ref={cancelRef} onClick={onAlertClose}>
-                            Annulla
-                        </Button>
-                        <Button variantColor='red' onClick={onHackathonUnsubscibe} ml={3}>
-                            Disiscriviti
-                        </Button>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                title='Sei sicuro di volerti iscrivere?'
+                onClose={() => setAlertOpen(false)}
+                onConfirm={onHackathonSubscribe}
+            />
         </Box>
     );
 }

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
+import { AttendantDb } from '../models/Attendant';
 import SocketEvent from '../models/Events';
-import { Attendant, HackathonDb } from '../models/Hackathon';
+import { HackathonDb } from '../models/Hackathon';
 
 const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 
@@ -69,7 +70,10 @@ export function findHackathon(req: Request, res: Response) {
         return res.sendStatus(400);
     }
     HackathonDb.findOne({ '_id': hackathonId })
-        .populate('attendants.user')
+        .populate({
+            path: 'attendants',
+            populate: { path: 'user' },
+        })
         .populate('organization')
         .exec((err, hackathon) => {
             if (hackathon == null) {
@@ -132,34 +136,48 @@ export function changeHackathonStatus(req: Request, res: Response) {
     });
 }
 
+export async function deleteAttendant(req: Request, res: Response) {
+    const hackathonId = req.params?.id;
+    const hackathon = await HackathonDb.findById(hackathonId);
+    hackathon!.attendants = [];
+    hackathon!.save();
+
+    await AttendantDb.remove({});
+    res.sendStatus(200);
+}
+
 export async function subscribeUser(req: Request, res: Response) {
     const user = req.session?.user;
     const hackathonId = req.params?.id;
 
-    const hackathon = await HackathonDb.findById(hackathonId).populate('organization', 'username');
-    if (hackathon != null && hackathon?.attendants.find((a) => a.user._id == user._id) == null) {
-        /*
-         * as any required due to:
-         * https://github.com/DefinitelyTyped/DefinitelyTyped/issues/44752
-         */
-        hackathon.attendants.push({
-            user: { _id: user._id },
-        } as Attendant);
-        /*
-         * Notify hackathon organization using socket
-         */
-        req.app.get('io').emit(hackathon.organization.username, {
-            id: hackathon._id,
-            event: SocketEvent.USER_SUB,
+    const hackathon = await HackathonDb.findById(hackathonId);
+    if (hackathon == null)
+        return res.status(400).json({
+            error: 'Can not find this hackathon',
         });
-
-        await hackathon?.save();
-        return res.json(await HackathonDb.findById(hackathonId).populate('attendants.user'));
-    } else {
-        return res.json(hackathon?.populate('attendants.user'));
-    }
+    // TODO: check if attendant already exist in this hackathon
+    const newAttendant = await AttendantDb.create({
+        user: user._id,
+        hackathon: hackathon._id,
+    });
+    hackathon.attendants.push(newAttendant._id as any);
+    await hackathon.save();
+    /*
+     * Notify hackathon organization using socket
+     */
+    req.app.get('io').emit(hackathon.organization.username, {
+        id: hackathon._id,
+        event: SocketEvent.NEW_ATTENDANT,
+    });
+    return res.json(
+        await HackathonDb.findById(hackathon._id).populate({
+            path: 'attendants',
+            populate: { path: 'user' },
+        })
+    );
 }
 
+// TODO: remove this
 export async function unsubscribeUser(req: Request, res: Response) {
     const user = req.session?.user;
     const hackathonId = req.params?.id;
@@ -167,7 +185,8 @@ export async function unsubscribeUser(req: Request, res: Response) {
     const hackathon = await HackathonDb.findById(hackathonId)
         .populate('organization', 'username')
         .populate('attendants.user');
-    if (hackathon != null && hackathon?.attendants.find((a) => a.user._id == user._id) != null) {
+    if (hackathon == null) return res.status(400).json({ error: 'Can not find this hackathon' });
+    if (hackathon?.attendants.find((a) => a.user._id == user._id) != null) {
         hackathon.attendants = hackathon.attendants.filter((a) => a.user._id != user._id);
         /*
          * Notify hackathon organization using socket

@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path';
 import socketIo from 'socket.io';
+import * as attendantsController from './controllers/attendants';
 import * as authController from './controllers/auth';
 import * as filtersController from './controllers/filters';
 import * as hackathonsController from './controllers/hackatons';
@@ -118,13 +119,24 @@ app.route('/hackathons')
 
 app.route('/hackathons/:id').get(hackathonsController.findHackathon);
 
-app.route('/hackathons/:id/sub').put(authController.isClient, hackathonsController.subscribeUser);
-app.route('/hackathons/:id/unsub').put(
-    authController.isClient,
-    hackathonsController.unsubscribeUser
-);
+app.route('/hackathons/:id/sub')
+    .put(authController.isClient, hackathonsController.subscribeUser)
+    .delete(hackathonsController.deleteAttendant);
 
 app.route('/hackathons/:id/status').put(hackathonsController.changeHackathonStatus);
+
+app.route('/attendants/:userId').get(
+    authController.isClient,
+    attendantsController.getUserAttendants
+);
+app.route('/attendants/:attendantId/invite').post(
+    authController.isClient,
+    attendantsController.inviteAttendantToGroup
+);
+app.route('/attendants/invites/:inviteId').put(
+    authController.isClient,
+    attendantsController.replyToInvite
+);
 
 app.route('/filters/cities').get(filtersController.getAvailableCities);
 

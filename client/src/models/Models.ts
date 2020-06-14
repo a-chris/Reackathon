@@ -56,10 +56,19 @@ export type Prize = {
     extra: string;
 };
 
+export type Invite = {
+    _id: string;
+    from: Attendant;
+    date: Date;
+    status: 'pending' | 'accepted' | 'declined';
+};
+
 export type Attendant = {
+    _id: string;
     user: User;
-    group: number;
-    pendingGroups: number[];
+    hackathon: Hackathon;
+    group?: number;
+    invites?: Invite[];
 };
 
 export type NewHackathon = {

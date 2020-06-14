@@ -1,5 +1,5 @@
 enum SocketEvent {
-    USER_SUB,
+    NEW_ATTENDANT,
     USER_UNSUB,
 }
 
