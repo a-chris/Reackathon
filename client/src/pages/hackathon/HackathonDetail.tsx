@@ -1,6 +1,7 @@
 import {
     Badge,
     Box,
+    Button,
     Flex,
     Heading,
     Icon,
@@ -8,7 +9,15 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
     PseudoBox,
+    Select,
     SimpleGrid,
     Stack,
     Tab,
@@ -17,8 +26,10 @@ import {
     TabPanels,
     Tabs,
     Text,
+    useDisclosure,
     useToast,
 } from '@chakra-ui/core';
+import _ from 'lodash';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
@@ -37,11 +48,7 @@ import colors from '../../utils/colors';
 import { toDateString, toTimeString } from '../../utils/functions';
 import { AttendantsList, StyledBlueButtonPadded } from './components/AttendantsList';
 import { Information } from './components/HackathonInformation';
-import {
-    StyledBlueButton,
-    StyledDateContainer,
-    StyledTitleBox,
-} from './components/StyledComponents';
+import { StyledDateContainer, StyledTitleBox } from './components/StyledComponents';
 
 type RouteParams = {
     id: string;
@@ -69,6 +76,7 @@ export default function HackathonDetail() {
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
     const [isAlertOpen, setAlertOpen] = React.useState<boolean>(false);
     const cancelRef = React.useRef<HTMLElement>(null);
+    const { isOpen, onOpen, onClose } = useDisclosure(); // winner dialog
 
     useEffectOnce(() => {
         if (appContext.state?.user?.role === 'ORGANIZATION') {
@@ -126,7 +134,14 @@ export default function HackathonDetail() {
         [hackathonId]
     );
 
-    const onAssignPrize = React.useCallback(() => {}, []);
+    const onHackathonFinish = React.useCallback(
+        (winnerGroup: number) => {
+            changeHackathonStatus(hackathonId, HackathonStatus.FINISHED, winnerGroup)
+                .then((hackathon) => setHackathonData(hackathon))
+                .catch((error) => console.log(error));
+        },
+        [hackathonId]
+    );
 
     const getHackathonButtons = () => {
         const currentUser = appContext.state?.user;
@@ -154,19 +169,11 @@ export default function HackathonDetail() {
             return (
                 <Stack>
                     {hackathonData?.status === HackathonStatus.PENDING && (
-                        <StyledBlueButtonPadded
-                            onClick={() => onChangeStatus(HackathonStatus.STARTED)}>
-                            Avvia
-                        </StyledBlueButtonPadded>
-                    )}
-                    {hackathonData?.status === HackathonStatus.STARTED && (
-                        <StyledBlueButtonPadded
-                            onClick={() => onChangeStatus(HackathonStatus.FINISHED)}>
-                            Concludi
-                        </StyledBlueButtonPadded>
-                    )}
-                    {hackathonData?.status !== HackathonStatus.ARCHIVED ? (
-                        hackathonData?.status !== HackathonStatus.FINISHED ? (
+                        <>
+                            <StyledBlueButtonPadded
+                                onClick={() => onChangeStatus(HackathonStatus.STARTED)}>
+                                Avvia
+                            </StyledBlueButtonPadded>
                             <Menu>
                                 <MenuButton
                                     alignItems='center'
@@ -192,14 +199,19 @@ export default function HackathonDetail() {
                                     </MenuItem>
                                 </MenuList>
                             </Menu>
-                        ) : (
-                            <StyledBlueButton onClick={onAssignPrize}>
-                                Assegna premi
-                            </StyledBlueButton>
-                        )
-                    ) : (
+                        </>
+                    )}
+                    {hackathonData?.status === HackathonStatus.STARTED && (
+                        <StyledBlueButtonPadded onClick={onOpen}>Concludi</StyledBlueButtonPadded>
+                    )}
+                    {hackathonData?.status === HackathonStatus.ARCHIVED && (
                         <Heading as='h2' size='lg' color={colors.red_dark}>
-                            Cancellato
+                            Archiviato
+                        </Heading>
+                    )}
+                    {hackathonData?.status === HackathonStatus.FINISHED && (
+                        <Heading as='h2' size='lg' color={colors.yellow}>
+                            Concluso
                         </Heading>
                     )}
                 </Stack>
@@ -287,6 +299,70 @@ export default function HackathonDetail() {
                 onClose={() => setAlertOpen(false)}
                 onConfirm={onHackathonSubscribe}
             />
+            <WinnerDialog
+                isOpen={isOpen}
+                attendants={hackathonData.attendants}
+                onClose={onClose}
+                onConfirm={onHackathonFinish}
+            />
         </Box>
+    );
+}
+
+interface WinnerDialogProps {
+    attendants: Attendant[];
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: (groupId: number) => void;
+}
+
+function WinnerDialog(props: WinnerDialogProps) {
+    const [selectedGroup, setSelectedGroup] = React.useState<any>();
+    const groups = _.groupBy(props.attendants, (a) => a.group) as object;
+
+    const onChangeWinner = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const { value } = event?.target;
+        if (value != null) {
+            setSelectedGroup(value);
+        }
+    };
+
+    const onConfirm = () => {
+        setSelectedGroup(null);
+        props.onClose();
+        props.onConfirm(selectedGroup);
+    };
+
+    return (
+        <Modal isOpen={props.isOpen} onClose={props.onClose}>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader>Concludi Hackathon</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <Select placeholder='Gruppo vincitore' onChange={onChangeWinner}>
+                        {Object.entries(groups).map((e) => (
+                            <option value={e[0]} key={e[0]}>
+                                Gruppo #{e[0]}:{' '}
+                                {e[1].map((a: Attendant) => a.user.username).join(', ')}
+                            </option>
+                        ))}
+                    </Select>
+                </ModalBody>
+
+                <ModalFooter>
+                    <Button variant='outline' variantColor='red' mr={3} onClick={props.onClose}>
+                        ANNULLA
+                    </Button>
+                    <Button
+                        variant='solid'
+                        variantColor='green'
+                        isDisabled={selectedGroup == null}
+                        onClick={onConfirm}>
+                        CONFERMA
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
     );
 }

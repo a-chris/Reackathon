@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import * as _ from 'lodash';
 import { AttendantDb } from '../models/Attendant';
 import SocketEvent from '../models/Events';
 import { HackathonDb } from '../models/Hackathon';
@@ -125,18 +126,51 @@ export function findOrganizationHackathons(req: Request, res: Response) {
 
 export async function changeHackathonStatus(req: Request, res: Response) {
     const hackathonId = req.params?.id;
-    const action = req.body.params?.action?.toString();
+    const winnerGroup = req.query?.winner;
+    const action = req.query?.action?.toString();
 
     if (hackathonId == null || action == null || !HackathonAction.includes(action)) {
         return res.sendStatus(400);
     }
+    if (action === 'finished' && winnerGroup == null) {
+        return res.status(400).json({ error: 'Cannot finish a hackathon without a winner' });
+    }
+
     const nextStatusIndex = HackathonAction.findIndex((v) => v === action);
 
-    const hackathon = await HackathonDb.findById(hackathonId);
+    const hackathon = await HackathonDb.findById(hackathonId).populate({
+        path: 'attendants',
+        populate: {
+            path: 'user',
+        },
+    });
     if (hackathon == null) return res.sendStatus(400);
 
     const currentStatusIndex = HackathonAction.findIndex((v) => v === hackathon?.status);
     if (currentStatusIndex > nextStatusIndex) return res.sendStatus(400);
+
+    if (action === 'started') {
+        // create group for every attendant
+        const attendantsWithoutGroup = hackathon.attendants.filter((a) => a.group == null);
+        let maxGroupCount = _.max(hackathon.attendants.map((a) => a.group)) || 0;
+        await attendantsWithoutGroup.forEach(async (a) => {
+            a.group = ++maxGroupCount;
+            await a.save();
+        });
+    } else if (action === 'finished') {
+        // we already checked winnerGroup is not null
+        hackathon.winnerGroup = parseInt(winnerGroup!.toString());
+
+        await hackathon.attendants.forEach(async (a) => {
+            // adds partecipation badge for all the attendants
+            a.user.badge!.partecipation += 1;
+            if (a.group?.toString() == winnerGroup!.toString()) {
+                // adds win badge for winners only
+                a.user.badge!.win += 1;
+            }
+            await a.user.save();
+        });
+    }
 
     hackathon.status = action;
     await hackathon.save();
@@ -150,6 +184,7 @@ export async function changeHackathonStatus(req: Request, res: Response) {
     return res.json(newHackathon);
 }
 
+// TODO: remove this function
 export async function deleteAttendant(req: Request, res: Response) {
     const hackathonId = req.params?.id;
     const hackathon = await HackathonDb.findById(hackathonId);
@@ -164,12 +199,18 @@ export async function subscribeUser(req: Request, res: Response) {
     const user = req.session?.user;
     const hackathonId = req.params?.id;
 
-    const hackathon = await HackathonDb.findById(hackathonId);
+    const hackathon = await HackathonDb.findById(hackathonId).populate({
+        path: 'attendants',
+        populate: { path: 'user' },
+    });
     if (hackathon == null)
         return res.status(400).json({
             error: 'Can not find this hackathon',
         });
-    // TODO: check if attendant already exist in this hackathon
+
+    if (hackathon.attendants.find((a) => a.user === user._id) != null) {
+        return res.status(400).json({ error: 'User already subscribed to this hackathon' });
+    }
     const newAttendant = await AttendantDb.create({
         user: user._id,
         hackathon: hackathon._id,
@@ -194,9 +235,7 @@ export async function subscribeUser(req: Request, res: Response) {
 export function organizationStats(req: Request, res: Response) {
     const user = req.session?.user;
 
-    if (user._id == null || user.role != UserRole.ORGANIZATION) {
-        return res.sendStatus(401);
-    }
+    if (user._id == null) return res.sendStatus(401);
 
     const stats = {
         totalHackathons: 0,
@@ -220,5 +259,5 @@ export function organizationStats(req: Request, res: Response) {
         }
         return res.json(stats);
     });
-    // return res.json(stats);
+    return res.json({});
 }

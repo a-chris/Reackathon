@@ -6,7 +6,6 @@ import sendWelcomeEmail from '../utils/email';
 const DEFAULT_SALT_ROUNDS = 10;
 
 export function isLogged(req: Request, res: Response, next: NextFunction) {
-    console.log('TCL: isLogged: ', req.session?.user != null);
     if (req.session?.user) next();
     else return res.sendStatus(401);
 }
