@@ -1,34 +1,19 @@
-import React from 'react';
-import OverlappedBoxes from '../../components/OverlappedBoxes';
-import {
-    Heading,
-    Box,
-    Stack,
-    Avatar,
-    Tag,
-    Text,
-    Flex,
-    RadioGroup,
-    Radio,
-    Button,
-} from '@chakra-ui/core';
-import { User } from '../../models/Models';
-import colors, { getRandomColorString, getRandomVariantColorString } from '../../utils/colors';
-import UserBadge from '../../components/UserBadge';
+import { Avatar, Box, Flex, Heading, Radio, RadioGroup, Stack, Tag, Text } from '@chakra-ui/core';
 import _ from 'lodash';
-import { StyledUserBox } from '../../components/Common';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { StyledUserBox } from '../../components/Common';
+import OverlappedBoxes from '../../components/OverlappedBoxes';
+import UserBadge from '../../components/UserBadge';
+import { User } from '../../models/Models';
 import { getUsersRanking } from '../../services/UserService';
+import colors, { getRandomColorString, getRandomVariantColorString } from '../../utils/colors';
 
 export default function Ranking() {
     const [users, setUsers] = React.useState<User[]>();
     const [order, setOrder] = React.useState('win');
 
     React.useEffect(() => {
-        getRank();
-    }, []);
-
-    const getRank = React.useCallback(() => {
         getUsersRanking(order).then((users) => {
             const userSanitized = users.map((user) => {
                 const userSkills = _.take(
@@ -44,10 +29,6 @@ export default function Ranking() {
 
     const onChangeRadioOrder = (e: React.ChangeEvent<HTMLInputElement>) => {
         setOrder(e.target.value);
-    };
-
-    const onChangeOrder = () => {
-        getRank();
     };
 
     return (
@@ -92,15 +73,6 @@ export default function Ranking() {
                                         Partecipazioni
                                     </Radio>
                                 </RadioGroup>
-                                <Button
-                                    variant='outline'
-                                    color={colors.blue_night}
-                                    size='sm'
-                                    ml='2'
-                                    rounded='md'
-                                    onClick={() => onChangeOrder()}>
-                                    Ordina
-                                </Button>
                             </Flex>
                             {users?.map((user, index) => (
                                 <StyledUserBox

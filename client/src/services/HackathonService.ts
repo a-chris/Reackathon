@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { Hackathon, HackathonStatus, NewHackathon } from '../models/Models';
+import { Hackathon, NewHackathon, HackathonStatus, Statistics } from '../models/Models';
 
 export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
-    // TODO: add params
     return new Promise((resolve, reject) =>
         axios
             .get('http://localhost:5000/hackathons', { params: filters })
@@ -38,15 +37,6 @@ export function subscribeToHackathon(hackathonId: string): Promise<Hackathon> {
     );
 }
 
-export function unsubscribeToHackathon(hackathonId: string): Promise<Hackathon> {
-    return new Promise((resolve, reject) =>
-        axios
-            .put(`http://localhost:5000/hackathons/${hackathonId}/unsub`)
-            .then((response: any) => resolve(response.data))
-            .catch((error: any) => reject(error))
-    );
-}
-
 export function changeHackathonStatus(
     hackathonId: string,
     status: HackathonStatus
@@ -56,6 +46,24 @@ export function changeHackathonStatus(
             .put(`http://localhost:5000/hackathons/${hackathonId}/status`, {
                 params: { action: status },
             })
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}
+
+export function getStatistics(): Promise<Statistics> {
+    return new Promise((resolve, reject) =>
+        axios
+            .get(`http://localhost:5000/stats`)
+            .then((response: any) => resolve(response.data))
+            .catch((error: any) => reject(error))
+    );
+}
+
+export function getOrganizationHackathons(): Promise<Hackathon[]> {
+    return new Promise((resolve, reject) =>
+        axios
+            .get('http://localhost:5000/hackathons/org')
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );

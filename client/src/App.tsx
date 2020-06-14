@@ -16,10 +16,10 @@ import Homepage from './pages/homepage/Homepage';
 import Login from './pages/login/Login';
 import OrganizationBoard from './pages/organization/OrganizationBoard';
 import Profile from './pages/profile/Profile';
+import Ranking from './pages/ranking/Ranking';
 import Signup from './pages/signup/Signup';
 import { getLocalUser } from './services/UserService';
 import { LOGIN_ACTION } from './utils/constants';
-import Ranking from './pages/raking/Ranking';
 
 /*
  * Set moment language to italian for the whole application

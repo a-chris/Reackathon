@@ -125,10 +125,12 @@ export default function Homepage() {
             </Box>
             <StyledBlueBox>
                 <SimpleResponsiveGrid>
-                    <MapContainer
-                        hackathons={hackathons}
-                        style={{ width: '100%', minHeight: '90vh' }}
-                    />
+                    <Box>
+                        <MapContainer
+                            hackathons={hackathons}
+                            style={{ width: '100%', minHeight: '90vh' }}
+                        />
+                    </Box>
                     <Flex alignSelf='center' p='8%'>
                         <Heading as='h3' size='xl' m='auto'>
                             Oppure cerca i prossimi Hackathon direttamente sulla mappa
@@ -168,13 +170,10 @@ const FlexContainer: React.FC<{}> = (props) => {
     );
 };
 
-const SimpleResponsiveGrid: React.FC<{}> = (props) => {
-    return (
-        <SimpleGrid h='100%' columns={[1, 1, 2, 2]}>
-            {props.children}
-        </SimpleGrid>
-    );
-};
+const SimpleResponsiveGrid = styled(SimpleGrid).attrs({
+    h: '100%',
+    columns: [1, 1, 2, 2],
+})``;
 
 const StyledContainer = styled(Box)`
     text-align: center;

@@ -1,39 +1,50 @@
-import React from 'react';
-import { getRandomVariantColorString, getRandomColorString } from '../../../utils/colors';
-import { Attendant } from '../../../models/Models';
+import { Avatar, Badge, Box, Heading, Stack, Tag, Text } from '@chakra-ui/core';
 import _ from 'lodash';
-import { Box, Stack, Avatar, Heading, Tag, Text } from '@chakra-ui/core';
-import { StyledBottomBoxContainer, StyledBlueButton } from './StyledComponents';
-import styled from 'styled-components';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import UserBadge from '../../../components/UserBadge';
+import styled from 'styled-components';
 import { StyledResponsiveFlex, StyledUserBox } from '../../../components/Common';
+import UserBadge from '../../../components/UserBadge';
+import { Attendant } from '../../../models/Models';
+import { inviteAttendantToGroup } from '../../../services/AttendantService';
+import { getRandomColorString, getRandomVariantColorString } from '../../../utils/colors';
+import { StyledBlueButton, StyledBottomBoxContainer } from './StyledComponents';
 
 type AttendantsProps = {
     attendants: Attendant[];
     currentAttendant?: Attendant;
 };
 
-type GroupColor = {
-    group: number;
-    color: string;
-};
-
-export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAttendant }) => {
+export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentAttendant }) => {
     const [orderedAttendants, setOrderedAttendants] = React.useState<Attendant[]>();
-    const [groupsColorMapping, setGroupsColorMapping] = React.useState<GroupColor[]>();
+    const [invitedAttendants, setInvitedAttendants] = React.useState<Set<string>>(new Set());
 
     React.useEffect(() => {
-        const orderedAttendants = _.orderBy(attendants, ['group'], ['asc']);
-        const groupsColorMapping = _.uniq(
-            attendants
-                .filter((attendant) => attendant.group != null)
-                .map((attendant) => attendant.group)
-        ).map((groupNumber: number) => ({ group: groupNumber, color: getRandomColorString() }));
-
-        setOrderedAttendants(orderedAttendants);
-        setGroupsColorMapping(groupsColorMapping);
+        setOrderedAttendants(_.orderBy(attendants, ['group'], ['asc']));
     }, [attendants, currentAttendant]);
+
+    const onInviteAttendant = (toId: string) => {
+        if (currentAttendant?._id != null) {
+            inviteAttendantToGroup(currentAttendant?._id, toId).then((result) => {
+                setInvitedAttendants((curr) => new Set([...curr, toId]));
+            });
+        }
+    };
+
+    const colors: string[] = React.useMemo(() => {
+        const tmpColors: string[] = [];
+        for (let i = 0; i < attendants.length; i++) {
+            const attendant = attendants[i];
+            if (i === 0 || attendant.group == null) {
+                tmpColors.push(getRandomColorString());
+            } else if (attendant.group === attendants[i - 1].group) {
+                tmpColors.push(tmpColors[i - 1]);
+            } else {
+                tmpColors.push('');
+            }
+        }
+        return tmpColors;
+    }, [attendants]);
 
     return (
         <StyledBottomBoxContainer>
@@ -42,9 +53,7 @@ export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAtten
             ) : (
                 <Box>
                     {orderedAttendants?.map((attendant, index) => (
-                        <StyledUserBox
-                            borderColor={getColor(attendant.group, groupsColorMapping)}
-                            key={index}>
+                        <StyledUserBox borderColor={colors[index]} key={index}>
                             <StyledResponsiveFlex>
                                 <Box>
                                     <Link to={`/profile/${attendant.user.username}`}>
@@ -72,7 +81,12 @@ export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAtten
                                         <Text>Utente senza gruppo</Text>
                                     )}
                                     {currentAttendant &&
-                                        getGroupButtons(currentAttendant, attendant)}
+                                        getGroupButton(
+                                            currentAttendant,
+                                            attendant,
+                                            invitedAttendants,
+                                            onInviteAttendant
+                                        )}
                                 </Stack>
                             </StyledResponsiveFlex>
 
@@ -98,25 +112,39 @@ export const Attendants: React.FC<AttendantsProps> = ({ attendants, currentAtten
     );
 };
 
-function getColor(group: number | undefined, groupsColorMapping: GroupColor[] | undefined) {
-    return group == null || groupsColorMapping == null
-        ? getRandomColorString()
-        : _.values(groupsColorMapping).find((obj) => obj.group === group)?.color;
-}
-
-function getGroupButtons(currentAttendant: Attendant, attendantInList: Attendant) {
-    let text = '';
+function getGroupButton(
+    currentAttendant: Attendant,
+    attendantInList: Attendant,
+    invitedAttendants: Set<string>,
+    onInvite: (toId: string) => void
+) {
     if (attendantInList.user._id === currentAttendant.user._id) {
         return null;
     }
-    if (currentAttendant.group == null && attendantInList.group == null) {
+
+    let text = '';
+    const alreadyInvited =
+        attendantInList.invites?.find((invite) => (invite.from as any) === currentAttendant._id) !=
+            null || invitedAttendants.has(attendantInList._id);
+    if (alreadyInvited) {
+        return (
+            <Badge ml='1' fontSize='0.8em' variantColor='green'>
+                <Text fontSize='md' fontWeight='bold'>
+                    INVITATO
+                </Text>
+            </Badge>
+        );
+    } else if (currentAttendant.group == null && attendantInList.group == null) {
         text = 'Crea gruppo';
-    } else if (currentAttendant.group == null && attendantInList.group != null) {
-        text = 'Unisciti al gruppo';
-    } else if (currentAttendant.group != null && attendantInList.group != null) {
+    } else if (currentAttendant.group != null && attendantInList.group == null) {
         text = 'Invita nel tuo gruppo';
     }
-    if (text) return <StyledBlueButton size='sm'>{text}</StyledBlueButton>;
+    if (text)
+        return (
+            <StyledBlueButton size='sm' onClick={() => onInvite(attendantInList._id)}>
+                {text}
+            </StyledBlueButton>
+        );
     return;
 }
 

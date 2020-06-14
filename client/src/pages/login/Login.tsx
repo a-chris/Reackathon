@@ -2,6 +2,7 @@ import {
     Box,
     Button,
     FormControl,
+    FormErrorMessage,
     Heading,
     Icon,
     IconButton,
@@ -11,15 +12,14 @@ import {
     InputRightElement,
     Stack,
     Text,
-    FormErrorMessage,
 } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { AppContext } from '../../AppContext';
+import { StyledCenteredContainer, StyledLabel } from '../../components/Common';
+import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { login, LoginData } from '../../services/AuthService';
 import colors from '../../utils/colors';
-import { StyledCenteredContainer, StyledLabel } from '../../components/Common';
-import { Link } from 'react-router-dom';
-import OverlappedBoxes from '../../components/OverlappedBoxes';
 
 export default function Login() {
     const appContext = React.useContext(AppContext);
@@ -145,7 +145,7 @@ export default function Login() {
                         <Text p={5} fontSize='0.9em'>
                             Oppure{' '}
                             <Link to='/signup'>
-                                <span style={{ color: colors.gold }}>
+                                <span style={{ color: colors.red }}>
                                     <b>registrati</b>
                                 </span>
                             </Link>

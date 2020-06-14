@@ -40,15 +40,15 @@ export type User = {
 };
 
 export type Location = {
-    street: string;
-    number: number;
-    city: string;
-    province: string;
-    district: string;
-    country: string;
-    zip_code: number;
-    lat: number;
-    long: number;
+    street?: string;
+    number?: number;
+    city?: string;
+    province?: string;
+    region?: string;
+    country?: string;
+    zip_code?: number;
+    lat?: number;
+    long?: number;
 };
 
 export type Prize = {
@@ -56,10 +56,19 @@ export type Prize = {
     extra: string;
 };
 
+export type Invite = {
+    _id: string;
+    from: Attendant;
+    date: Date;
+    status: 'pending' | 'accepted' | 'declined';
+};
+
 export type Attendant = {
+    _id: string;
     user: User;
-    group: number;
-    pendingGroups: number[];
+    hackathon: Hackathon;
+    group?: number;
+    invites?: Invite[];
 };
 
 export type NewHackathon = {
@@ -72,10 +81,10 @@ export type NewHackathon = {
         minGroupComponents?: number;
         maxGroupComponents?: number;
     };
-    organization: User | undefined;
+    organization?: User;
     startDate: Date;
     endDate: Date;
-    location: Location;
+    location?: Location;
     prize: Prize;
 };
 
@@ -84,4 +93,12 @@ export type Hackathon = NewHackathon & {
     attendants: Attendant[];
     status: HackathonStatus;
     organization: User;
+    location: Location;
+};
+
+export type Statistics = {
+    totalHackathons: number;
+    pendingHackathons: number;
+    totalPrize: number;
+    totalAttendants: number;
 };
