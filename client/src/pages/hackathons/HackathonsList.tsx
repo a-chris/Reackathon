@@ -17,13 +17,14 @@ import {
 import queryString from 'query-string';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BoxWithSpacedChildren } from '../../components/Common';
+import { BoxWithSpacedChildren, BoxFullHeightAfterHeader } from '../../components/Common';
 import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getAvailableCities } from '../../services/FilterService';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 import { toDateString } from '../../utils/functions';
+import { AppContext } from '../../AppContext';
 
 type RouteParams = {
     organization?: string;
@@ -55,6 +56,7 @@ const HACKATHON_STATUSES = {
 };
 
 export default function HackathonsList() {
+    const appContext = React.useContext(AppContext);
     const location = useLocation();
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
     const [availableCities, setAvailableCities] = React.useState<string[]>([]);
@@ -78,8 +80,10 @@ export default function HackathonsList() {
         }
     };
 
+    const isLogged = appContext.state?.user != null;
+
     return (
-        <Box w='100%' h='85vh'>
+        <BoxFullHeightAfterHeader isLogged={isLogged}>
             <SimpleGrid w='100%' h='100%' columns={[1, 1, 2, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box textAlign='center'>
@@ -87,7 +91,7 @@ export default function HackathonsList() {
                             Hackathons
                         </Heading>
                     </Box>
-                    <Accordion allowToggle>
+                    <Accordion allowToggle defaultIndex={[]}>
                         <AccordionItem>
                             <AccordionHeader>
                                 <Box flex='1'>
@@ -190,7 +194,7 @@ export default function HackathonsList() {
                     />
                 </Box>
             </SimpleGrid>
-        </Box>
+        </BoxFullHeightAfterHeader>
     );
 }
 // HackathonsList.whyDidYouRender = true;

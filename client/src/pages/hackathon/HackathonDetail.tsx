@@ -42,6 +42,8 @@ import {
     StyledDateContainer,
     StyledTitleBox,
 } from './components/StyledComponents';
+import styled from 'styled-components';
+import { BoxFullHeightAfterHeader } from '../../components/Common';
 
 type RouteParams = {
     id: string;
@@ -211,83 +213,95 @@ export default function HackathonDetail() {
     return hackathonData == null || cancelRef == null ? (
         <div />
     ) : (
-        <Box>
-            <OverlappedBoxes
-                mainStackStyle={{ width: ['90%'] }}
-                TopContent={() => (
-                    <StyledTitleBox>
-                        <Heading as='h1' size='xl'>
-                            {hackathonData.name}
-                        </Heading>
-                        <SimpleGrid columns={[1, 1, 3, 3]} textAlign='left'>
-                            <Stack>
-                                <Stack
-                                    isInline
-                                    color={colors.gray_dark}
-                                    fontWeight='semibold'
-                                    letterSpacing='wide'
-                                    fontSize='md'>
-                                    <PseudoBox textTransform='capitalize'>
-                                        {hackathonData.location.street}{' '}
-                                        {hackathonData.location.number} &bull;{' '}
-                                        {hackathonData.location.city} &bull;{' '}
-                                        {hackathonData.location.country}
-                                    </PseudoBox>
+        <BoxFullHeightAfterHeader isLogged={appContext.state?.user != null}>
+            <ContainerWithBackgroundImage>
+                <OverlappedBoxes
+                    mainStackStyle={{ width: ['90%', '85%', '70%', '65%'] }}
+                    TopContent={() => (
+                        <StyledTitleBox>
+                            <Heading as='h1' size='xl'>
+                                {hackathonData.name}
+                            </Heading>
+                            <SimpleGrid columns={[1, 1, 3, 3]} textAlign='left'>
+                                <Stack>
+                                    <Stack
+                                        isInline
+                                        color={colors.gray_dark}
+                                        fontWeight='semibold'
+                                        letterSpacing='wide'
+                                        fontSize='md'>
+                                        <PseudoBox textTransform='capitalize'>
+                                            {hackathonData.location.street}{' '}
+                                            {hackathonData.location.number} &bull;{' '}
+                                            {hackathonData.location.city} &bull;{' '}
+                                            {hackathonData.location.country}
+                                        </PseudoBox>
+                                    </Stack>
+                                    <Badge variantColor='green' m='auto'>
+                                        Hackathon {statusToString(hackathonData.status)}
+                                    </Badge>
                                 </Stack>
-                                <Badge variantColor='green' m='auto'>
-                                    Hackathon {statusToString(hackathonData.status)}
-                                </Badge>
-                            </Stack>
-                            <StyledDateContainer>
-                                <Icon name='calendar' size='1.5em' color={colors.red} />
-                                <Box textAlign='center'>
-                                    <PseudoBox>
-                                        Dal <b>{toDateString(hackathonData.startDate)}</b>, ore{' '}
-                                        <b>{toTimeString(hackathonData.startDate)}</b>
-                                    </PseudoBox>
-                                    <PseudoBox>
-                                        Al <b>{toDateString(hackathonData.endDate)}</b>, ore{' '}
-                                        <b>{toTimeString(hackathonData.endDate)}</b>
-                                    </PseudoBox>
-                                </Box>
-                            </StyledDateContainer>
-                            <Flex
-                                alignItems='center'
-                                justifyContent={['center', 'center', 'flex-end']}>
-                                {getHackathonButtons()}
-                            </Flex>
-                        </SimpleGrid>
-                    </StyledTitleBox>
-                )}
-                BottomContent={() => (
-                    <Box>
-                        <Tabs isFitted p='1%'>
-                            <TabList mb='1em'>
-                                {HACKATHONS_TABS.map((tabTitle) => (
-                                    <Tab key={`tab-${tabTitle}`}>{tabTitle}</Tab>
-                                ))}
-                            </TabList>
-                            <TabPanels>
-                                <TabPanel>
-                                    <Information hackathon={hackathonData} />
-                                </TabPanel>
-                                <TabPanel>
-                                    <AttendantsList
-                                        attendants={hackathonData.attendants}
-                                        currentAttendant={attendant}
-                                    />
-                                </TabPanel>
-                            </TabPanels>
-                        </Tabs>
-                    </Box>
-                )}
-            />
-            <ConfirmDialog
-                isOpen={isAlertOpen}
-                title='Sei sicuro di volerti iscrivere?'
-                onClose={() => setAlertOpen(false)}
-                onConfirm={onHackathonSubscribe}
-            />
-        </Box>
+                                <StyledDateContainer>
+                                    <Icon name='calendar' size='1.5em' color={colors.red} />
+                                    <Box textAlign='center'>
+                                        <PseudoBox>
+                                            Dal <b>{toDateString(hackathonData.startDate)}</b>, ore{' '}
+                                            <b>{toTimeString(hackathonData.startDate)}</b>
+                                        </PseudoBox>
+                                        <PseudoBox>
+                                            Al <b>{toDateString(hackathonData.endDate)}</b>, ore{' '}
+                                            <b>{toTimeString(hackathonData.endDate)}</b>
+                                        </PseudoBox>
+                                    </Box>
+                                </StyledDateContainer>
+                                <Flex
+                                    alignItems='center'
+                                    justifyContent={['center', 'center', 'flex-end']}>
+                                    {getHackathonButtons()}
+                                </Flex>
+                            </SimpleGrid>
+                        </StyledTitleBox>
+                    )}
+                    BottomContent={() => (
+                        <Box>
+                            <Tabs isFitted p='1%'>
+                                <TabList mb='1em'>
+                                    {HACKATHONS_TABS.map((tabTitle) => (
+                                        <Tab key={`tab-${tabTitle}`}>{tabTitle}</Tab>
+                                    ))}
+                                </TabList>
+                                <TabPanels>
+                                    <TabPanel>
+                                        <Information hackathon={hackathonData} />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <AttendantsList
+                                            attendants={hackathonData.attendants}
+                                            currentAttendant={attendant}
+                                        />
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
+                        </Box>
+                    )}
+                />
+                <ConfirmDialog
+                    isOpen={isAlertOpen}
+                    title='Sei sicuro di volerti iscrivere?'
+                    onClose={() => setAlertOpen(false)}
+                    onConfirm={onHackathonSubscribe}
+                />
+            </ContainerWithBackgroundImage>
+        </BoxFullHeightAfterHeader>
     );
 }
+
+const ContainerWithBackgroundImage = styled(Box).attrs({
+    backgroundImage: "url('./images/background/space-min.jpg')",
+    w: '100%',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    h: 'fit-content',
+    minH: '100%',
+    backgroundPosition: 'bottom',
+})``;

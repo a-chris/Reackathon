@@ -7,6 +7,8 @@ import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getAvailableCities } from '../../services/FilterService';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
+import { BoxFullHeightAfterHeader } from '../../components/Common';
+import { AppContext } from '../../AppContext';
 
 const initialFilter = { country: 'Italy', status: HackathonStatus.PENDING };
 
@@ -19,6 +21,7 @@ const BackgroundImageStyleProps = {
 };
 
 export default function Homepage() {
+    const appContext = React.useContext(AppContext);
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
     const [cities, setCities] = React.useState<string[]>([]);
     const [selectedCity, setSelectedCity] = React.useState<string>();
@@ -39,54 +42,62 @@ export default function Homepage() {
         }
     };
 
+    const isLogged = appContext.state?.user != null;
+
     return (
         <StyledContainer>
-            <FlexContainer>
-                <SimpleResponsiveGrid>
-                    <Flex alignSelf='center' color={colors.white} pr={0}>
-                        <Stack p={[50, 45, 35, 30]} textAlign='center'>
-                            <Heading as='h1' size='2xl' m='auto'>
-                                Entra nel mondo degli Hackathon!
-                            </Heading>
-                            <Heading p='5%' as='h2' fontSize='xl'>
-                                Entra a far parte della piattaforma di Hackathon numero uno.
-                                <br />
-                                Iscriviti ad un Hackathon, crea il tuo team ed esprimi il tuo
-                                talento!
-                            </Heading>
-                        </Stack>
-                    </Flex>
-                    <Box bg={colors.white} w='70%' h='100%' m='auto' borderRadius='md'>
-                        <Flex>
-                            <Stack spacing={8} p='8%' w='100%'>
-                                <Heading as='h2' size='lg' p={5}>
-                                    Trova l'Hackathon che fa per te
+            <BoxFullHeightAfterHeader isLogged={isLogged}>
+                <FlexContainer>
+                    <SimpleResponsiveGrid>
+                        <Flex alignSelf='center' color={colors.white} pr={0}>
+                            <Stack p={[50, 45, 35, 30]} textAlign='center'>
+                                <Heading as='h1' size='2xl' m='auto'>
+                                    Entra nel mondo degli Hackathon!
                                 </Heading>
-                                <Box>
-                                    <Box textAlign='left'>
-                                        <label>
-                                            <b>Seleziona una città:</b>
-                                            <Select onChange={onFilterChange} placeholder='-'>
-                                                {Array.from(cities).map((city) => (
-                                                    <option key={city} value={city} label={city} />
-                                                ))}
-                                            </Select>
-                                        </label>
-                                    </Box>
-                                    <Link
-                                        to={
-                                            selectedCity != null
-                                                ? `/hackathons?city=${selectedCity}`
-                                                : '/hackathons'
-                                        }>
-                                        <StyledBlueButton>Vai</StyledBlueButton>
-                                    </Link>
-                                </Box>
+                                <Heading p='5%' as='h2' fontSize='xl'>
+                                    Entra a far parte della piattaforma di Hackathon numero uno.
+                                    <br />
+                                    Iscriviti ad un Hackathon, crea il tuo team ed esprimi il tuo
+                                    talento!
+                                </Heading>
                             </Stack>
                         </Flex>
-                    </Box>
-                </SimpleResponsiveGrid>
-            </FlexContainer>
+                        <Box bg={colors.white} w='70%' h='100%' m='auto' borderRadius='md'>
+                            <Flex>
+                                <Stack spacing={8} p='8%' w='100%'>
+                                    <Heading as='h2' size='lg' p={5}>
+                                        Trova l'Hackathon che fa per te
+                                    </Heading>
+                                    <Box>
+                                        <Box textAlign='left'>
+                                            <label>
+                                                <b>Seleziona una città:</b>
+                                                <Select onChange={onFilterChange} placeholder='-'>
+                                                    {Array.from(cities).map((city) => (
+                                                        <option
+                                                            key={city}
+                                                            value={city}
+                                                            label={city}
+                                                        />
+                                                    ))}
+                                                </Select>
+                                            </label>
+                                        </Box>
+                                        <Link
+                                            to={
+                                                selectedCity != null
+                                                    ? `/hackathons?city=${selectedCity}`
+                                                    : '/hackathons'
+                                            }>
+                                            <StyledBlueButton>Vai</StyledBlueButton>
+                                        </Link>
+                                    </Box>
+                                </Stack>
+                            </Flex>
+                        </Box>
+                    </SimpleResponsiveGrid>
+                </FlexContainer>
+            </BoxFullHeightAfterHeader>
             <Box>
                 {cities?.length > 0 && (
                     <Box p={10} pb='10%' pt={30}>
@@ -186,6 +197,7 @@ const StyledBlueButton = styled(Button).attrs({
     pl: '2.5rem',
     pr: '2.5rem',
     rounded: 'md',
+    _hover: { bg: colors.blue_light },
 })``;
 
 const StyledBlueBox = styled(Box).attrs({

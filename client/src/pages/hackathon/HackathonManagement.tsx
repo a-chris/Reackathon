@@ -344,7 +344,7 @@ export default function HackathonManagement() {
                             </Stack>
                         </FormControl>
                         <Divider borderColor={colors.red} />
-                        <FormControl isInvalid={locationMissingFields.length > 0}>
+                        <FormControl isInvalid={locationMissingFields.length > 0} isRequired>
                             <FormLabel htmlFor='location'>Indirizzo</FormLabel>
                             <AutocompleteComponent
                                 id='location'

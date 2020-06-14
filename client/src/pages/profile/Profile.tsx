@@ -15,7 +15,7 @@ import {
 } from '../../services/UserService';
 import colors from '../../utils/colors';
 import ClientProfileInfo from './components/ClientProfileInfo';
-import HackathonProfileInfo from './components/HackathonProfileInfo';
+import OrganizationProfileInfo from './components/OrganizationProfileInfo';
 
 export default function Profile() {
     const { username } = useParams();
@@ -123,7 +123,10 @@ export default function Profile() {
                             onSaveSkills={onSaveSkills}
                         />
                     ) : (
-                        <HackathonProfileInfo userId={user?._id} isProfileOwner={isProfileOwner} />
+                        <OrganizationProfileInfo
+                            userId={user?._id}
+                            isProfileOwner={isProfileOwner}
+                        />
                     )}
                 </Stack>
             )}

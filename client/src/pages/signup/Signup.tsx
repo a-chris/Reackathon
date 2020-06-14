@@ -268,6 +268,7 @@ export default function Signup() {
                         <Button
                             isDisabled={!allValuesValid}
                             bg={colors.blue_night}
+                            _hover={{ bg: colors.blue_light }}
                             color={colors.white}
                             isLoading={loading}
                             type='submit'

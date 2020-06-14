@@ -37,6 +37,12 @@
     }
 }
 
+/* Scrollbar always visible to avoid page resizing when opening the drawer */
+html {
+    overflow: -moz-scrollbars-vertical;
+    overflow-y: scroll;
+}
+
 .App {
     height: 100%;
 }
