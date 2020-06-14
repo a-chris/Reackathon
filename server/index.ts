@@ -117,6 +117,11 @@ app.route('/hackathons')
     .get(hackathonsController.findHackathons)
     .post(hackathonsController.saveHackathons);
 
+app.route('/hackathons/org').get(
+    authController.isOrganization,
+    hackathonsController.findOrganizationHackathons
+);
+
 app.route('/hackathons/:id').get(hackathonsController.findHackathon);
 
 app.route('/hackathons/:id/sub')
@@ -139,6 +144,8 @@ app.route('/attendants/invites/:inviteId').put(
 );
 
 app.route('/filters/cities').get(filtersController.getAvailableCities);
+
+app.route('/stats').get(authController.isOrganization, hackathonsController.organizationStats);
 
 /**
  * Listen

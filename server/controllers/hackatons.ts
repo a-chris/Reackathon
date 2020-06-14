@@ -2,24 +2,32 @@ import { Request, Response } from 'express';
 import { AttendantDb } from '../models/Attendant';
 import SocketEvent from '../models/Events';
 import { HackathonDb } from '../models/Hackathon';
+import { UserRole } from '../models/User';
 
 const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 
 type FilterType = {
     city?: string;
     province?: string;
-    district?: string;
+    region?: string;
     country?: string;
     from?: string;
     to?: string;
     status?: string;
 };
 
+export type Statistic = {
+    totalHackathons: number;
+    pendingHackathons: number;
+    totalPrize: number;
+    totalAttendants: number;
+};
+
 const mapFiltersToString = (filterName: string) => {
     switch (filterName) {
         case 'city':
         case 'province':
-        case 'district':
+        case 'region':
         case 'country':
             return 'location.' + filterName;
         default:
@@ -27,16 +35,7 @@ const mapFiltersToString = (filterName: string) => {
     }
 };
 
-const HACKATHON_FIELDS = new Set([
-    'city',
-    'province',
-    'district',
-    'country',
-    'state',
-    'from',
-    'to',
-    'status',
-]);
+const HACKATHON_FIELDS = new Set(['city', 'province', 'country', 'state', 'from', 'to', 'status']);
 
 const sanitizeFilters = (filters: any): FilterType => {
     const sanitizedFilters: any = {};
@@ -108,6 +107,20 @@ export function saveHackathons(req: Request, res: Response) {
                 console.log(err);
             });
     }
+}
+
+export function findOrganizationHackathons(req: Request, res: Response) {
+    const user = req.session?.user;
+
+    if (user._id == null || user.role != UserRole.ORGANIZATION) {
+        return res.sendStatus(401);
+    }
+
+    HackathonDb.find({ 'organization': user._id })
+        .populate('organization')
+        .exec((err, hackathons) => {
+            res.json(hackathons);
+        });
 }
 
 export function changeHackathonStatus(req: Request, res: Response) {
@@ -199,4 +212,36 @@ export async function unsubscribeUser(req: Request, res: Response) {
     } else {
         return res.json(hackathon);
     }
+}
+
+export function organizationStats(req: Request, res: Response) {
+    const user = req.session?.user;
+
+    if (user._id == null || user.role != UserRole.ORGANIZATION) {
+        return res.sendStatus(401);
+    }
+
+    const stats = {
+        totalHackathons: 0,
+        pendingHackathons: 0,
+        totalAttendants: 0,
+        totalPrize: 0,
+    };
+
+    HackathonDb.find({ organization: user._id }).exec((err, results) => {
+        if (results.length > 0) {
+            stats.totalHackathons = results.length;
+            stats.pendingHackathons = results.filter(
+                (hackathon) => hackathon.status === 'pending'
+            ).length;
+            stats.totalAttendants = results
+                .map((hackathon) => hackathon.attendants.length)
+                .reduce((numAttendantsA, numAttendantsB) => numAttendantsA + numAttendantsB);
+            stats.totalPrize = results
+                .map((hackathon) => hackathon.prize.amount)
+                .reduce((amountA, amountB) => amountA + amountB);
+        }
+        return res.json(stats);
+    });
+    // return res.json(stats);
 }

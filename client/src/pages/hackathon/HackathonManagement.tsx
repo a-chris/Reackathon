@@ -6,6 +6,7 @@ import {
     AccordionPanel,
     Box,
     Button,
+    Divider,
     FormControl,
     FormErrorMessage,
     FormLabel,
@@ -26,11 +27,12 @@ import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { HackathonStatus, NewHackathon, UserRole } from '../../models/Models';
-// TODO find a better solution
-import { fakeLocation } from '../../models/TempDemoModels';
+import { HackathonStatus, Location, NewHackathon, UserRole } from '../../models/Models';
 import { createHackathon, getHackathon } from '../../services/HackathonService';
 import colors from '../../utils/colors';
+import AutocompleteComponent from './components/AutocompleteComponent';
+
+type Props = { id?: string };
 
 const AccordionHeaderStyle = {
     fontWeight: '700',
@@ -44,6 +46,16 @@ const initialPrizeData = {
     extra: '',
 };
 
+const locationToString = {
+    number: 'numero civico',
+    street: 'via',
+    city: 'città',
+    region: 'regione',
+    province: 'provincia',
+    country: 'stato',
+    zip_code: 'codice postale',
+};
+
 function initialHackathonData() {
     const date = moment();
     return {
@@ -52,16 +64,13 @@ function initialHackathonData() {
         attendantsRequirements: {
             description: '',
         },
-        organization: undefined,
         startDate: date.add(7, 'days').toDate(),
         endDate: date.add(1, 'days').toDate(),
-        location: fakeLocation, //TODO remove fake value
+        location: undefined,
         prize: initialPrizeData,
         status: HackathonStatus.PENDING,
     };
 }
-
-type Props = { id?: string };
 
 export default function HackathonManagement() {
     const appContext = React.useContext(AppContext);
@@ -73,6 +82,9 @@ export default function HackathonManagement() {
     const [loading, setLoading] = React.useState<boolean>(false);
     const [allValuesValid, setAllValuesValid] = React.useState<boolean>(false);
     const [dateError, setDateError] = React.useState<boolean>(false);
+    const [groupError, setGroupError] = React.useState<boolean>(false);
+    const [attendantsNumError, setAttendantsNumError] = React.useState<boolean>(false);
+    const [locationMissingFields, setLocationMissingFields] = React.useState<string[]>([]);
     //TODO optional add min max errors and validation
     const [missingData, setMissingData] = React.useState<string[]>([]);
 
@@ -86,17 +98,20 @@ export default function HackathonManagement() {
     }, [hackathonId]);
 
     React.useEffect(() => {
-        const allValid = _.every(new Set([dateError])) && missingData.length === 0;
+        const allValid =
+            _.every(new Set([dateError, groupError, attendantsNumError])) &&
+            missingData.length === 0 &&
+            locationMissingFields.length === 0;
         setAllValuesValid(allValid);
-    }, [dateError, missingData]);
+    }, [dateError, groupError, attendantsNumError, missingData, locationMissingFields]);
 
     React.useEffect(() => {
-        setMissingData(
-            Object.entries(hackathonData)
-                .filter((el) => el[1] === undefined || el[1] === '')
-                .map((el) => el[0])
-        );
-    }, [hackathonData]); //TODO optimize
+        const missingFields = Object.entries(hackathonData)
+            .filter((el) => el[1] === undefined || el[1] === '')
+            .map((el) => el[0]);
+
+        setMissingData(missingFields);
+    }, [hackathonData]);
 
     React.useEffect(() => {
         if (appContext.state?.user && appContext.state?.user.role === UserRole.ORGANIZATION) {
@@ -113,6 +128,21 @@ export default function HackathonManagement() {
             setDateError(error);
         }
     }, [hackathonData.startDate, hackathonData.endDate]);
+
+    React.useEffect(() => {
+        setAttendantsNumError(
+            validateRange(
+                hackathonData.attendantsRequirements.minNum,
+                hackathonData.attendantsRequirements.maxNum
+            )
+        );
+        setGroupError(
+            validateRange(
+                hackathonData.attendantsRequirements.minGroupComponents,
+                hackathonData.attendantsRequirements.maxGroupComponents
+            )
+        );
+    }, [hackathonData.attendantsRequirements]);
 
     const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event?.target;
@@ -136,6 +166,14 @@ export default function HackathonManagement() {
         if (name != null && value != null) {
             setHackathonData((curr) => ({ ...curr, prize: { ...curr.prize, [name]: value } }));
         }
+    };
+
+    const onChangeLocation = (location: Location | undefined, missingData: string[] | []) => {
+        setHackathonData((curr) => ({
+            ...curr,
+            location,
+        }));
+        setLocationMissingFields(missingData);
     };
 
     const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,29 +218,26 @@ export default function HackathonManagement() {
                 history.push(`/hackathons/${hackathon._id}`);
             })
             .catch((error) => console.log(error));
-    }, [hackathonData, history, appContext]);
+    }, [hackathonData, history]);
 
     return (
         <StyledHackathonContainer>
-            <PseudoBox as='h1' fontSize='1.8em' fontWeight='semibold' m={3} textAlign='left'>
+            <PseudoBox as='h1' fontSize='1.8em' fontWeight='semibold' m={3}>
                 {hackathonId ? 'Modifica' : 'Creazione'} Hackathon
             </PseudoBox>
 
             <Accordion defaultIndex={[0]} allowMultiple>
                 <StyledAccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
-                        <Box flex='1' textAlign='left'>
-                            Descrizione dell'evento
-                        </Box>
+                        <Box flex='1'>Descrizione dell'evento</Box>
                         <AccordionIcon />
                     </AccordionHeader>
                     <AccordionPanel pb={4}>
-                        <FormControl isRequired textAlign='left'>
+                        <FormControl isRequired>
                             <FormLabel htmlFor='name'>Nome dell'evento</FormLabel>
                             <Input
                                 id='name'
                                 name='name'
-                                textAlign='left'
                                 value={hackathonData.name}
                                 onChange={onChangeValue}
                                 placeholder='clicca per modificare...'
@@ -213,7 +248,7 @@ export default function HackathonManagement() {
                             />
                         </FormControl>
 
-                        <FormControl isRequired textAlign='left'>
+                        <FormControl isRequired>
                             <FormLabel htmlFor='description'>Descrizione</FormLabel>
                             <Textarea
                                 id='description'
@@ -228,9 +263,7 @@ export default function HackathonManagement() {
 
                 <StyledAccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
-                        <Box flex='1' textAlign='left'>
-                            Orari e location
-                        </Box>
+                        <Box flex='1'>Orari e location</Box>
                         <AccordionIcon />
                     </AccordionHeader>
                     <AccordionPanel pb={4}>
@@ -238,7 +271,7 @@ export default function HackathonManagement() {
                             <Stack>
                                 <Box display={{ md: 'flex' }}>
                                     <StyleDataDiv>
-                                        <FormControl isRequired textAlign='left' p={1}>
+                                        <FormControl isRequired p={1}>
                                             <FormLabel htmlFor='startDate'>
                                                 Data di inizio
                                             </FormLabel>
@@ -255,7 +288,7 @@ export default function HackathonManagement() {
                                             />
                                         </FormControl>
 
-                                        <FormControl isRequired textAlign='left' p={1}>
+                                        <FormControl isRequired p={1}>
                                             <FormLabel htmlFor='startTime'>Ora di inizio</FormLabel>
                                             <Input
                                                 size='sm'
@@ -272,7 +305,7 @@ export default function HackathonManagement() {
                                     </StyleDataDiv>
 
                                     <StyleDataDiv>
-                                        <FormControl isRequired textAlign='left' p={1}>
+                                        <FormControl isRequired p={1}>
                                             <FormLabel htmlFor='endDate'>Data di fine</FormLabel>
                                             <Input
                                                 size='sm'
@@ -287,7 +320,7 @@ export default function HackathonManagement() {
                                             />
                                         </FormControl>
 
-                                        <FormControl isRequired textAlign='left' p={1}>
+                                        <FormControl isRequired p={1}>
                                             <FormLabel htmlFor='endTime'>Ora di fine</FormLabel>
                                             <Input
                                                 size='sm'
@@ -304,39 +337,38 @@ export default function HackathonManagement() {
                                     </StyleDataDiv>
                                 </Box>
                                 <FormErrorMessage>
-                                    {`L'Hackathon deve essere creato almeno un giorno prima dell'inizio dell'evento,\
-                                     e la data di inizio deve essere inferiore a quella di fine.`}
+                                    L'Hackathon deve essere creato almeno un giorno prima
+                                    dell'inizio dell'evento, e la data di inizio deve essere
+                                    inferiore a quella di fine.
                                 </FormErrorMessage>
                             </Stack>
-                            <FormControl isRequired textAlign='left'>
-                                <FormLabel htmlFor='location'>Luogo</FormLabel>
-                                <Input
-                                    id='location'
-                                    name='location'
-                                    textAlign='left'
-                                    defaultValue={Object.entries(hackathonData.location).map(
-                                        (v: any) => v[1]
-                                    )} //TODO add address autocomplete
-                                    isReadOnly={true}
-                                    // onChange={onChangeValue}
-                                    placeholder='clicca per modificare...'
-                                    p={2}
-                                    pl={4}
-                                />
-                            </FormControl>
+                        </FormControl>
+                        <Divider borderColor={colors.red} />
+                        <FormControl isInvalid={locationMissingFields.length > 0}>
+                            <FormLabel htmlFor='location'>Indirizzo</FormLabel>
+                            <AutocompleteComponent
+                                id='location'
+                                onPlaceChanged={onChangeLocation}
+                            />
+                            <FormErrorMessage>
+                                Indirizzo incompleto. Inserisci:{' '}
+                                <b>
+                                    {locationMissingFields
+                                        .map((field: any) => (locationToString as any)[field])
+                                        .join(', ')}
+                                </b>
+                            </FormErrorMessage>
                         </FormControl>
                     </AccordionPanel>
                 </StyledAccordionItem>
 
                 <StyledAccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
-                        <Box flex='1' textAlign='left'>
-                            Requisiti per partecipare
-                        </Box>
+                        <Box flex='1'>Requisiti per partecipare</Box>
                         <AccordionIcon />
                     </AccordionHeader>
                     <AccordionPanel pb={4}>
-                        <FormControl textAlign='left'>
+                        <FormControl>
                             <FormLabel htmlFor='requirements_description'>
                                 Requisiti richiesti ai partecipanti
                             </FormLabel>
@@ -349,82 +381,91 @@ export default function HackathonManagement() {
                             />
                         </FormControl>
 
-                        <Box display={{ md: 'flex' }}>
-                            <FormControl textAlign='left' pr={4}>
-                                <FormLabel htmlFor='minNum'>
-                                    Numero minimo di partecipanti
-                                </FormLabel>
-                                <Input
-                                    id='minNum'
-                                    name='minNum'
-                                    type='number'
-                                    placeholder='-'
-                                    value={hackathonData.attendantsRequirements.minNum || ''}
-                                    onChange={onChangeRequirements}
-                                />
-                            </FormControl>
+                        <FormControl pr={4} isInvalid={attendantsNumError}>
+                            <Box display={{ md: 'flex' }}>
+                                <Stack pr={2}>
+                                    <FormLabel htmlFor='minNum'>
+                                        Numero minimo di partecipanti
+                                    </FormLabel>
+                                    <Input
+                                        id='minNum'
+                                        name='minNum'
+                                        type='number'
+                                        placeholder='-'
+                                        value={hackathonData.attendantsRequirements.minNum || ''}
+                                        onChange={onChangeRequirements}
+                                    />
+                                </Stack>
+                                <Stack>
+                                    <FormLabel htmlFor='maxNum'>
+                                        Numero massimo di partecipanti
+                                    </FormLabel>
+                                    <Input
+                                        id='maxNum'
+                                        name='maxNum'
+                                        type='number'
+                                        placeholder='-'
+                                        value={hackathonData.attendantsRequirements.maxNum || ''}
+                                        onChange={onChangeRequirements}
+                                    />
+                                </Stack>
+                            </Box>
+                            <FormErrorMessage>
+                                Il numero mimino non può essere più grande del numero massimo di
+                                partecipanti
+                            </FormErrorMessage>
+                        </FormControl>
 
-                            <FormControl textAlign='left'>
-                                <FormLabel htmlFor='maxNum'>
-                                    Numero massimo di partecipanti
-                                </FormLabel>
-                                <Input
-                                    id='maxNum'
-                                    name='maxNum'
-                                    type='number'
-                                    placeholder='-'
-                                    value={hackathonData.attendantsRequirements.maxNum || ''}
-                                    onChange={onChangeRequirements}
-                                />
-                            </FormControl>
-                        </Box>
-                        <Box display={{ md: 'flex' }}>
-                            <FormControl textAlign='left' pr={4}>
-                                <FormLabel htmlFor='minGroupComponents'>
-                                    Numero minimo di componenti per squadra
-                                </FormLabel>
-                                <Input
-                                    id='minGroupComponents'
-                                    name='minGroupComponents'
-                                    type='number'
-                                    placeholder='-'
-                                    value={
-                                        hackathonData.attendantsRequirements.minGroupComponents ||
-                                        ''
-                                    }
-                                    onChange={onChangeRequirements}
-                                />
-                            </FormControl>
-
-                            <FormControl textAlign='left'>
-                                <FormLabel htmlFor='maxGroupComponents'>
-                                    Numero massimo di componenti per squadra
-                                </FormLabel>
-                                <Input
-                                    id='maxGroupComponents'
-                                    name='maxGroupComponents'
-                                    type='number'
-                                    placeholder='-'
-                                    value={
-                                        hackathonData.attendantsRequirements.maxGroupComponents ||
-                                        ''
-                                    }
-                                    onChange={onChangeRequirements}
-                                />
-                            </FormControl>
-                        </Box>
+                        <FormControl pr={4} isInvalid={groupError}>
+                            <Box display={{ md: 'flex' }}>
+                                <Stack pr={2}>
+                                    <FormLabel htmlFor='minGroupComponents'>
+                                        Numero minimo di componenti per squadra
+                                    </FormLabel>
+                                    <Input
+                                        id='minGroupComponents'
+                                        name='minGroupComponents'
+                                        type='number'
+                                        placeholder='-'
+                                        value={
+                                            hackathonData.attendantsRequirements
+                                                .minGroupComponents || ''
+                                        }
+                                        onChange={onChangeRequirements}
+                                    />
+                                </Stack>
+                                <Stack>
+                                    <FormLabel htmlFor='maxGroupComponents'>
+                                        Numero massimo di componenti per squadra
+                                    </FormLabel>
+                                    <Input
+                                        id='maxGroupComponents'
+                                        name='maxGroupComponents'
+                                        type='number'
+                                        placeholder='-'
+                                        value={
+                                            hackathonData.attendantsRequirements
+                                                .maxGroupComponents || ''
+                                        }
+                                        onChange={onChangeRequirements}
+                                    />
+                                </Stack>
+                            </Box>
+                            <FormErrorMessage>
+                                Il numero mimino non può essere più grande del numero massimo di
+                                componenti per gruppo
+                            </FormErrorMessage>
+                        </FormControl>
                     </AccordionPanel>
                 </StyledAccordionItem>
 
                 <StyledAccordionItem>
                     <AccordionHeader {...AccordionHeaderStyle}>
-                        <Box flex='1' textAlign='left'>
-                            Premi
-                        </Box>
+                        <Box flex='1'>Premi</Box>
                         <AccordionIcon />
                     </AccordionHeader>
                     <AccordionPanel pb={4}>
-                        <FormControl isRequired textAlign='left'>
+                        <FormControl isRequired>
                             <FormLabel htmlFor='amount'>Premio in denaro</FormLabel>
                             <NumberInput step={5} defaultValue={0} min={0}>
                                 <NumberInputField
@@ -439,7 +480,7 @@ export default function HackathonManagement() {
                             </NumberInput>
                         </FormControl>
 
-                        <FormControl textAlign='left' pr={4}>
+                        <FormControl pr={4}>
                             <FormLabel htmlFor='extra'>Altre informazioni</FormLabel>
                             <Input
                                 id='extra'
@@ -452,26 +493,32 @@ export default function HackathonManagement() {
                 </StyledAccordionItem>
             </Accordion>
 
-            <Button
-                isLoading={loading}
-                isDisabled={!allValuesValid}
-                m={3}
-                mb={0}
-                borderColor={colors.blue_night}
-                color={colors.black}
-                border='2px'
-                variant='outline'
-                onClick={onHackathonCreation}
-                type='button'>
-                Salva
-            </Button>
-            {!allValuesValid && (
-                <Text>
-                    <small>Inserisci tutte le informazioni richieste per poter procedere</small>
-                </Text>
-            )}
+            <Box textAlign='center'>
+                <Button
+                    isLoading={loading}
+                    isDisabled={!allValuesValid}
+                    m={3}
+                    mb={0}
+                    borderColor={colors.blue_night}
+                    color={colors.black}
+                    border='2px'
+                    variant='outline'
+                    onClick={onHackathonCreation}
+                    type='button'>
+                    Salva
+                </Button>
+                {!allValuesValid && (
+                    <Text>
+                        <small>Inserisci tutte le informazioni richieste per poter procedere</small>
+                    </Text>
+                )}
+            </Box>
         </StyledHackathonContainer>
     );
+}
+
+function validateRange(min?: number, max?: number): boolean {
+    return min != null && max != null && +min > +max;
 }
 
 const StyledHackathonContainer = styled.div`
@@ -480,7 +527,6 @@ const StyledHackathonContainer = styled.div`
     border: 3px solid #e2e8f0;
     border-radius: 10px;
     padding: 10px;
-    text-align: center;
 `;
 
 const StyledAccordionItem = styled(AccordionItem)`

@@ -43,6 +43,11 @@ type MenuItem = {
 
 const ACTION_MENU_ITEMS: MenuItem[] = [
     {
+        name: 'Dashboard',
+        path: '/org',
+        role: [UserRole.ORGANIZATION],
+    },
+    {
         name: 'Crea',
         path: '/hackathons/create',
         role: [UserRole.ORGANIZATION],
@@ -60,7 +65,7 @@ const ACTION_MENU_ITEMS: MenuItem[] = [
     {
         name: 'Classifica',
         path: '/ranking',
-        role: [UserRole.CLIENT, UserRole.ORGANIZATION],
+        role: [UserRole.CLIENT],
     },
 ];
 

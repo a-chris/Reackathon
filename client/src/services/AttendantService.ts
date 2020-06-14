@@ -4,10 +4,10 @@ import { BASE_URL } from './Constants';
 
 const ATTENDANTS_API = `${BASE_URL}/attendants`;
 
-export function inviteAttendantToGroup(attendandIdFrom: string, attendandIdTo: string) {
+export function inviteAttendantToGroup(attendantIdFrom: string, attendantIdTo: string) {
     return new Promise((resolve, reject) =>
         axios
-            .post(`${ATTENDANTS_API}/${attendandIdTo}/invite`, { from: attendandIdFrom })
+            .post(`${ATTENDANTS_API}/${attendantIdTo}/invite`, { from: attendantIdFrom })
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );

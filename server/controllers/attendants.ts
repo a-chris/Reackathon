@@ -56,6 +56,9 @@ export async function replyToInvite(req: Request, res: Response) {
             const newGroupNumber = (_.max(hackathon?.attendants?.map((a) => a.group)) || 0) + 1;
             attendantSender!.group = newGroupNumber;
             attendantReceiver!.group = newGroupNumber;
+            // remove other invites for this hackathon
+            attendantSender!.invites = [];
+            attendantReceiver!.invites = [];
         } else {
             // assign to the receiver the sender's group
             const groupMembersCountOfSender = hackathon.attendants.filter(
@@ -63,6 +66,8 @@ export async function replyToInvite(req: Request, res: Response) {
             ).length;
             if (groupMembersCountOfSender < hackathon.attendantsRequirements.maxGroupComponents) {
                 attendantReceiver!.group = attendantSender.group;
+                // remove other invites for this hackathon
+                attendantReceiver!.invites = [];
             } else {
                 return res
                     .status(400)

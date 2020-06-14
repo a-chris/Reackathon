@@ -32,11 +32,18 @@ export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentA
     };
 
     const colors: string[] = React.useMemo(() => {
-        return attendants.map((a, index, array) => {
-            if (index === 0 || a.group == null) return getRandomColorString();
-            else if (a.group === array[index - 1].group) return _.last(colors)!;
-            else return '';
-        });
+        const tmpColors: string[] = [];
+        for (let i = 0; i < attendants.length; i++) {
+            const attendant = attendants[i];
+            if (i === 0 || attendant.group == null) {
+                tmpColors.push(getRandomColorString());
+            } else if (attendant.group === attendants[i - 1].group) {
+                tmpColors.push(tmpColors[i - 1]);
+            } else {
+                tmpColors.push('');
+            }
+        }
+        return tmpColors;
     }, [attendants]);
 
     return (
@@ -129,7 +136,7 @@ function getGroupButton(
         );
     } else if (currentAttendant.group == null && attendantInList.group == null) {
         text = 'Crea gruppo';
-    } else if (currentAttendant.group != null && attendantInList.group != null) {
+    } else if (currentAttendant.group != null && attendantInList.group == null) {
         text = 'Invita nel tuo gruppo';
     }
     if (text)

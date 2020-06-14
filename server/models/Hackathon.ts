@@ -8,11 +8,11 @@ const LocationSchema = new mongoose.Schema({
     number: Number,
     city: String,
     province: String,
-    district: String,
+    region: String,
     country: String,
     zip_code: Number,
-    lat: Number,
-    long: Number,
+    lat: { type: Number, required: false },
+    long: { type: Number, required: false },
 });
 
 const AttendantsRequirementsSchema = new mongoose.Schema({
@@ -47,11 +47,11 @@ export type Location = mongoose.Document & {
     number: number;
     city: string;
     province: string;
-    district: string;
+    region: string;
     country: string;
     zip_code: number;
-    lat: number;
-    long: number;
+    lat?: number;
+    long?: number;
 };
 
 export type Prize = mongoose.Document & {

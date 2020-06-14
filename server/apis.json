@@ -119,9 +119,8 @@
                     "province": {
                         "type": "string"
                     },
-                    "district": {
-                        "type": "string",
-                        "description": "regione"
+                    "region": {
+                        "type": "string"
                     },
                     "country": {
                         "type": "string"
@@ -408,13 +407,6 @@
                     {
                         "in": "query",
                         "name": "province",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "in": "query",
-                        "name": "district",
                         "schema": {
                             "type": "string"
                         }
