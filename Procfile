@@ -1,1 +1,1 @@
-web: node server/js/index.js
+web: yarn start
