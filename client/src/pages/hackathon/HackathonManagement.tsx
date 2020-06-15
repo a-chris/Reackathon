@@ -34,13 +34,6 @@ import AutocompleteComponent from './components/AutocompleteComponent';
 
 type Props = { id?: string };
 
-const AccordionHeaderStyle = {
-    fontWeight: '700',
-    bg: colors.blue_night,
-    color: colors.white,
-    borderRadius: 3,
-};
-
 const initialPrizeData = {
     amount: 0,
     extra: '',
@@ -109,6 +102,8 @@ export default function HackathonManagement() {
         const missingFields = Object.entries(hackathonData)
             .filter((el) => el[1] === undefined || el[1] === '')
             .map((el) => el[0]);
+        if (hackathonData.attendantsRequirements.description === '')
+            missingFields.push('attendantsRequirements');
 
         setMissingData(missingFields);
     }, [hackathonData]);
@@ -228,10 +223,10 @@ export default function HackathonManagement() {
 
             <Accordion defaultIndex={[0]} allowMultiple>
                 <StyledAccordionItem>
-                    <AccordionHeader {...AccordionHeaderStyle}>
+                    <StyledAccordionHeader>
                         <Box flex='1'>Descrizione dell'evento</Box>
                         <AccordionIcon />
-                    </AccordionHeader>
+                    </StyledAccordionHeader>
                     <AccordionPanel pb={4}>
                         <FormControl isRequired>
                             <FormLabel htmlFor='name'>Nome dell'evento</FormLabel>
@@ -262,10 +257,10 @@ export default function HackathonManagement() {
                 </StyledAccordionItem>
 
                 <StyledAccordionItem>
-                    <AccordionHeader {...AccordionHeaderStyle}>
+                    <StyledAccordionHeader>
                         <Box flex='1'>Orari e location</Box>
                         <AccordionIcon />
-                    </AccordionHeader>
+                    </StyledAccordionHeader>
                     <AccordionPanel pb={4}>
                         <FormControl isInvalid={dateError}>
                             <Stack>
@@ -363,12 +358,12 @@ export default function HackathonManagement() {
                 </StyledAccordionItem>
 
                 <StyledAccordionItem>
-                    <AccordionHeader {...AccordionHeaderStyle}>
+                    <StyledAccordionHeader>
                         <Box flex='1'>Requisiti per partecipare</Box>
                         <AccordionIcon />
-                    </AccordionHeader>
+                    </StyledAccordionHeader>
                     <AccordionPanel pb={4}>
-                        <FormControl>
+                        <FormControl isRequired>
                             <FormLabel htmlFor='requirements_description'>
                                 Requisiti richiesti ai partecipanti
                             </FormLabel>
@@ -460,10 +455,10 @@ export default function HackathonManagement() {
                 </StyledAccordionItem>
 
                 <StyledAccordionItem>
-                    <AccordionHeader {...AccordionHeaderStyle}>
+                    <StyledAccordionHeader>
                         <Box flex='1'>Premi</Box>
                         <AccordionIcon />
-                    </AccordionHeader>
+                    </StyledAccordionHeader>
                     <AccordionPanel pb={4}>
                         <FormControl isRequired>
                             <FormLabel htmlFor='amount'>Premio in denaro</FormLabel>
@@ -528,6 +523,14 @@ const StyledHackathonContainer = styled.div`
     border-radius: 10px;
     padding: 10px;
 `;
+
+const StyledAccordionHeader = styled(AccordionHeader).attrs({
+    fontWeight: '700',
+    bg: colors.blue_night,
+    color: colors.white,
+    borderRadius: 3,
+    _hover: { bg: colors.blue_light },
+})``;
 
 const StyledAccordionItem = styled(AccordionItem)`
     padding-bottom: 5px;

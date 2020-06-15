@@ -70,6 +70,7 @@ export default function HackathonDetail() {
     const [hackathonData, setHackathonData] = React.useState<Hackathon>();
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
     const [isAlertOpen, setAlertOpen] = React.useState<boolean>(false);
+    const [isArchiveAlertOpen, setArchiveAlertOpen] = React.useState<boolean>(false);
     const cancelRef = React.useRef<HTMLElement>(null);
 
     useEffectOnce(() => {
@@ -180,15 +181,15 @@ export default function HackathonDetail() {
                                     <Icon name='chevron-down' ml='2px' size='26px' p='0' />
                                 </MenuButton>
                                 <MenuList>
-                                    <MenuItem alignItems='center'>
-                                        <Link to={`/hackathons/update/${hackathonId}`}>
+                                    <Link to={`/hackathons/update/${hackathonId}`}>
+                                        <MenuItem alignItems='center'>
                                             Modifica
                                             <Icon name='external-link' ml='2px' size='20px' />
-                                        </Link>
-                                    </MenuItem>
+                                        </MenuItem>
+                                    </Link>
                                     <MenuItem
                                         alignItems='center'
-                                        onClick={() => onChangeStatus(HackathonStatus.ARCHIVED)}
+                                        onClick={() => setArchiveAlertOpen(true)}
                                         color={colors.red_dark}>
                                         Cancella evento
                                         <Icon name='warning-2' ml='2px' size='20px' />
@@ -290,6 +291,12 @@ export default function HackathonDetail() {
                     title='Sei sicuro di volerti iscrivere?'
                     onClose={() => setAlertOpen(false)}
                     onConfirm={onHackathonSubscribe}
+                />
+                <ConfirmDialog
+                    isOpen={isArchiveAlertOpen}
+                    title="Sei sicuro di voler cancellare l'Hackathon? Questa operazione è irreversibile."
+                    onClose={() => setArchiveAlertOpen(false)}
+                    onConfirm={() => onChangeStatus(HackathonStatus.ARCHIVED)}
                 />
             </ContainerWithBackgroundImage>
         </BoxFullHeightAfterHeader>

@@ -137,15 +137,15 @@ export function changeHackathonStatus(req: Request, res: Response) {
         const currentStatusIndex = HackathonAction.findIndex((v) => v === hackathon?.status);
         if (currentStatusIndex > nextStatusIndex) return res.sendStatus(400);
 
-        HackathonDb.findOneAndUpdate(
-            { '_id': hackathonId },
-            { 'status': action },
-            { new: true },
-            (err, newHackathon) => {
+        HackathonDb.findOneAndUpdate({ '_id': hackathonId }, { 'status': action }, { new: true })
+            .populate({
+                path: 'attendants',
+                populate: { path: 'user' },
+            })
+            .exec((err, newHackathon) => {
                 if (err != null) return res.sendStatus(400);
                 return res.json(newHackathon);
-            }
-        );
+            });
     });
 }
 

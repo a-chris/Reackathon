@@ -133,13 +133,6 @@ const FlexContainer = styled(Stack).attrs({
     bg: colors.white,
 })``;
 
-const StyledBlueBox = styled(Box).attrs({
-    bg: colors.blue_night,
-    color: colors.white,
-    p: '2%',
-    w: '100%',
-})``;
-
 const StyledStat = styled(Box).attrs({
     bg: colors.white,
 })`
