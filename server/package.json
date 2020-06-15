@@ -18,9 +18,7 @@
         "lodash": "^4.17.15",
         "mongoose": "^5.9.12",
         "multer": "^1.4.2",
-        "nodemailer": "^6.4.8",
-        "socket.io": "^2.3.0",
-        "ts-node": "^8.10.2"
+        "nodemailer": "^6.4.8"
     },
     "devDependencies": {
         "@types/bcrypt": "^3.0.0",
