@@ -11,8 +11,7 @@
         "client"
     ],
     "scripts": {
-        "start": "ts-node server/index.ts",
-        "heroku-postbuild": "cd client && yarn && yarn run build"
+        "start": "ts-node server/index.ts"
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^2.31.0",
