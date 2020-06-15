@@ -1,1 +1,1 @@
-web: yarn start
+web: yarn --cwd "client" build && yarn --cwd "server" ts-node index.ts
