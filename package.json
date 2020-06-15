@@ -11,7 +11,7 @@
         "client"
     ],
     "scripts": {
-        "start": "cd server && ts-node index.ts",
+        "start": "ts-node server/index.ts",
         "heroku-postbuild": "cd client && yarn && yarn run build"
     },
     "devDependencies": {
@@ -28,8 +28,8 @@
         "prettier": "^2.0.5"
     },
     "dependencies": {
-        "typescript": "^3.8.3",
-        "ts-node": "^8.10.2"
+        "ts-node": "^8.10.2",
+        "typescript": "^3.8.3"
     },
     "engines": {
         "node": "14.x",
