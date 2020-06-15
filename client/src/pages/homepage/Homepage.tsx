@@ -62,7 +62,7 @@ export default function Homepage() {
                                 </Heading>
                             </Stack>
                         </Flex>
-                        <Box bg={colors.white} w='70%' h='100%' m='auto' borderRadius='md'>
+                        <Box bg={colors.white} w='70%' m='auto' borderRadius='md'>
                             <Flex>
                                 <Stack spacing={8} p='8%' w='100%'>
                                     <Heading as='h2' size='lg' p={5}>
@@ -170,9 +170,9 @@ export default function Homepage() {
 const FlexContainer: React.FC<{}> = (props) => {
     return (
         <Flex
+            h='100%'
             alignItems='center'
             justifyContent='center'
-            h='fit-content'
             p='10% 0'
             backgroundImage="url('./images/background/space-min.jpg')"
             {...BackgroundImageStyleProps}>

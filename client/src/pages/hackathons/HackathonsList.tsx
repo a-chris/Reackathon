@@ -13,6 +13,7 @@ import {
     SimpleGrid,
     Stack,
     Text,
+    FormLabel,
 } from '@chakra-ui/core';
 import queryString from 'query-string';
 import React from 'react';
@@ -102,10 +103,11 @@ export default function HackathonsList() {
                                 <AccordionIcon />
                             </AccordionHeader>
                             <AccordionPanel>
-                                <SimpleGrid columns={[1, 2, 4]} spacing={[1, 1, 2]}>
-                                    <label>
+                                <Flex wrap='wrap'>
+                                    <FormLabel pl={1}>
                                         <b>Città:</b>
                                         <Select
+                                            minW='200.19px'
                                             placeholder='-'
                                             name='city'
                                             onChange={onChangeFilter}>
@@ -115,10 +117,11 @@ export default function HackathonsList() {
                                                 </option>
                                             ))}
                                         </Select>
-                                    </label>
-                                    <label>
-                                        <b>Status:</b>
+                                    </FormLabel>
+                                    <FormLabel pl={1}>
+                                        <b>Stato:</b>
                                         <Select
+                                            minW='200.19px'
                                             placeholder='-'
                                             name='status'
                                             onChange={onChangeFilter}>
@@ -128,16 +131,16 @@ export default function HackathonsList() {
                                                 </option>
                                             ))}
                                         </Select>
-                                    </label>
-                                    <label>
+                                    </FormLabel>
+                                    <FormLabel pl={1}>
                                         <b>Data di inizio:</b>
                                         <Input type='date' name='from' onChange={onChangeFilter} />
-                                    </label>
-                                    <label>
+                                    </FormLabel>
+                                    <FormLabel pl={1}>
                                         <b>Data di fine:</b>
                                         <Input type='date' name='to' onChange={onChangeFilter} />
-                                    </label>
-                                </SimpleGrid>
+                                    </FormLabel>
+                                </Flex>
                             </AccordionPanel>
                         </AccordionItem>
                     </Accordion>
