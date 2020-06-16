@@ -7,27 +7,26 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path';
 import socketIo from 'socket.io';
+import { isProduction } from './config/constants';
 import * as attendantsController from './controllers/attendants';
 import * as authController from './controllers/auth';
 import * as filtersController from './controllers/filters';
 import * as hackathonsController from './controllers/hackatons';
 import * as usersController from './controllers/users';
 
+require('dotenv').config();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
 
-if (process.env.MONGODB_URI != null) {
-    mongoose.connect(process.env.MONGODB_URI as string, { useNewUrlParser: true });
-} else {
-    mongoose.connect('mongodb://192.168.1.123', {
-        dbName: 'test',
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-    });
-}
+mongoose.connect(process.env.MONGODB_URI as string, {
+    dbName: isProduction() ? undefined : 'test',
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+});
 
 const MongoStore = require('connect-mongo')(session);
 const storage = multer.diskStorage({
@@ -56,7 +55,7 @@ app.use(
 app.use(
     session({
         name: 'reackathon_session',
-        secret: 'reackathon2020',
+        secret: process.env.SECRET as string,
         proxy: true,
         resave: true,
         saveUninitialized: false,
