@@ -1,6 +1,8 @@
 import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
+import http from 'http';
+import https from 'https';
 import * as _ from 'lodash';
 import mongoose from 'mongoose';
 import multer from 'multer';
@@ -62,8 +64,6 @@ app.use(
     })
 );
 
-// TODO: wrap this in a if statement
-// before to deploy in qa/production
 app.use(
     cors({
         credentials: true,
@@ -155,7 +155,10 @@ app.route('/stats').get(authController.isOrganization, hackathonsController.orga
 /**
  * Listen
  */
-const server = app.listen(PORT, () => console.log('Server started!'));
+const server =
+    process.env.NODE_ENV === 'production' ? https.createServer(app) : http.createServer(app);
+
+server.listen(PORT, () => console.log('Server started!'));
 
 const io = socketIo(server);
 app.set('io', io);
