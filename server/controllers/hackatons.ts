@@ -184,17 +184,6 @@ export async function changeHackathonStatus(req: Request, res: Response) {
     return res.json(newHackathon);
 }
 
-// TODO: remove this function
-export async function deleteAttendant(req: Request, res: Response) {
-    const hackathonId = req.params?.id;
-    const hackathon = await HackathonDb.findById(hackathonId);
-    hackathon!.attendants = [];
-    hackathon!.save();
-
-    await AttendantDb.remove({});
-    res.sendStatus(200);
-}
-
 export async function subscribeUser(req: Request, res: Response) {
     const user = req.session?.user;
     const hackathonId = req.params?.id;

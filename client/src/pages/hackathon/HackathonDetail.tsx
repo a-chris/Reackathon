@@ -33,7 +33,9 @@ import _ from 'lodash';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
+import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
+import { BoxFullHeightAfterHeader } from '../../components/Common';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { Attendant, Hackathon, HackathonStatus, UserRole } from '../../models/Models';
@@ -75,6 +77,7 @@ export default function HackathonDetail() {
     const [hackathonData, setHackathonData] = React.useState<Hackathon>();
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
     const [isAlertOpen, setAlertOpen] = React.useState<boolean>(false);
+    const [isArchiveAlertOpen, setArchiveAlertOpen] = React.useState<boolean>(false);
     const cancelRef = React.useRef<HTMLElement>(null);
     const { isOpen, onOpen, onClose } = useDisclosure(); // winner dialog
 
@@ -184,15 +187,15 @@ export default function HackathonDetail() {
                                     <Icon name='chevron-down' ml='2px' size='26px' p='0' />
                                 </MenuButton>
                                 <MenuList>
-                                    <MenuItem alignItems='center'>
-                                        <Link to={`/hackathons/update/${hackathonId}`}>
+                                    <Link to={`/hackathons/update/${hackathonId}`}>
+                                        <MenuItem alignItems='center'>
                                             Modifica
                                             <Icon name='external-link' ml='2px' size='20px' />
-                                        </Link>
-                                    </MenuItem>
+                                        </MenuItem>
+                                    </Link>
                                     <MenuItem
                                         alignItems='center'
-                                        onClick={() => onChangeStatus(HackathonStatus.ARCHIVED)}
+                                        onClick={() => setArchiveAlertOpen(true)}
                                         color={colors.red_dark}>
                                         Cancella evento
                                         <Icon name='warning-2' ml='2px' size='20px' />
@@ -222,90 +225,101 @@ export default function HackathonDetail() {
     return hackathonData == null || cancelRef == null ? (
         <div />
     ) : (
-        <Box>
-            <OverlappedBoxes
-                mainStackStyle={{ width: ['90%'] }}
-                TopContent={() => (
-                    <StyledTitleBox>
-                        <Heading as='h1' size='xl'>
-                            {hackathonData.name}
-                        </Heading>
-                        <SimpleGrid columns={[1, 1, 3, 3]} textAlign='left'>
-                            <Stack>
-                                <Stack
-                                    isInline
-                                    color={colors.gray_dark}
-                                    fontWeight='semibold'
-                                    letterSpacing='wide'
-                                    fontSize='md'>
-                                    <PseudoBox textTransform='capitalize'>
-                                        {hackathonData.location.street}{' '}
-                                        {hackathonData.location.number} &bull;{' '}
-                                        {hackathonData.location.city} &bull;{' '}
-                                        {hackathonData.location.country}
-                                    </PseudoBox>
+        <BoxFullHeightAfterHeader isLogged={appContext.state?.user != null}>
+            <ContainerWithBackgroundImage>
+                <OverlappedBoxes
+                    mainStackStyle={{ width: ['90%', '85%', '70%', '65%'] }}
+                    TopContent={() => (
+                        <StyledTitleBox>
+                            <Heading as='h1' size='xl'>
+                                {hackathonData.name}
+                            </Heading>
+                            <SimpleGrid columns={[1, 1, 3, 3]} textAlign='left'>
+                                <Stack>
+                                    <Stack
+                                        isInline
+                                        color={colors.gray_dark}
+                                        fontWeight='semibold'
+                                        letterSpacing='wide'
+                                        fontSize='md'>
+                                        <PseudoBox textTransform='capitalize'>
+                                            {hackathonData.location.street}{' '}
+                                            {hackathonData.location.number} &bull;{' '}
+                                            {hackathonData.location.city} &bull;{' '}
+                                            {hackathonData.location.country}
+                                        </PseudoBox>
+                                    </Stack>
+                                    <Badge variantColor='green' m='auto'>
+                                        Hackathon {statusToString(hackathonData.status)}
+                                    </Badge>
                                 </Stack>
                                 <Badge variantColor='green' m='auto'>
                                     Hackathon {statusToString(hackathonData.status)}
                                 </Badge>
-                            </Stack>
-                            <StyledDateContainer>
-                                <Icon name='calendar' size='1.5em' color={colors.red} />
-                                <Box textAlign='center'>
-                                    <PseudoBox>
-                                        Dal <b>{toDateString(hackathonData.startDate)}</b>, ore{' '}
-                                        <b>{toTimeString(hackathonData.startDate)}</b>
-                                    </PseudoBox>
-                                    <PseudoBox>
-                                        Al <b>{toDateString(hackathonData.endDate)}</b>, ore{' '}
-                                        <b>{toTimeString(hackathonData.endDate)}</b>
-                                    </PseudoBox>
-                                </Box>
-                            </StyledDateContainer>
-                            <Flex
-                                alignItems='center'
-                                justifyContent={['center', 'center', 'flex-end']}>
-                                {getHackathonButtons()}
-                            </Flex>
-                        </SimpleGrid>
-                    </StyledTitleBox>
-                )}
-                BottomContent={() => (
-                    <Box>
-                        <Tabs isFitted p='1%'>
-                            <TabList mb='1em'>
-                                {HACKATHONS_TABS.map((tabTitle) => (
-                                    <Tab key={`tab-${tabTitle}`}>{tabTitle}</Tab>
-                                ))}
-                            </TabList>
-                            <TabPanels>
-                                <TabPanel>
-                                    <Information hackathon={hackathonData} />
-                                </TabPanel>
-                                <TabPanel>
-                                    <AttendantsList
-                                        attendants={hackathonData.attendants}
-                                        currentAttendant={attendant}
-                                    />
-                                </TabPanel>
-                            </TabPanels>
-                        </Tabs>
-                    </Box>
-                )}
-            />
-            <ConfirmDialog
-                isOpen={isAlertOpen}
-                title='Sei sicuro di volerti iscrivere?'
-                onClose={() => setAlertOpen(false)}
-                onConfirm={onHackathonSubscribe}
-            />
-            <WinnerDialog
-                isOpen={isOpen}
-                attendants={hackathonData.attendants}
-                onClose={onClose}
-                onConfirm={onHackathonFinish}
-            />
-        </Box>
+                                <StyledDateContainer>
+                                    <Icon name='calendar' size='1.5em' color={colors.red} />
+                                    <Box textAlign='center'>
+                                        <PseudoBox>
+                                            Dal <b>{toDateString(hackathonData.startDate)}</b>, ore{' '}
+                                            <b>{toTimeString(hackathonData.startDate)}</b>
+                                        </PseudoBox>
+                                        <PseudoBox>
+                                            Al <b>{toDateString(hackathonData.endDate)}</b>, ore{' '}
+                                            <b>{toTimeString(hackathonData.endDate)}</b>
+                                        </PseudoBox>
+                                    </Box>
+                                </StyledDateContainer>
+                                <Flex
+                                    alignItems='center'
+                                    justifyContent={['center', 'center', 'flex-end']}>
+                                    {getHackathonButtons()}
+                                </Flex>
+                            </SimpleGrid>
+                        </StyledTitleBox>
+                    )}
+                    BottomContent={() => (
+                        <Box>
+                            <Tabs isFitted p='1%'>
+                                <TabList mb='1em'>
+                                    {HACKATHONS_TABS.map((tabTitle) => (
+                                        <Tab key={`tab-${tabTitle}`}>{tabTitle}</Tab>
+                                    ))}
+                                </TabList>
+                                <TabPanels>
+                                    <TabPanel>
+                                        <Information hackathon={hackathonData} />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <AttendantsList
+                                            attendants={hackathonData.attendants}
+                                            currentAttendant={attendant}
+                                        />
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
+                        </Box>
+                    )}
+                />
+                <ConfirmDialog
+                    isOpen={isAlertOpen}
+                    title='Sei sicuro di volerti iscrivere?'
+                    onClose={() => setAlertOpen(false)}
+                    onConfirm={onHackathonSubscribe}
+                />
+                <ConfirmDialog
+                    isOpen={isArchiveAlertOpen}
+                    title="Sei sicuro di voler cancellare l'Hackathon? Questa operazione è irreversibile."
+                    onClose={() => setArchiveAlertOpen(false)}
+                    onConfirm={() => onChangeStatus(HackathonStatus.ARCHIVED)}
+                />
+                <WinnerDialog
+                    isOpen={isOpen}
+                    attendants={hackathonData.attendants}
+                    onClose={onClose}
+                    onConfirm={onHackathonFinish}
+                />
+            </ContainerWithBackgroundImage>
+        </BoxFullHeightAfterHeader>
     );
 }
 
@@ -366,3 +380,13 @@ function WinnerDialog(props: WinnerDialogProps) {
         </Modal>
     );
 }
+
+const ContainerWithBackgroundImage = styled(Box).attrs({
+    backgroundImage: "url('./images/background/space-min.jpg')",
+    w: '100%',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    h: 'fit-content',
+    minH: '100%',
+    backgroundPosition: 'bottom',
+})``;

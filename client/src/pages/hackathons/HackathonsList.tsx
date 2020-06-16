@@ -13,17 +13,19 @@ import {
     SimpleGrid,
     Stack,
     Text,
+    FormLabel,
 } from '@chakra-ui/core';
 import queryString from 'query-string';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BoxWithSpacedChildren } from '../../components/Common';
+import { BoxWithSpacedChildren, BoxFullHeightAfterHeader } from '../../components/Common';
 import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getAvailableCities } from '../../services/FilterService';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 import { toDateString } from '../../utils/functions';
+import { AppContext } from '../../AppContext';
 
 type RouteParams = {
     organization?: string;
@@ -55,6 +57,7 @@ const HACKATHON_STATUSES = {
 };
 
 export default function HackathonsList() {
+    const appContext = React.useContext(AppContext);
     const location = useLocation();
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
     const [availableCities, setAvailableCities] = React.useState<string[]>([]);
@@ -78,8 +81,10 @@ export default function HackathonsList() {
         }
     };
 
+    const isLogged = appContext.state?.user != null;
+
     return (
-        <Box w='100%' h='85vh'>
+        <BoxFullHeightAfterHeader isLogged={isLogged}>
             <SimpleGrid w='100%' h='100%' columns={[1, 1, 2, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box textAlign='center'>
@@ -87,7 +92,7 @@ export default function HackathonsList() {
                             Hackathons
                         </Heading>
                     </Box>
-                    <Accordion allowToggle>
+                    <Accordion allowToggle defaultIndex={[]}>
                         <AccordionItem>
                             <AccordionHeader>
                                 <Box flex='1'>
@@ -98,10 +103,11 @@ export default function HackathonsList() {
                                 <AccordionIcon />
                             </AccordionHeader>
                             <AccordionPanel>
-                                <SimpleGrid columns={[1, 2, 4]} spacing={[1, 1, 2]}>
-                                    <label>
+                                <Flex wrap='wrap'>
+                                    <FormLabel pl={1}>
                                         <b>Città:</b>
                                         <Select
+                                            minW='200.19px'
                                             placeholder='-'
                                             name='city'
                                             onChange={onChangeFilter}>
@@ -111,10 +117,11 @@ export default function HackathonsList() {
                                                 </option>
                                             ))}
                                         </Select>
-                                    </label>
-                                    <label>
-                                        <b>Status:</b>
+                                    </FormLabel>
+                                    <FormLabel pl={1}>
+                                        <b>Stato:</b>
                                         <Select
+                                            minW='200.19px'
                                             placeholder='-'
                                             name='status'
                                             onChange={onChangeFilter}>
@@ -124,16 +131,16 @@ export default function HackathonsList() {
                                                 </option>
                                             ))}
                                         </Select>
-                                    </label>
-                                    <label>
+                                    </FormLabel>
+                                    <FormLabel pl={1}>
                                         <b>Data di inizio:</b>
                                         <Input type='date' name='from' onChange={onChangeFilter} />
-                                    </label>
-                                    <label>
+                                    </FormLabel>
+                                    <FormLabel pl={1}>
                                         <b>Data di fine:</b>
                                         <Input type='date' name='to' onChange={onChangeFilter} />
-                                    </label>
-                                </SimpleGrid>
+                                    </FormLabel>
+                                </Flex>
                             </AccordionPanel>
                         </AccordionItem>
                     </Accordion>
@@ -190,7 +197,7 @@ export default function HackathonsList() {
                     />
                 </Box>
             </SimpleGrid>
-        </Box>
+        </BoxFullHeightAfterHeader>
     );
 }
 // HackathonsList.whyDidYouRender = true;

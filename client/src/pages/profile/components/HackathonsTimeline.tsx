@@ -6,6 +6,7 @@ import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeli
 import styled from 'styled-components';
 import { Hackathon } from '../../../models/Models';
 import colors, { getRandomColorHex } from '../../../utils/colors';
+import { Link } from 'react-router-dom';
 
 export default function HackathonsTimeline({ hackathons }: { hackathons: Hackathon[] }) {
     const hackathonCount = hackathons.length;
@@ -37,12 +38,14 @@ export default function HackathonsTimeline({ hackathons }: { hackathons: Hackath
                         }}
                         date={formatHackathonPeriod(hack)}
                         key={index}>
-                        <Flex justify='space-between'>
-                            <Box>
-                                <Text>{hack?.name}</Text>
-                                <Text>{hack?.description.substring(0, 50)}...</Text>
-                            </Box>
-                        </Flex>
+                        <Link to={`/hackathons/${hack._id}`}>
+                            <Flex justify='space-between'>
+                                <Box>
+                                    <Text>{hack?.name}</Text>
+                                    <Text>{hack?.description.substring(0, 50)}...</Text>
+                                </Box>
+                            </Flex>
+                        </Link>
                     </VerticalTimelineElement>
                 ))}
             </VerticalTimeline>

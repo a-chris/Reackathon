@@ -95,16 +95,10 @@ app.use('/avatar', express.static(__dirname + '/uploads'));
 /**
  * Auth Routes
  */
-app.route('/info').post(authController.info);
 app.route('/login').post(authController.login);
 app.route('/signup').post(authController.signup);
 app.route('/logout').post(authController.logout);
 app.route('/users/exist').get(usersController.usernameExists);
-
-/**
- * Authenticated Routes
- */
-app.route('/users').get(authController.isOrganization, usersController.getUsers);
 
 app.route('/users/ranking').get(usersController.getUsersRanking);
 
@@ -130,9 +124,7 @@ app.route('/hackathons/org').get(
 
 app.route('/hackathons/:id').get(hackathonsController.findHackathon);
 
-app.route('/hackathons/:id/sub')
-    .put(authController.isClient, hackathonsController.subscribeUser)
-    .delete(hackathonsController.deleteAttendant);
+app.route('/hackathons/:id/sub').put(authController.isClient, hackathonsController.subscribeUser);
 
 app.route('/hackathons/:id/status').put(hackathonsController.changeHackathonStatus);
 

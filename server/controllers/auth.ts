@@ -20,21 +20,6 @@ export function isClient(req: Request, res: Response, next: NextFunction) {
     else return res.sendStatus(401);
 }
 
-export function info(req: Request, res: Response) {
-    const { username } = req.body;
-    if (username == null) {
-        return res.sendStatus(400);
-    }
-    UserDb.findOne({ username: username }, (err, storedUser) => {
-        if (storedUser == null || err != null) {
-            return res.sendStatus(401);
-        }
-        if (req.session) req.session.user = storedUser;
-        console.log('TCL: info -> req.session', req.session);
-        res.json(storedUser);
-    });
-}
-
 export function login(req: Request, res: Response) {
     const { username, password } = req.body;
     if (username == null || password == null) {

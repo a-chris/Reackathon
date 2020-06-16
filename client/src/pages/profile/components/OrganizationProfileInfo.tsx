@@ -6,11 +6,11 @@ import { Box, Heading, Flex, Button, Icon } from '@chakra-ui/core';
 import { Link } from 'react-router-dom';
 
 interface ExperienceProps {
-    userId: string | undefined;
+    userId?: string;
     isProfileOwner: boolean;
 }
 
-export default function HackathonProfileInfo(props: ExperienceProps) {
+export default function OrganizationProfileInfo(props: ExperienceProps) {
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
 
     React.useEffect(() => {

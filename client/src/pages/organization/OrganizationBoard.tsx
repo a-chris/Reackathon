@@ -14,6 +14,7 @@ import styled from 'styled-components';
 import { Hackathon, HackathonStatus, Statistics } from '../../models/Models';
 import { getOrganizationHackathons, getStatistics } from '../../services/HackathonService';
 import colors from '../../utils/colors';
+import { BoxFullHeightAfterHeader } from '../../components/Common';
 
 export default function OrganizationBoard() {
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
@@ -28,10 +29,31 @@ export default function OrganizationBoard() {
         });
     }, []);
 
+    const message = boardMessage(hackathons);
+
     return (
-        <>
+        <BoxFullHeightAfterHeader isLogged={true}>
             <FlexContainer>
-                <SimpleGrid columns={[2, 2, 4, null]} textAlign='center' w='80%' spacing={8}>
+                <Box p={25} pb='5%' textAlign='center'>
+                    <Heading as='h1' size='2xl' pb={10}>
+                        {message.heading}
+                    </Heading>
+                    <Heading as='h2' size='xl' pb={10}>
+                        {message.subHeading}
+                    </Heading>
+                    <Link to={message.linkTo}>
+                        <Button
+                            variant='outline'
+                            color={colors.white}
+                            bg={colors.blue_night}
+                            size='lg'
+                            _hover={{ bg: colors.blue_light }}
+                            p={5}>
+                            Vai
+                        </Button>
+                    </Link>
+                </Box>
+                <SimpleGrid columns={[1, 2, 4, null]} textAlign='center' w='80%' spacing={8}>
                     {stats != null && (
                         <>
                             <StyledStat>
@@ -60,71 +82,55 @@ export default function OrganizationBoard() {
                         </>
                     )}
                 </SimpleGrid>
-                <Box p={20} textAlign='center'>
-                    {boardMessage(hackathons)}
-                </Box>
             </FlexContainer>
-
-            <StyledBlueBox p='2%'>
-                ©Copyright 2020 - Giada Boccali &bull; Antonio Christian Toscano
-            </StyledBlueBox>
-        </>
+        </BoxFullHeightAfterHeader>
     );
 }
 
-function boardMessage(hackathons?: Hackathon[]) {
-    let heading = 'Nessun Hackathon inserito';
-    let subHeading = 'Creane uno adesso!';
-    let linkTo = '/hackathons/create';
+const hackathonStatus = (id?: string) => ({
+    empty: {
+        heading: 'Nessun Hackathon inserito',
+        subHeading: 'Creane uno adesso!',
+        linkTo: '/hackathons/create',
+    },
+    started: {
+        heading: 'Hai un Hackathon in corso',
+        subHeading: 'Controllane lo stato!',
+        linkTo: `/hackathons/${id}`,
+    },
+    pending: {
+        heading: 'Hai un Hackathon in programma',
+        subHeading: 'Controlla ora le iscrizioni!',
+        linkTo: `/hackathons/${id}`,
+    },
+});
 
+function boardMessage(hackathons?: Hackathon[]) {
     if (hackathons != null && hackathons.length > 0) {
-        const currentHackathon = hackathons.find(
+        const startedHackathon = hackathons.find(
             (hackathon) => hackathon.status === HackathonStatus.STARTED
         );
-
-        if (currentHackathon != null) {
-            heading = 'Hai un Hackathon in corso';
-            subHeading = 'Controllane lo stato!';
-            linkTo = `/hackathons/${currentHackathon._id}`;
+        if (startedHackathon != null) {
+            return hackathonStatus(startedHackathon._id).started;
         } else {
             const pendingHackathon = hackathons.find(
                 (hackathon) => hackathon.status === HackathonStatus.PENDING
             );
-
             if (pendingHackathon != null) {
-                heading = 'Hai un Hackathon in programma';
-                subHeading = 'Controlla ora le iscrizioni!';
-                linkTo = `/hackathons/${pendingHackathon._id}`;
+                return hackathonStatus(pendingHackathon._id).pending;
             }
         }
     }
-
-    return (
-        <>
-            <Heading as='h1' size='xl' pb={5}>
-                {heading}
-            </Heading>
-            <Heading as='h2' size='lg' pb={5}>
-                {subHeading}
-            </Heading>
-            <Link to={linkTo}>
-                <Button variant='outline' bg={colors.white} color={colors.blue_night} p={5}>
-                    Vai
-                </Button>
-            </Link>
-        </>
-    );
+    return hackathonStatus().empty;
 }
 
 const FlexContainer = styled(Stack).attrs({
     alignItems: 'center',
     h: 'fit-content',
-    p: '1% 0',
-})``;
-
-const StyledBlueBox = styled(Box).attrs({
-    bg: colors.blue_night,
-    color: colors.white,
+    p: '20px 0',
+    mt: '2px',
+    flexWrap: 'wrap-reverse',
+    bg: colors.white,
 })``;
 
 const StyledStat = styled(Box).attrs({

@@ -13,15 +13,6 @@ export interface SignupData extends LoginData {
     name: string;
 }
 
-export function getUserInfo(username: string): Promise<User> {
-    return new Promise((resolve, reject) =>
-        axios
-            .post('/info', { username })
-            .then((response: any) => resolve(response.data))
-            .catch((error: any) => reject(error))
-    );
-}
-
 export function login(loginData: LoginData): Promise<User> {
     return new Promise((resolve, reject) =>
         axios
