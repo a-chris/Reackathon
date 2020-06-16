@@ -94,6 +94,7 @@ export type Hackathon = NewHackathon & {
     status: HackathonStatus;
     organization: User;
     location: Location;
+    winnerGroup?: number;
 };
 
 export type Statistics = {

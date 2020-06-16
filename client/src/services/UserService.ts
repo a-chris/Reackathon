@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { Experience, User } from '../models/Models';
-import { BASE_URL } from './Constants';
 
-const USERS_API = `${BASE_URL}/users`;
 const LOCAL_USER = 'loginInfo';
 
 export function getLocalUser(): User | null {
@@ -21,7 +19,7 @@ export function setLocalUser(user: User | null) {
 export function getUserDetail(username: string): Promise<User> {
     return new Promise((resolve, reject) =>
         axios
-            .get(`${USERS_API}/${username}`)
+            .get(`/users/${username}`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -30,7 +28,7 @@ export function getUserDetail(username: string): Promise<User> {
 export function saveClientExperiences(username: string, experiences: Experience[]): Promise<User> {
     return new Promise((resolve, reject) =>
         axios
-            .post(`${USERS_API}/${username}`, { experiences })
+            .post(`/users/${username}`, { experiences })
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -39,7 +37,7 @@ export function saveClientExperiences(username: string, experiences: Experience[
 export function saveClientSkills(username: string, skills: string[]): Promise<User> {
     return new Promise((resolve, reject) =>
         axios
-            .post(`${USERS_API}/${username}`, { skills })
+            .post(`/users/${username}`, { skills })
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -53,7 +51,7 @@ export function uploadAvatar(username: string, avatar: any): Promise<User> {
     };
     return new Promise((resolve, reject) =>
         axios
-            .post(`${USERS_API}/${username}/avatar`, formData, options)
+            .post(`/users/${username}/avatar`, formData, options)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -62,7 +60,7 @@ export function uploadAvatar(username: string, avatar: any): Promise<User> {
 export function getUsersRanking(order?: string): Promise<User[]> {
     return new Promise((resolve, reject) =>
         axios
-            .get(`${USERS_API}/ranking`, { params: { order } })
+            .get(`/users/ranking`, { params: { order } })
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );

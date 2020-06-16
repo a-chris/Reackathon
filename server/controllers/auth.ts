@@ -6,7 +6,6 @@ import sendWelcomeEmail from '../utils/email';
 const DEFAULT_SALT_ROUNDS = 10;
 
 export function isLogged(req: Request, res: Response, next: NextFunction) {
-    console.log('TCL: isLogged: ', req.session?.user != null);
     if (req.session?.user) next();
     else return res.sendStatus(401);
 }
@@ -19,21 +18,6 @@ export function isOrganization(req: Request, res: Response, next: NextFunction) 
 export function isClient(req: Request, res: Response, next: NextFunction) {
     if (req.session?.user?.role === 'CLIENT') next();
     else return res.sendStatus(401);
-}
-
-export function info(req: Request, res: Response) {
-    const { username } = req.body;
-    if (username == null) {
-        return res.sendStatus(400);
-    }
-    UserDb.findOne({ username: username }, (err, storedUser) => {
-        if (storedUser == null || err != null) {
-            return res.sendStatus(401);
-        }
-        if (req.session) req.session.user = storedUser;
-        console.log('TCL: info -> req.session', req.session);
-        res.json(storedUser);
-    });
 }
 
 export function login(req: Request, res: Response) {

@@ -1,6 +1,7 @@
 import {
     Badge,
     Box,
+    Button,
     Flex,
     Heading,
     Icon,
@@ -8,7 +9,15 @@ import {
     MenuButton,
     MenuItem,
     MenuList,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
     PseudoBox,
+    Select,
     SimpleGrid,
     Stack,
     Tab,
@@ -17,12 +26,16 @@ import {
     TabPanels,
     Tabs,
     Text,
+    useDisclosure,
     useToast,
 } from '@chakra-ui/core';
+import _ from 'lodash';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
+import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
+import { BoxFullHeightAfterHeader } from '../../components/Common';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { Attendant, Hackathon, HackathonStatus, UserRole } from '../../models/Models';
@@ -37,11 +50,7 @@ import colors from '../../utils/colors';
 import { toDateString, toTimeString } from '../../utils/functions';
 import { AttendantsList, StyledBlueButtonPadded } from './components/AttendantsList';
 import { Information } from './components/HackathonInformation';
-import {
-    StyledBlueButton,
-    StyledDateContainer,
-    StyledTitleBox,
-} from './components/StyledComponents';
+import { StyledDateContainer, StyledTitleBox } from './components/StyledComponents';
 
 type RouteParams = {
     id: string;
@@ -68,7 +77,9 @@ export default function HackathonDetail() {
     const [hackathonData, setHackathonData] = React.useState<Hackathon>();
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
     const [isAlertOpen, setAlertOpen] = React.useState<boolean>(false);
+    const [isArchiveAlertOpen, setArchiveAlertOpen] = React.useState<boolean>(false);
     const cancelRef = React.useRef<HTMLElement>(null);
+    const { isOpen, onOpen, onClose } = useDisclosure(); // winner dialog
 
     useEffectOnce(() => {
         if (appContext.state?.user?.role === 'ORGANIZATION') {
@@ -126,11 +137,17 @@ export default function HackathonDetail() {
         [hackathonId]
     );
 
-    const onAssignPrize = React.useCallback(() => {}, []);
+    const onHackathonFinish = React.useCallback(
+        (winnerGroup: number) => {
+            changeHackathonStatus(hackathonId, HackathonStatus.FINISHED, winnerGroup)
+                .then((hackathon) => setHackathonData(hackathon))
+                .catch((error) => console.log(error));
+        },
+        [hackathonId]
+    );
 
     const getHackathonButtons = () => {
         const currentUser = appContext.state?.user;
-
         if (
             currentUser == null ||
             (currentUser.role === UserRole.ORGANIZATION &&
@@ -155,19 +172,11 @@ export default function HackathonDetail() {
             return (
                 <Stack>
                     {hackathonData?.status === HackathonStatus.PENDING && (
-                        <StyledBlueButtonPadded
-                            onClick={() => onChangeStatus(HackathonStatus.STARTED)}>
-                            Avvia
-                        </StyledBlueButtonPadded>
-                    )}
-                    {hackathonData?.status === HackathonStatus.STARTED && (
-                        <StyledBlueButtonPadded
-                            onClick={() => onChangeStatus(HackathonStatus.FINISHED)}>
-                            Concludi
-                        </StyledBlueButtonPadded>
-                    )}
-                    {hackathonData?.status !== HackathonStatus.ARCHIVED ? (
-                        hackathonData?.status !== HackathonStatus.FINISHED ? (
+                        <>
+                            <StyledBlueButtonPadded
+                                onClick={() => onChangeStatus(HackathonStatus.STARTED)}>
+                                Avvia
+                            </StyledBlueButtonPadded>
                             <Menu>
                                 <MenuButton
                                     alignItems='center'
@@ -178,29 +187,34 @@ export default function HackathonDetail() {
                                     <Icon name='chevron-down' ml='2px' size='26px' p='0' />
                                 </MenuButton>
                                 <MenuList>
-                                    <MenuItem alignItems='center'>
-                                        <Link to={`/hackathons/update/${hackathonId}`}>
+                                    <Link to={`/hackathons/update/${hackathonId}`}>
+                                        <MenuItem alignItems='center'>
                                             Modifica
                                             <Icon name='external-link' ml='2px' size='20px' />
-                                        </Link>
-                                    </MenuItem>
+                                        </MenuItem>
+                                    </Link>
                                     <MenuItem
                                         alignItems='center'
-                                        onClick={() => onChangeStatus(HackathonStatus.ARCHIVED)}
+                                        onClick={() => setArchiveAlertOpen(true)}
                                         color={colors.red_dark}>
                                         Cancella evento
                                         <Icon name='warning-2' ml='2px' size='20px' />
                                     </MenuItem>
                                 </MenuList>
                             </Menu>
-                        ) : (
-                            <StyledBlueButton onClick={onAssignPrize}>
-                                Assegna premi
-                            </StyledBlueButton>
-                        )
-                    ) : (
+                        </>
+                    )}
+                    {hackathonData?.status === HackathonStatus.STARTED && (
+                        <StyledBlueButtonPadded onClick={onOpen}>Concludi</StyledBlueButtonPadded>
+                    )}
+                    {hackathonData?.status === HackathonStatus.ARCHIVED && (
                         <Heading as='h2' size='lg' color={colors.red_dark}>
-                            Cancellato
+                            Archiviato
+                        </Heading>
+                    )}
+                    {hackathonData?.status === HackathonStatus.FINISHED && (
+                        <Heading as='h2' size='lg' color={colors.yellow}>
+                            Concluso
                         </Heading>
                     )}
                 </Stack>
@@ -211,83 +225,168 @@ export default function HackathonDetail() {
     return hackathonData == null || cancelRef == null ? (
         <div />
     ) : (
-        <Box>
-            <OverlappedBoxes
-                mainStackStyle={{ width: ['90%'] }}
-                TopContent={() => (
-                    <StyledTitleBox>
-                        <Heading as='h1' size='xl'>
-                            {hackathonData.name}
-                        </Heading>
-                        <SimpleGrid columns={[1, 1, 3, 3]} textAlign='left'>
-                            <Stack>
-                                <Stack
-                                    isInline
-                                    color={colors.gray_dark}
-                                    fontWeight='semibold'
-                                    letterSpacing='wide'
-                                    fontSize='md'>
-                                    <PseudoBox textTransform='capitalize'>
-                                        {hackathonData.location.street}{' '}
-                                        {hackathonData.location.number} &bull;{' '}
-                                        {hackathonData.location.city} &bull;{' '}
-                                        {hackathonData.location.country}
-                                    </PseudoBox>
+        <BoxFullHeightAfterHeader isLogged={appContext.state?.user != null}>
+            <ContainerWithBackgroundImage>
+                <OverlappedBoxes
+                    mainStackStyle={{ width: ['90%', '85%', '70%', '65%'] }}
+                    TopContent={() => (
+                        <StyledTitleBox>
+                            <Heading as='h1' size='xl'>
+                                {hackathonData.name}
+                            </Heading>
+                            <SimpleGrid columns={[1, 1, 3, 3]} textAlign='left'>
+                                <Stack>
+                                    <Stack
+                                        isInline
+                                        color={colors.gray_dark}
+                                        fontWeight='semibold'
+                                        letterSpacing='wide'
+                                        fontSize='md'>
+                                        <PseudoBox textTransform='capitalize'>
+                                            {hackathonData.location.street}{' '}
+                                            {hackathonData.location.number} &bull;{' '}
+                                            {hackathonData.location.city} &bull;{' '}
+                                            {hackathonData.location.country}
+                                        </PseudoBox>
+                                    </Stack>
+                                    <Badge variantColor='green' m='auto'>
+                                        Hackathon {statusToString(hackathonData.status)}
+                                    </Badge>
                                 </Stack>
                                 <Badge variantColor='green' m='auto'>
                                     Hackathon {statusToString(hackathonData.status)}
                                 </Badge>
-                            </Stack>
-                            <StyledDateContainer>
-                                <Icon name='calendar' size='1.5em' color={colors.red} />
-                                <Box textAlign='center'>
-                                    <PseudoBox>
-                                        Dal <b>{toDateString(hackathonData.startDate)}</b>, ore{' '}
-                                        <b>{toTimeString(hackathonData.startDate)}</b>
-                                    </PseudoBox>
-                                    <PseudoBox>
-                                        Al <b>{toDateString(hackathonData.endDate)}</b>, ore{' '}
-                                        <b>{toTimeString(hackathonData.endDate)}</b>
-                                    </PseudoBox>
-                                </Box>
-                            </StyledDateContainer>
-                            <Flex
-                                alignItems='center'
-                                justifyContent={['center', 'center', 'flex-end']}>
-                                {getHackathonButtons()}
-                            </Flex>
-                        </SimpleGrid>
-                    </StyledTitleBox>
-                )}
-                BottomContent={() => (
-                    <Box>
-                        <Tabs isFitted p='1%'>
-                            <TabList mb='1em'>
-                                {HACKATHONS_TABS.map((tabTitle) => (
-                                    <Tab key={`tab-${tabTitle}`}>{tabTitle}</Tab>
-                                ))}
-                            </TabList>
-                            <TabPanels>
-                                <TabPanel>
-                                    <Information hackathon={hackathonData} />
-                                </TabPanel>
-                                <TabPanel>
-                                    <AttendantsList
-                                        attendants={hackathonData.attendants}
-                                        currentAttendant={attendant}
-                                    />
-                                </TabPanel>
-                            </TabPanels>
-                        </Tabs>
-                    </Box>
-                )}
-            />
-            <ConfirmDialog
-                isOpen={isAlertOpen}
-                title='Sei sicuro di volerti iscrivere?'
-                onClose={() => setAlertOpen(false)}
-                onConfirm={onHackathonSubscribe}
-            />
-        </Box>
+                                <StyledDateContainer>
+                                    <Icon name='calendar' size='1.5em' color={colors.red} />
+                                    <Box textAlign='center'>
+                                        <PseudoBox>
+                                            Dal <b>{toDateString(hackathonData.startDate)}</b>, ore{' '}
+                                            <b>{toTimeString(hackathonData.startDate)}</b>
+                                        </PseudoBox>
+                                        <PseudoBox>
+                                            Al <b>{toDateString(hackathonData.endDate)}</b>, ore{' '}
+                                            <b>{toTimeString(hackathonData.endDate)}</b>
+                                        </PseudoBox>
+                                    </Box>
+                                </StyledDateContainer>
+                                <Flex
+                                    alignItems='center'
+                                    justifyContent={['center', 'center', 'flex-end']}>
+                                    {getHackathonButtons()}
+                                </Flex>
+                            </SimpleGrid>
+                        </StyledTitleBox>
+                    )}
+                    BottomContent={() => (
+                        <Box>
+                            <Tabs isFitted p='1%'>
+                                <TabList mb='1em'>
+                                    {HACKATHONS_TABS.map((tabTitle) => (
+                                        <Tab key={`tab-${tabTitle}`}>{tabTitle}</Tab>
+                                    ))}
+                                </TabList>
+                                <TabPanels>
+                                    <TabPanel>
+                                        <Information hackathon={hackathonData} />
+                                    </TabPanel>
+                                    <TabPanel>
+                                        <AttendantsList
+                                            attendants={hackathonData.attendants}
+                                            currentAttendant={attendant}
+                                        />
+                                    </TabPanel>
+                                </TabPanels>
+                            </Tabs>
+                        </Box>
+                    )}
+                />
+                <ConfirmDialog
+                    isOpen={isAlertOpen}
+                    title='Sei sicuro di volerti iscrivere?'
+                    onClose={() => setAlertOpen(false)}
+                    onConfirm={onHackathonSubscribe}
+                />
+                <ConfirmDialog
+                    isOpen={isArchiveAlertOpen}
+                    title="Sei sicuro di voler cancellare l'Hackathon? Questa operazione è irreversibile."
+                    onClose={() => setArchiveAlertOpen(false)}
+                    onConfirm={() => onChangeStatus(HackathonStatus.ARCHIVED)}
+                />
+                <WinnerDialog
+                    isOpen={isOpen}
+                    attendants={hackathonData.attendants}
+                    onClose={onClose}
+                    onConfirm={onHackathonFinish}
+                />
+            </ContainerWithBackgroundImage>
+        </BoxFullHeightAfterHeader>
     );
 }
+
+interface WinnerDialogProps {
+    attendants: Attendant[];
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: (groupId: number) => void;
+}
+
+function WinnerDialog(props: WinnerDialogProps) {
+    const [selectedGroup, setSelectedGroup] = React.useState<any>();
+    const groups = _.groupBy(props.attendants, (a) => a.group) as object;
+
+    const onChangeWinner = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const { value } = event?.target;
+        if (value != null) {
+            setSelectedGroup(value);
+        }
+    };
+
+    const onConfirm = () => {
+        setSelectedGroup(null);
+        props.onClose();
+        props.onConfirm(selectedGroup);
+    };
+
+    return (
+        <Modal isOpen={props.isOpen} onClose={props.onClose}>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader>Concludi Hackathon</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <Select placeholder='Gruppo vincitore' onChange={onChangeWinner}>
+                        {Object.entries(groups).map((e) => (
+                            <option value={e[0]} key={e[0]}>
+                                Gruppo #{e[0]}:{' '}
+                                {e[1].map((a: Attendant) => a.user.username).join(', ')}
+                            </option>
+                        ))}
+                    </Select>
+                </ModalBody>
+
+                <ModalFooter>
+                    <Button variant='outline' variantColor='red' mr={3} onClick={props.onClose}>
+                        ANNULLA
+                    </Button>
+                    <Button
+                        variant='solid'
+                        variantColor='green'
+                        isDisabled={selectedGroup == null}
+                        onClick={onConfirm}>
+                        CONFERMA
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
+    );
+}
+
+const ContainerWithBackgroundImage = styled(Box).attrs({
+    backgroundImage: "url('./images/background/space-min.jpg')",
+    w: '100%',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    h: 'fit-content',
+    minH: '100%',
+    backgroundPosition: 'bottom',
+})``;

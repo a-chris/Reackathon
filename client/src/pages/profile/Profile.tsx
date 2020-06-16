@@ -15,7 +15,7 @@ import {
 } from '../../services/UserService';
 import colors from '../../utils/colors';
 import ClientProfileInfo from './components/ClientProfileInfo';
-import HackathonProfileInfo from './components/HackathonProfileInfo';
+import OrganizationProfileInfo from './components/OrganizationProfileInfo';
 
 export default function Profile() {
     const { username } = useParams();
@@ -58,7 +58,6 @@ export default function Profile() {
     const onAddExperiences = (newExperiences: Experience[]) => {
         // user can't be null at this point
         const experiencesToSave = [...user?.experiences!, ...newExperiences];
-        console.log('TCL: onSaveExperiences -> experiencesToSave', experiencesToSave);
         onSaveExperiences(experiencesToSave);
     };
 
@@ -71,8 +70,7 @@ export default function Profile() {
     const isProfileOwner = username === appContext?.state?.user?.username;
 
     // TODO: improve this
-    const avatarUrl =
-        user?.avatar != null ? 'http:localhost:5000/avatar/' + user?.avatar : undefined;
+    const avatarUrl = user?.avatar != null ? 'avatar/' + user?.avatar : undefined;
 
     return (
         <OverlappedBoxes
@@ -123,7 +121,10 @@ export default function Profile() {
                             onSaveSkills={onSaveSkills}
                         />
                     ) : (
-                        <HackathonProfileInfo userId={user?._id} isProfileOwner={isProfileOwner} />
+                        <OrganizationProfileInfo
+                            userId={user?._id}
+                            isProfileOwner={isProfileOwner}
+                        />
                     )}
                 </Stack>
             )}

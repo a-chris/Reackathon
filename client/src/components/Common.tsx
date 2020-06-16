@@ -5,6 +5,20 @@ interface BoxWithSpacedChildrenProps {
     space: string;
 }
 
+interface UserLoginProps {
+    isLogged: boolean;
+}
+
+export const BoxFullHeightAfterHeader = styled(Box).attrs((props: UserLoginProps) => ({
+    height: [
+        'calc(100vh - 3rem)',
+        'calc(100vh - 3rem)',
+        props.isLogged ? 'calc(100vh - 6.5rem)' : 'calc(100vh - 4rem)',
+    ],
+}))<UserLoginProps>`
+    width: 100%;
+`;
+
 export const BoxWithSpacedChildren = styled(Box)<BoxWithSpacedChildrenProps>`
     & > * {
         margin-bottom: ${(props) => props.space};

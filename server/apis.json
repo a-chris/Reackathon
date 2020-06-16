@@ -28,7 +28,7 @@
                     },
                     "participation": {
                         "type": "number",
-                        "example": 3
+                        "example": 5
                     }
                 }
             },
@@ -334,38 +334,7 @@
                 }
             }
         },
-        "/users": {
-            "get": {
-                "description": "Check if a username has been already taken.",
-                "parameters": [
-                    {
-                        "in": "query",
-                        "name": "username",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "$ref": "#/components/schemas/User"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/user/{id}": {
+        "/user/{username}": {
             "get": {
                 "description": "User detail with skills, badges.",
                 "parameters": [

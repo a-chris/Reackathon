@@ -1,0 +1,7 @@
+{
+    "service": "gmail",
+    "auth": {
+        "user": "reackathon.project@gmail.com",
+        "pass": "riccio2000"
+    }
+}

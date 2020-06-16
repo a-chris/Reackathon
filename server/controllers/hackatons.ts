@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import * as _ from 'lodash';
 import { AttendantDb } from '../models/Attendant';
 import SocketEvent from '../models/Events';
 import { HackathonDb } from '../models/Hackathon';
@@ -123,52 +124,82 @@ export function findOrganizationHackathons(req: Request, res: Response) {
         });
 }
 
-export function changeHackathonStatus(req: Request, res: Response) {
+export async function changeHackathonStatus(req: Request, res: Response) {
     const hackathonId = req.params?.id;
-    const action = req.body.params?.action?.toString();
+    const winnerGroup = req.query?.winner;
+    const action = req.query?.action?.toString();
 
     if (hackathonId == null || action == null || !HackathonAction.includes(action)) {
         return res.sendStatus(400);
     }
+    if (action === 'finished' && winnerGroup == null) {
+        return res.status(400).json({ error: 'Cannot finish a hackathon without a winner' });
+    }
+
     const nextStatusIndex = HackathonAction.findIndex((v) => v === action);
 
-    HackathonDb.findOne({ '_id': hackathonId }, (err, hackathon) => {
-        if (err != null) return res.sendStatus(400);
-        const currentStatusIndex = HackathonAction.findIndex((v) => v === hackathon?.status);
-        if (currentStatusIndex > nextStatusIndex) return res.sendStatus(400);
-
-        HackathonDb.findOneAndUpdate(
-            { '_id': hackathonId },
-            { 'status': action },
-            { new: true },
-            (err, newHackathon) => {
-                if (err != null) return res.sendStatus(400);
-                return res.json(newHackathon);
-            }
-        );
+    const hackathon = await HackathonDb.findById(hackathonId).populate({
+        path: 'attendants',
+        populate: {
+            path: 'user',
+        },
     });
-}
+    if (hackathon == null) return res.sendStatus(400);
 
-export async function deleteAttendant(req: Request, res: Response) {
-    const hackathonId = req.params?.id;
-    const hackathon = await HackathonDb.findById(hackathonId);
-    hackathon!.attendants = [];
-    hackathon!.save();
+    const currentStatusIndex = HackathonAction.findIndex((v) => v === hackathon?.status);
+    if (currentStatusIndex > nextStatusIndex) return res.sendStatus(400);
 
-    await AttendantDb.remove({});
-    res.sendStatus(200);
+    if (action === 'started') {
+        // create group for every attendant
+        const attendantsWithoutGroup = hackathon.attendants.filter((a) => a.group == null);
+        let maxGroupCount = _.max(hackathon.attendants.map((a) => a.group)) || 0;
+        await attendantsWithoutGroup.forEach(async (a) => {
+            a.group = ++maxGroupCount;
+            await a.save();
+        });
+    } else if (action === 'finished') {
+        // we already checked winnerGroup is not null
+        hackathon.winnerGroup = parseInt(winnerGroup!.toString());
+
+        await hackathon.attendants.forEach(async (a) => {
+            // adds partecipation badge for all the attendants
+            a.user.badge!.partecipation += 1;
+            if (a.group?.toString() == winnerGroup!.toString()) {
+                // adds win badge for winners only
+                a.user.badge!.win += 1;
+            }
+            await a.user.save();
+        });
+    }
+
+    hackathon.status = action;
+    await hackathon.save();
+
+    const newHackathon = await HackathonDb.findById(hackathonId)
+        .populate('organization')
+        .populate({
+            path: 'attendants',
+            populate: { path: 'user', select: 'username' },
+        });
+    return res.json(newHackathon);
 }
 
 export async function subscribeUser(req: Request, res: Response) {
     const user = req.session?.user;
     const hackathonId = req.params?.id;
 
-    const hackathon = await HackathonDb.findById(hackathonId);
+    const hackathon = await HackathonDb.findById(hackathonId).populate({
+        path: 'attendants',
+        populate: { path: 'user' },
+    });
     if (hackathon == null)
         return res.status(400).json({
             error: 'Can not find this hackathon',
         });
-    // TODO: check if attendant already exist in this hackathon
+
+    if (hackathon.attendants.find((a) => a.user === user._id) != null) {
+        return res.status(400).json({ error: 'User already subscribed to this hackathon' });
+    }
     const newAttendant = await AttendantDb.create({
         user: user._id,
         hackathon: hackathon._id,
@@ -190,36 +221,10 @@ export async function subscribeUser(req: Request, res: Response) {
     );
 }
 
-// TODO: remove this
-export async function unsubscribeUser(req: Request, res: Response) {
-    const user = req.session?.user;
-    const hackathonId = req.params?.id;
-
-    const hackathon = await HackathonDb.findById(hackathonId)
-        .populate('organization', 'username')
-        .populate('attendants.user');
-    if (hackathon == null) return res.status(400).json({ error: 'Can not find this hackathon' });
-    if (hackathon?.attendants.find((a) => a.user._id == user._id) != null) {
-        hackathon.attendants = hackathon.attendants.filter((a) => a.user._id != user._id);
-        /*
-         * Notify hackathon organization using socket
-         */
-        req.app.get('io').emit(hackathon.organization.username, {
-            id: hackathon._id,
-            event: SocketEvent.USER_UNSUB,
-        });
-        return res.json(await hackathon?.save());
-    } else {
-        return res.json(hackathon);
-    }
-}
-
 export function organizationStats(req: Request, res: Response) {
     const user = req.session?.user;
 
-    if (user._id == null || user.role != UserRole.ORGANIZATION) {
-        return res.sendStatus(401);
-    }
+    if (user._id == null) return res.sendStatus(401);
 
     const stats = {
         totalHackathons: 0,
@@ -243,5 +248,5 @@ export function organizationStats(req: Request, res: Response) {
         }
         return res.json(stats);
     });
-    // return res.json(stats);
+    return res.json({});
 }

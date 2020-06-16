@@ -136,6 +136,7 @@ export default function Login() {
                         <Button
                             bg={colors.blue_night}
                             color={colors.white}
+                            _hover={{ bg: colors.blue_light }}
                             isLoading={loading}
                             type='submit'
                             margin={3}

@@ -32,16 +32,16 @@ const HackathonSchema = new mongoose.Schema({
     name: String,
     description: String,
     organization: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    attendants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Attendant', unique: true }],
+    attendants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Attendant' }],
     attendantsRequirements: AttendantsRequirementsSchema,
     startDate: Date,
     endDate: Date,
     status: { type: String, enum: ['pending', 'started', 'finished', 'archived'] },
     location: LocationSchema,
     prize: PrizeSchema,
+    winnerGroup: { type: Number, required: false },
 });
 
-// Types definition
 export type Location = mongoose.Document & {
     street: string;
     number: number;
@@ -77,6 +77,7 @@ export type Hackathon = mongoose.Document & {
     status: string;
     location: Location;
     prize: Prize;
+    winnerGroup: number;
 };
 
 export const HackathonDb = mongoose.model<Hackathon>('Hackathon', HackathonSchema);
