@@ -50,7 +50,7 @@ app.use(
         saveUninitialized: false,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 14,
-            secure: true,
+            secure: process.env.NODE_ENV === 'production',
             httpOnly: false,
         }, // two weeks
         store: new MongoStore({

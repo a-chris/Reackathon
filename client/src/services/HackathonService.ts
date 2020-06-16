@@ -4,7 +4,7 @@ import { Hackathon, HackathonStatus, NewHackathon, Statistics } from '../models/
 export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
     return new Promise((resolve, reject) =>
         axios
-            .get('http://localhost:5000/hackathons', { params: filters })
+            .get('/hackathons', { params: filters })
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -13,7 +13,7 @@ export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
 export function getHackathon(id: string): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
-            .get(`http://localhost:5000/hackathons/${id}`)
+            .get(`/hackathons/${id}`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -22,7 +22,7 @@ export function getHackathon(id: string): Promise<Hackathon> {
 export function createHackathon(hackathonData: NewHackathon): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
-            .post('http://localhost:5000/hackathons', hackathonData)
+            .post('/hackathons', hackathonData)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -31,7 +31,7 @@ export function createHackathon(hackathonData: NewHackathon): Promise<Hackathon>
 export function subscribeToHackathon(hackathonId: string): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
-            .put(`http://localhost:5000/hackathons/${hackathonId}/sub`)
+            .put(`/hackathons/${hackathonId}/sub`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -44,7 +44,7 @@ export function changeHackathonStatus(
 ): Promise<Hackathon> {
     return new Promise((resolve, reject) =>
         axios
-            .put(`http://localhost:5000/hackathons/${hackathonId}/status`, null, {
+            .put(`/hackathons/${hackathonId}/status`, null, {
                 params: {
                     winner,
                     action: status,
@@ -58,7 +58,7 @@ export function changeHackathonStatus(
 export function getStatistics(): Promise<Statistics> {
     return new Promise((resolve, reject) =>
         axios
-            .get(`http://localhost:5000/stats`)
+            .get(`/stats`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -67,7 +67,7 @@ export function getStatistics(): Promise<Statistics> {
 export function getOrganizationHackathons(): Promise<Hackathon[]> {
     return new Promise((resolve, reject) =>
         axios
-            .get('http://localhost:5000/hackathons/org')
+            .get('/hackathons/org')
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );

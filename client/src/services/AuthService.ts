@@ -16,7 +16,7 @@ export interface SignupData extends LoginData {
 export function getUserInfo(username: string): Promise<User> {
     return new Promise((resolve, reject) =>
         axios
-            .post('http://localhost:5000/info', { username })
+            .post('/info', { username })
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -25,7 +25,7 @@ export function getUserInfo(username: string): Promise<User> {
 export function login(loginData: LoginData): Promise<User> {
     return new Promise((resolve, reject) =>
         axios
-            .post('http://localhost:5000/login', loginData)
+            .post('/login', loginData)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -34,7 +34,7 @@ export function login(loginData: LoginData): Promise<User> {
 export function signup(loginData: LoginData): Promise<User> {
     return new Promise((resolve, reject) =>
         axios
-            .post('http://localhost:5000/signup', loginData)
+            .post('/signup', loginData)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -43,7 +43,7 @@ export function signup(loginData: LoginData): Promise<User> {
 export function usernameAlreadyExists(username: string): Promise<boolean> {
     return new Promise((resolve, reject) =>
         axios
-            .get('http://localhost:5000/users/exist', { params: { username } })
+            .get('/users/exist', { params: { username } })
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );
@@ -52,7 +52,7 @@ export function usernameAlreadyExists(username: string): Promise<boolean> {
 export function logout(loginData: LoginData): Promise<boolean> {
     return new Promise((resolve, reject) =>
         axios
-            .post('http://localhost:5000/logout', loginData)
+            .post('/logout', loginData)
             .then((response: any) => {
                 console.log('TCL: response', response);
                 setLocalUser(null);
