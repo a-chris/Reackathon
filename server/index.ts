@@ -46,12 +46,12 @@ app.use(
     session({
         name: 'reackathon_session',
         secret: 'reackathon2020',
-        resave: false,
+        resave: true,
         saveUninitialized: false,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 14,
             secure: process.env.NODE_ENV === 'production',
-            httpOnly: true,
+            httpOnly: false,
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : undefined,
         }, // two weeks
         store: new MongoStore({
@@ -67,6 +67,7 @@ app.use(
 app.use(
     cors({
         credentials: true,
+        origin: true,
     })
 );
 
