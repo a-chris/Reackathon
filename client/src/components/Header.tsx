@@ -184,7 +184,7 @@ export default function Header() {
                                 onClick={() =>
                                     onMenuClick(`/profile/${appContext?.state?.user?.username}`)
                                 }>
-                                Profilo
+                                {appContext?.state?.user?.username}
                             </StyledHeaderButton>
                             <StyledHeaderButton color={colors.blue_light} onClick={onLogout}>
                                 Logout
@@ -205,11 +205,8 @@ export default function Header() {
                         </>
                     )}
                     {isLogged && isClient && (
-                        <Button
-                            variant='ghost'
+                        <StyledHeaderButton
                             leftIcon={() => <Icon name='bell' mr={0} />}
-                            size='md'
-                            pr={3}
                             aria-label='notifiche'
                             ref={drawerRef}
                             onClick={onOpen}>
@@ -218,7 +215,7 @@ export default function Header() {
                                     {pendingInvites}
                                 </Box>
                             )}
-                        </Button>
+                        </StyledHeaderButton>
                     )}
                 </Flex>
             </Stack>
@@ -290,7 +287,7 @@ export default function Header() {
                                                     `/profile/${appContext?.state?.user?.username}`
                                                 )
                                             }>
-                                            Profilo
+                                            {appContext?.state?.user?.username}
                                         </StyledHamburgerHeaderButton>
                                         <StyledHamburgerHeaderButton onClick={onLogout}>
                                             Logout
