@@ -6,12 +6,6 @@ import { UserDb, UserRole } from '../models/User';
 
 const USER_SECTIONS = new Set(['skills', 'experiences']);
 
-export function getUsers(req: Request, res: Response) {
-    UserDb.find((err, users) => {
-        res.json(users);
-    });
-}
-
 export function getUserDetail(req: Request, res: Response) {
     const username = req.params.username;
     // TODO: sort experiences by date FROM
