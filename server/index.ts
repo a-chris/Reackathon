@@ -13,7 +13,7 @@ import * as hackathonsController from './controllers/hackatons';
 import * as usersController from './controllers/users';
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 if (process.env.MONGODB_URI != null) {
     mongoose.connect(process.env.MONGODB_URI as string, { useNewUrlParser: true });
