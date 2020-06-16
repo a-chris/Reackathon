@@ -149,17 +149,31 @@ export default function Homepage() {
                     </Flex>
                 </SimpleResponsiveGrid>
             </StyledBlueBox>
-            <Box p='5%'>
-                <Heading as='h3' size='xl' p={10}>
-                    Stai organizzando un Hackathon?
-                </Heading>
-                <Heading as='h4' size='md' m={2}>
-                    <p>Registrati sulla piattaforma e dai visibilità al tuo evento</p>
-                    <Link to='/signup'>
-                        <StyledBlueButton>Registrati</StyledBlueButton>
-                    </Link>
-                </Heading>
-            </Box>
+            {!isLogged ? (
+                <Box p='5%'>
+                    <Heading as='h3' size='xl' p={10}>
+                        Stai organizzando un Hackathon?
+                    </Heading>
+                    <Heading as='h4' size='md' m={2}>
+                        <p>Registrati sulla piattaforma e dai visibilità al tuo evento</p>
+                        <Link to='/signup'>
+                            <StyledBlueButton>Registrati</StyledBlueButton>
+                        </Link>
+                    </Heading>
+                </Box>
+            ) : (
+                <Box p='5%'>
+                    <Heading as='h3' size='xl' p={10}>
+                        Hai già aggiornato il tuo profilo?
+                    </Heading>
+                    <Heading as='h4' size='md' m={2}>
+                        <p>Controlla subito le informazioni che hai inserito!</p>
+                        <Link to={`/profile/${appContext.state?.user?.username}`}>
+                            <StyledBlueButton>Profilo</StyledBlueButton>
+                        </Link>
+                    </Heading>
+                </Box>
+            )}
             <StyledBlueBox p='2%' textAlign='left'>
                 ©Copyright 2020 - Giada Boccali &bull; Antonio Christian Toscano
             </StyledBlueBox>
