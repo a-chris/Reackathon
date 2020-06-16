@@ -67,6 +67,8 @@ app.use(
     })
 );
 
+app.set('trust proxy', true);
+
 app.use((req, res, next) => {
     let logString = `${req.originalUrl}:`;
     if (!_.isEmpty(req.params)) logString = logString + ` params: ${JSON.stringify(req.params)}`;
