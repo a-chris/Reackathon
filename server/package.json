@@ -1,9 +1,10 @@
 {
-    "name": "reackathon-server",
+    "name": "server",
     "version": "0.0.1",
     "main": "index.js",
     "license": "MIT",
     "author": "Christian Toscano - Giada Boccali",
+    "private": true,
     "scripts": {
         "compile": "tsc",
         "start": "tsc && node js/index.js",

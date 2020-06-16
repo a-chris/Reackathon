@@ -16,7 +16,7 @@ const app = express();
 const PORT = 5000;
 
 if (process.env.MONGODB_URI != null) {
-    mongoose.connect(process.env.MONGODB_URI as string);
+    mongoose.connect(process.env.MONGODB_URI as string, { useNewUrlParser: true });
 } else {
     mongoose.connect('mongodb://192.168.1.123', {
         dbName: 'test',
