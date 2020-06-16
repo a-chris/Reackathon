@@ -43,21 +43,27 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// required to work with heroku
+app.enable('trust proxy');
 app.set('io', io);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+    cors({
+        credentials: true,
+    })
+);
 app.use(
     session({
         name: 'reackathon_session',
         secret: 'reackathon2020',
+        proxy: true,
         resave: true,
         saveUninitialized: false,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 14,
-            secure: process.env.NODE_ENV === 'production',
+            secure: false,
             httpOnly: false,
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : undefined,
         }, // two weeks
         store: new MongoStore({
             mongooseConnection: mongoose.connection,
@@ -66,8 +72,6 @@ app.use(
         }),
     })
 );
-
-app.set('trust proxy', true);
 
 app.use((req, res, next) => {
     let logString = `${req.originalUrl}:`;
