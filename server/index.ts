@@ -46,6 +46,7 @@ const upload = multer({ storage });
 app.set('io', io);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 app.use(
     session({
         name: 'reackathon_session',
@@ -63,13 +64,6 @@ app.use(
             collections: 'sessions',
             autoRemove: 'native',
         }),
-    })
-);
-
-app.use(
-    cors({
-        credentials: true,
-        origin: true,
     })
 );
 
