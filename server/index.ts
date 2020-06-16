@@ -2,7 +2,6 @@ import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import http from 'http';
-import https from 'https';
 import * as _ from 'lodash';
 import mongoose from 'mongoose';
 import multer from 'multer';
@@ -16,6 +15,8 @@ import * as usersController from './controllers/users';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const httpServer = http.createServer(app);
+const io = socketIo(httpServer);
 
 if (process.env.MONGODB_URI != null) {
     mongoose.connect(process.env.MONGODB_URI as string, { useNewUrlParser: true });
@@ -42,6 +43,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+app.set('io', io);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -153,15 +155,9 @@ app.route('/filters/cities').get(filtersController.getAvailableCities);
 app.route('/stats').get(authController.isOrganization, hackathonsController.organizationStats);
 
 /**
- * Listen
+ * HTTP Server
  */
-const server =
-    process.env.NODE_ENV === 'production' ? https.createServer(app) : http.createServer(app);
-
-server.listen(PORT, () => console.log('Server started!'));
-
-const io = socketIo(server);
-app.set('io', io);
+httpServer.listen(PORT, () => 'Server started!');
 
 /**
  * Socket.io put here to reuse the http server
