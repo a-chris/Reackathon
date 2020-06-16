@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path';
 import socketIo from 'socket.io';
+import { isProduction } from './config/constants';
 import * as attendantsController from './controllers/attendants';
 import * as authController from './controllers/auth';
 import * as filtersController from './controllers/filters';
@@ -50,8 +51,9 @@ app.use(
         saveUninitialized: false,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 14,
-            secure: process.env.NODE_ENV === 'production',
-            httpOnly: false,
+            secure: isProduction(),
+            httpOnly: true,
+            sameSite: isProduction() ? 'none' : undefined,
         }, // two weeks
         store: new MongoStore({
             mongooseConnection: mongoose.connection,
