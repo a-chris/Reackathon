@@ -1,4 +1,4 @@
-import { CSSReset, theme, ThemeProvider } from '@chakra-ui/core';
+import { CSSReset, ThemeProvider } from '@chakra-ui/core';
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
@@ -7,6 +7,7 @@ import { HashRouter, Redirect, Route, RouteProps, Switch } from 'react-router-do
 import { AppContext, reducer } from './AppContext';
 import Header from './components/Header';
 import './config/AxiosConfig';
+import { customTheme } from './fonts/theme';
 import { User, UserRole } from './models/Models';
 import PageNotFound from './pages/errors/PageNotFound';
 import HackathonDetail from './pages/hackathon/HackathonDetail';
@@ -59,7 +60,7 @@ export default function App() {
                 Questo sito utilizza i cookie per migliorare la user experience.
             </CookieConsent>
             <div role='main'>
-                <ThemeProvider theme={theme}>
+                <ThemeProvider theme={customTheme}>
                     <AppContext.Provider value={{ state, onLoggedIn, onLogout }}>
                         <CSSReset />
                         <HashRouter>
