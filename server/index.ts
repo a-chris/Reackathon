@@ -50,7 +50,7 @@ app.use(
         saveUninitialized: false,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 14,
-            secure: false,
+            secure: true,
             httpOnly: false,
         }, // two weeks
         store: new MongoStore({
