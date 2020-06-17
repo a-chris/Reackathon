@@ -1,7 +1,7 @@
 import React from 'react';
 import { Hackathon } from '../../../models/Models';
 import HackathonsTimeline from './HackathonsTimeline';
-import { getHackathons } from '../../../services/HackathonService';
+import { getOrganizationHackathons } from '../../../services/HackathonService';
 import { Box, Heading, Flex, Button, Icon } from '@chakra-ui/core';
 import { Link } from 'react-router-dom';
 
@@ -14,10 +14,12 @@ export default function OrganizationProfileInfo(props: ExperienceProps) {
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
 
     React.useEffect(() => {
-        const filters = { organization: props.userId };
-        getHackathons(filters).then((hackathons) => {
-            setHackathons(hackathons);
-        });
+        const organizationId = props.userId;
+        if (organizationId) {
+            getOrganizationHackathons(organizationId).then((hackathons) => {
+                setHackathons(hackathons);
+            });
+        }
     }, [props.userId]);
 
     return (

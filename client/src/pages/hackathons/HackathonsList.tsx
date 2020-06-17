@@ -97,7 +97,7 @@ export default function HackathonsList() {
                             <AccordionHeader>
                                 <Box flex='1'>
                                     <Heading as='h2' size='md' textAlign='center'>
-                                        Fitri
+                                        Filtri
                                     </Heading>
                                 </Box>
                                 <AccordionIcon />

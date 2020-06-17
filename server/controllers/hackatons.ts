@@ -110,14 +110,14 @@ export function saveHackathons(req: Request, res: Response) {
 }
 
 export function findOrganizationHackathons(req: Request, res: Response) {
-    const user = req.session?.user;
+    const organizationId = req.query.organizationId;
 
-    if (user._id == null || user.role != UserRole.ORGANIZATION) {
-        return res.sendStatus(401);
+    if (organizationId == null) {
+        return res.sendStatus(400);
     }
 
-    HackathonDb.find({ 'organization': user._id })
-        .populate('organization')
+    HackathonDb.find({ 'organization': organizationId as any })
+        // .populate('organization') TODO adds populate?
         .exec((err, hackathons) => {
             res.json(hackathons);
         });

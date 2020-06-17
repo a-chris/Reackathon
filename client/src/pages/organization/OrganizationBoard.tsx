@@ -15,19 +15,24 @@ import { Hackathon, HackathonStatus, Statistics } from '../../models/Models';
 import { getOrganizationHackathons, getStatistics } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 import { BoxFullHeightAfterHeader } from '../../components/Common';
+import { AppContext } from '../../AppContext';
 
 export default function OrganizationBoard() {
+    const appContext = React.useContext(AppContext);
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
     const [stats, setStats] = React.useState<Statistics>();
 
     React.useEffect(() => {
-        getOrganizationHackathons().then((hackathons) => {
-            setHackathons(hackathons);
-        });
-        getStatistics().then((stats) => {
-            setStats(stats);
-        });
-    }, []);
+        const organizationId = appContext.state?.user?._id;
+        if (organizationId) {
+            getOrganizationHackathons(organizationId).then((hackathons) => {
+                setHackathons(hackathons);
+            });
+            getStatistics().then((stats) => {
+                setStats(stats);
+            });
+        }
+    }, [appContext.state]);
 
     const message = boardMessage(hackathons);
 
