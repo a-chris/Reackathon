@@ -9,12 +9,12 @@ import {
     DrawerHeader,
     DrawerOverlay,
     Flex,
+    Heading,
+    Icon,
     Stack,
     Tag,
     Text,
     useDisclosure,
-    Heading,
-    Icon,
 } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
@@ -25,6 +25,8 @@ import { AppContext } from '../AppContext';
 import { Attendant, UserRole } from '../models/Models';
 import { acceptInvite, declineInvite, getUserAttendants } from '../services/AttendantService';
 import { logout } from '../services/AuthService';
+import socketClient from '../socket/socket';
+import SocketEvent from '../socket/SocketEvent';
 import colors from '../utils/colors';
 
 type InviteData = {
@@ -79,6 +81,20 @@ export default function Header() {
     const [invites, setInvites] = React.useState<InviteData[]>([]);
     const [isHamburgerMenuOpen, setHamburgerMenuOpen] = React.useState<boolean>(false);
     const [invitesChanged, { inc }] = useCounter(0);
+
+    React.useEffect(() => {
+        if (appContext.state?.user?.role === UserRole.CLIENT) {
+            const userId = appContext.state.user?._id;
+            socketClient.on(SocketEvent.NEW_INVITE, () => {
+                if (userId != null) {
+                    console.log('UPDATE INVITES');
+                    getUserAttendants(userId).then((attendants) => {
+                        setInvites(mapAttendantsToInvitesData(attendants));
+                    });
+                }
+            });
+        }
+    }, [appContext.state]);
 
     React.useEffect(() => {
         const userId = appContext.state?.user?._id;

@@ -1,9 +1,10 @@
-import { CSSReset, ThemeProvider } from '@chakra-ui/core';
+import { CSSReset, ThemeProvider, useToast } from '@chakra-ui/core';
+import axios from 'axios';
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
 import CookieConsent from 'react-cookie-consent';
-import { HashRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
+import { HashRouter, Redirect, Route, RouteProps, Switch, useHistory } from 'react-router-dom';
 import { AppContext, reducer } from './AppContext';
 import Header from './components/Header';
 import './config/AxiosConfig';
@@ -20,6 +21,8 @@ import Profile from './pages/profile/Profile';
 import Ranking from './pages/ranking/Ranking';
 import Signup from './pages/signup/Signup';
 import { getLocalUser } from './services/UserService';
+import socketClient from './socket/socket';
+import SocketEvent from './socket/SocketEvent';
 import { LOGIN_ACTION } from './utils/constants';
 
 /*
@@ -28,8 +31,42 @@ import { LOGIN_ACTION } from './utils/constants';
 moment.locale('it');
 
 export default function App() {
+    const history = useHistory();
     const [state, dispatch] = React.useReducer(reducer, {});
+    const toast = useToast();
     console.log('TCL: App -> state', state);
+
+    React.useEffect(() => {
+        if (state.user == null) return;
+        socketClient.on('connect', () => {
+            console.log('SOCKET CONNECTED');
+            if (state.user != null) {
+                socketClient.emit('join_room', state.user.username);
+            }
+        });
+        if (state.user.role === 'ORGANIZATION') {
+            socketClient.on(SocketEvent.NEW_ATTENDANT, () => {
+                toast({
+                    position: 'bottom-right',
+                    title: 'Nuova notifica',
+                    description: 'Un nuovo utente si è iscritto.',
+                    status: 'success',
+                    isClosable: true,
+                });
+            });
+        }
+        return () => {
+            socketClient.disconnect();
+        };
+    }, [state.user, toast]);
+
+    axios.interceptors.response.use((response) => {
+        if (response.status === 500) {
+            // TODO: do something
+            history.push('/error');
+        }
+        return response;
+    });
 
     const onLoggedIn = React.useCallback((user: User) => {
         dispatch({ type: LOGIN_ACTION.LOGGED_IN, payload: user });
@@ -48,16 +85,10 @@ export default function App() {
         }
     }, [onLoggedIn, onLogout]);
 
-    React.useEffect(() => {
-        if (state.user == null) return;
-
-        // TODO: add socket functions (?)
-    }, [state.user]);
-
     return (
         <div className='App'>
             <CookieConsent debug={true} buttonText='Ho capito'>
-                Questo sito utilizza i cookie per migliorare la user experience.
+                Questo sito utilizza i cookie per migliorare l'esperienza utente.
             </CookieConsent>
             <div role='main'>
                 <ThemeProvider theme={customTheme}>

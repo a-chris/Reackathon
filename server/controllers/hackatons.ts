@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import * as _ from 'lodash';
 import { AttendantDb } from '../models/Attendant';
-import SocketEvent from '../models/Events';
 import { HackathonDb } from '../models/Hackathon';
+import SocketEvent from '../models/SocketEvent';
 import { UserRole } from '../models/User';
 
 const HackathonAction = ['pending', 'started', 'finished', 'archived'];
@@ -188,10 +188,12 @@ export async function subscribeUser(req: Request, res: Response) {
     const user = req.session?.user;
     const hackathonId = req.params?.id;
 
-    const hackathon = await HackathonDb.findById(hackathonId).populate({
-        path: 'attendants',
-        populate: { path: 'user' },
-    });
+    const hackathon = await HackathonDb.findById(hackathonId)
+        .populate('organization')
+        .populate({
+            path: 'attendants',
+            populate: { path: 'user' },
+        });
     if (hackathon == null)
         return res.status(400).json({
             error: 'Can not find this hackathon',
@@ -209,10 +211,9 @@ export async function subscribeUser(req: Request, res: Response) {
     /*
      * Notify hackathon organization using socket
      */
-    req.app.get('io').emit(hackathon.organization.username, {
-        id: hackathon._id,
-        event: SocketEvent.NEW_ATTENDANT,
-    });
+    (req.app.get('io').to(hackathon.organization.username) as SocketIO.Server).emit(
+        SocketEvent.NEW_ATTENDANT
+    );
     return res.json(
         await HackathonDb.findById(hackathon._id).populate({
             path: 'attendants',

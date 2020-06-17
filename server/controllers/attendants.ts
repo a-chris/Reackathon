@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as _ from 'lodash';
 import { AttendantDb } from '../models/Attendant';
 import { HackathonDb } from '../models/Hackathon';
+import SocketEvent from '../models/SocketEvent';
 
 const INVITE_STATUSES = new Set(['pending', 'accepted', 'declined']);
 
@@ -10,14 +11,18 @@ export async function inviteAttendantToGroup(req: Request, res: Response) {
     const attendantIdFrom = req.body?.from;
 
     if (attendantIdFrom == null)
-        return res.status(400).json({ error: 'Cannot find attendant sender of the invite' });
+        return res.status(400).json({
+            error: 'Cannot find attendant sender of the invite',
+        });
 
     const attendant = await AttendantDb.findById(attendantIdTo)
         .populate('user')
         .populate('hackathon');
-    if (attendant == null) return res.status(400).json({ error: 'Can not find this attendant' });
+    if (attendant == null)
+        return res.status(400).json({
+            error: 'Can not find this attendant',
+        });
 
-    // TODO: check if invite form this user already exist
     if (attendant.invites?.find((invite) => invite.from == attendantIdFrom) == null) {
         attendant.invites?.push({
             from: attendantIdFrom,
@@ -26,8 +31,8 @@ export async function inviteAttendantToGroup(req: Request, res: Response) {
         } as any);
     }
     await attendant.save();
-    // TODO: notify receiver user of the invite
-    res.sendStatus(200);
+    (req.app.get('io').to(attendant.user.username) as SocketIO.Server).emit(SocketEvent.NEW_INVITE);
+    return res.sendStatus(200);
 }
 
 export async function replyToInvite(req: Request, res: Response) {
@@ -76,7 +81,7 @@ export async function replyToInvite(req: Request, res: Response) {
         }
     invite!.status = newStatus.toString();
     await attendantSender!.save();
-    res.json(await attendantReceiver?.save());
+    return res.json(await attendantReceiver?.save());
 }
 
 export async function getUserAttendants(req: Request, res: Response) {

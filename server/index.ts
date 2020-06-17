@@ -154,16 +154,19 @@ httpServer.listen(PORT, () => 'Server started!');
  * Socket.io put here to reuse the http server
  */
 io.on('connection', (client) => {
-    client.on('test', () => {
-        client.emit('FromAPI', new Date());
+    /*
+     * Create a room for a certain user
+     * identified by the username
+     */
+    client.on('join_room', (username: string) => {
+        console.log('TCL: join_room', username);
+        client.join(username);
     });
 
     /*
-     * Create a room for a certain organization
-     * identified by the organization username
+     * Remove the client from his rooms
      */
-    client.on('org_room', (username: string) => {
-        console.log('TCL: org_room', username);
-        client.join(username);
+    client.on('disconnect', () => {
+        client.leaveAll();
     });
 });

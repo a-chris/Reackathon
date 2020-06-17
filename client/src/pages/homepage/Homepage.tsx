@@ -2,13 +2,13 @@ import { Box, Button, Flex, Heading, Select, SimpleGrid, Stack } from '@chakra-u
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { AppContext } from '../../AppContext';
+import { BoxFullHeightAfterHeader } from '../../components/Common';
 import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getAvailableCities } from '../../services/FilterService';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
-import { BoxFullHeightAfterHeader } from '../../components/Common';
-import { AppContext } from '../../AppContext';
 
 const initialFilter = { country: 'Italy', status: HackathonStatus.PENDING };
 
@@ -118,9 +118,9 @@ export default function Homepage() {
                                         border={`2px solid ${colors.blue_night}`}
                                         boxShadow={`-1px 2px 10px ${colors.blue_night}`}>
                                         <Box
-                                            h={'200px'}
+                                            h='200px'
                                             bg={colors.blue_light}
-                                            backgroundImage={`url('./images/cities/${city.toLowerCase()}.jpg')`}
+                                            backgroundImage='url(https://source.unsplash.com/collection/1891993)'
                                             backgroundPosition='bottom'
                                             {...BackgroundImageStyleProps}
                                         />

@@ -10,8 +10,6 @@ export interface AppStore {
 }
 
 export interface AppState {
-    authRequest?: boolean;
-    username?: string;
     user?: User;
 }
 
