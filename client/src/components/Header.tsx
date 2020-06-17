@@ -381,7 +381,10 @@ function InviteItem(props: InviteItemProps) {
             <Flex justifyContent='flex-end' pt={2}>
                 {props.inviteData.status === 'pending' && (
                     <>
-                        <Button size='sm' onClick={() => props.onAccept(props.inviteData.inviteId)}>
+                        <Button
+                            size='sm'
+                            variantColor='green'
+                            onClick={() => props.onAccept(props.inviteData.inviteId)}>
                             ACCETTA
                         </Button>
                         <Button
@@ -423,7 +426,8 @@ const StyledNavBar = styled(Box).attrs((props: NavBarProps) => ({
     pt: ['10px', '5px', '0px', null],
     pb: '5px',
     pl: ['5px', '10px', '20px', '25px'],
-    height: ['3rem', '3rem', props.isSecondMenuShown ? '6.5rem' : '4rem', null],
+    pr: ['5px', '10px', '20px', '25px'],
+    height: ['3.2rem', '3.2rem', props.isSecondMenuShown ? '6.5rem' : '4rem', null],
 }))<NavBarProps>`
     width: 100%;
     overflow: hidden;

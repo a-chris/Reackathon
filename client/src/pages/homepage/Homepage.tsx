@@ -54,12 +54,18 @@ export default function Homepage() {
                                 <Heading as='h1' size='2xl' m='auto'>
                                     Entra nel mondo degli Hackathon!
                                 </Heading>
-                                <Heading p='5%' as='h2' fontSize='xl'>
-                                    Entra a far parte della piattaforma di Hackathon numero uno.
-                                    <br />
-                                    Iscriviti ad un Hackathon, crea il tuo team ed esprimi il tuo
-                                    talento!
-                                </Heading>
+                                <Box p='5%'>
+                                    <Heading
+                                        as='h2'
+                                        fontSize='xl'
+                                        backgroundColor={colors.blue_night}
+                                        boxShadow={`5px 5px 20px ${colors.blue_night}`}>
+                                        Entra a far parte della piattaforma di Hackathon numero uno.
+                                        <br />
+                                        Iscriviti ad un Hackathon, crea il tuo team ed esprimi il
+                                        tuo talento!
+                                    </Heading>
+                                </Box>
                             </Stack>
                         </Flex>
                         <Box bg={colors.white} w='70%' m='auto' borderRadius='md'>
@@ -136,7 +142,9 @@ export default function Homepage() {
             </Box>
             <StyledBlueBox>
                 <SimpleResponsiveGrid>
-                    <Box>
+                    <Box
+                        borderTop={`1px solid ${colors.blue_night}`}
+                        borderBottom={`1px solid ${colors.blue_night}`}>
                         <MapContainer
                             hackathons={hackathons}
                             style={{ width: '100%', minHeight: '90vh' }}
@@ -184,7 +192,7 @@ export default function Homepage() {
 const FlexContainer: React.FC<{}> = (props) => {
     return (
         <Flex
-            h='100%'
+            minHeight='inherit'
             alignItems='center'
             justifyContent='center'
             p='10% 0'

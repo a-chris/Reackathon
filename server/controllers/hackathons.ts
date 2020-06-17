@@ -111,17 +111,15 @@ export function saveHackathons(req: Request, res: Response) {
 }
 
 export function findOrganizationHackathons(req: Request, res: Response) {
-    const user = req.session?.user;
+    const organizationId = req.query?.id;
 
-    if (user._id == null || user.role != UserRole.ORGANIZATION) {
-        return res.sendStatus(401);
+    if (organizationId == null) {
+        return res.sendStatus(400);
     }
 
-    HackathonDb.find({ 'organization': user._id })
-        .populate('organization')
-        .exec((err, hackathons) => {
-            res.json(hackathons);
-        });
+    HackathonDb.find({ 'organization': organizationId as any }).exec((err, hackathons) => {
+        res.json(hackathons);
+    });
 }
 
 export async function changeHackathonStatus(req: Request, res: Response) {
@@ -224,6 +222,7 @@ export async function subscribeUser(req: Request, res: Response) {
 
 export function organizationStats(req: Request, res: Response) {
     const user = req.session?.user;
+    console.log('organizationStats -> user', user);
 
     if (user._id == null) return res.sendStatus(401);
 
@@ -234,7 +233,7 @@ export function organizationStats(req: Request, res: Response) {
         totalPrize: 0,
     };
 
-    HackathonDb.find({ organization: user._id }).exec((err, results) => {
+    HackathonDb.find({ 'organization': user._id }, (err, results) => {
         if (results.length > 0) {
             stats.totalHackathons = results.length;
             stats.pendingHackathons = results.filter(
@@ -249,5 +248,5 @@ export function organizationStats(req: Request, res: Response) {
         }
         return res.json(stats);
     });
-    return res.json({});
+    return res.json(stats);
 }

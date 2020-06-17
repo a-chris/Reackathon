@@ -64,10 +64,10 @@ export function getStatistics(): Promise<Statistics> {
     );
 }
 
-export function getOrganizationHackathons(): Promise<Hackathon[]> {
+export function getOrganizationHackathons(organizationId: string): Promise<Hackathon[]> {
     return new Promise((resolve, reject) =>
         axios
-            .get('/hackathons/org')
+            .get(`/hackathons/org?id=${organizationId}`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );

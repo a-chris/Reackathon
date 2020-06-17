@@ -117,10 +117,7 @@ app.route('/hackathons')
     .get(hackathonsController.findHackathons)
     .post(hackathonsController.saveHackathons);
 
-app.route('/hackathons/org').get(
-    authController.isOrganization,
-    hackathonsController.findOrganizationHackathons
-);
+app.route('/hackathons/org').get(hackathonsController.findOrganizationHackathons);
 
 app.route('/hackathons/:id').get(hackathonsController.findHackathon);
 

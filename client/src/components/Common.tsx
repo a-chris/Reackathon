@@ -10,9 +10,9 @@ interface UserLoginProps {
 }
 
 export const BoxFullHeightAfterHeader = styled(Box).attrs((props: UserLoginProps) => ({
-    height: [
-        'calc(100vh - 3rem)',
-        'calc(100vh - 3rem)',
+    minHeight: [
+        'calc(100vh - 3.2rem)',
+        'calc(100vh - 3.2rem)',
         props.isLogged ? 'calc(100vh - 6.5rem)' : 'calc(100vh - 4rem)',
     ],
 }))<UserLoginProps>`
