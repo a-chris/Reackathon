@@ -1,6 +1,7 @@
 import React from 'react';
 import { User } from './models/Models';
 import { setLocalUser } from './services/UserService';
+import socketClient from './socket/socket';
 import { LOGIN_ACTION } from './utils/constants';
 
 export interface AppStore {
@@ -39,6 +40,7 @@ export const reducer = (state: AppState, action: Action): AppState => {
                 user: undefined,
             };
         case LOGIN_ACTION.LOGOUT:
+            socketClient.disconnect();
             setLocalUser(null);
             return {
                 ...state,
