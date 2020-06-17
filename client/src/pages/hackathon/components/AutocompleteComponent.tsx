@@ -13,8 +13,9 @@ const componentForm = {
     street_number: 'short_name',
     route: 'long_name',
     locality: 'long_name',
-    administrative_area_level_2: 'short_name',
     administrative_area_level_1: 'short_name',
+    administrative_area_level_2: 'short_name',
+    administrative_area_level_3: 'short_name',
     country: 'long_name',
     postal_code: 'short_name',
 };
@@ -23,6 +24,7 @@ const locationFieldsMapping = {
     street_number: 'number',
     route: 'street',
     locality: 'city',
+    administrative_area_level_3: 'city',
     administrative_area_level_2: 'province',
     administrative_area_level_1: 'region',
     country: 'country',
