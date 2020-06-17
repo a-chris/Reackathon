@@ -25,3 +25,9 @@ export const StyledBlueButton = styled(Button).attrs({
     color: colors.white,
     rounded: 'md',
 })``;
+
+export const StyledBlueButtonPadded = styled(StyledBlueButton).attrs({
+    pl: '2.5rem',
+    pr: '2.5rem',
+    m: '2px',
+})``;

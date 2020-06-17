@@ -1,5 +1,6 @@
 import { Box, FormLabel } from '@chakra-ui/core';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 interface BoxWithSpacedChildrenProps {
     space: string;
@@ -56,4 +57,10 @@ export const StyledResponsiveFlex = styled(Box).attrs({
     display: { md: 'flex' },
 })`
     justify-content: space-between;
+`;
+
+export const StyedLinkRouter = styled(Link)`
+    :hover {
+        text-decoration: underline;
+    }
 `;

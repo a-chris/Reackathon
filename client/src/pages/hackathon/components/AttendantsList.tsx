@@ -1,9 +1,7 @@
 import { Avatar, Badge, Box, Heading, Stack, Tag, Text } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import { StyledResponsiveFlex, StyledUserBox } from '../../../components/Common';
+import { StyledResponsiveFlex, StyledUserBox, StyedLinkRouter } from '../../../components/Common';
 import UserBadge from '../../../components/UserBadge';
 import { Attendant } from '../../../models/Models';
 import { inviteAttendantToGroup } from '../../../services/AttendantService';
@@ -56,18 +54,18 @@ export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentA
                         <StyledUserBox borderColor={colors[index]} key={index}>
                             <StyledResponsiveFlex>
                                 <Box>
-                                    <Link to={`/profile/${attendant.user.username}`}>
-                                        <Stack isInline alignItems='center'>
-                                            <Avatar
-                                                name={attendant.user.username}
-                                                src={attendant.user.avatar}
-                                                pr='3px'
-                                            />
+                                    <Stack isInline alignItems='center'>
+                                        <Avatar
+                                            name={attendant.user.username}
+                                            src={attendant.user.avatar}
+                                            pr='3px'
+                                        />
+                                        <StyedLinkRouter to={`/profile/${attendant.user.username}`}>
                                             <Heading as='h3' size='md'>
                                                 {attendant.user.username}
                                             </Heading>
-                                        </Stack>
-                                    </Link>
+                                        </StyedLinkRouter>
+                                    </Stack>
                                     <UserBadge user={attendant.user} />
                                 </Box>
                                 <Stack
@@ -147,8 +145,3 @@ function getGroupButton(
         );
     return;
 }
-
-export const StyledBlueButtonPadded = styled(StyledBlueButton).attrs({
-    pl: '2.5rem',
-    pr: '2.5rem',
-})``;

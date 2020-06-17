@@ -47,6 +47,10 @@ export default function Signup() {
     const [missingData, setMissingData] = React.useState<string[]>([]);
 
     React.useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    React.useEffect(() => {
         const allValid =
             _.every([!passwordError, !passwordConfirmError, !usernameError]) &&
             missingData.length === 0;

@@ -48,9 +48,9 @@ import socketClient from '../../socket/socket';
 import SocketEvent, { HackathonSocketData } from '../../socket/SocketEvent';
 import colors from '../../utils/colors';
 import { toDateString, toTimeString } from '../../utils/functions';
-import { AttendantsList, StyledBlueButtonPadded } from './components/AttendantsList';
+import { AttendantsList } from './components/AttendantsList';
 import { Information } from './components/HackathonInformation';
-import { StyledTitleBox } from './components/StyledComponents';
+import { StyledTitleBox, StyledBlueButtonPadded } from './components/StyledComponents';
 
 type RouteParams = {
     id: string;
@@ -238,8 +238,8 @@ export default function HackathonDetail() {
                 <OverlappedBoxes
                     mainStackStyle={{ width: ['90%', '85%', '70%', '65%'] }}
                     topBoxStyle={{
-                        pl: ['2%', '2%', '5%', '5%'],
-                        pr: ['2%', '2%', '5%', '5%'],
+                        pl: '5%',
+                        pr: '5%',
                         pt: '15px',
                         pb: '15px',
                     }}

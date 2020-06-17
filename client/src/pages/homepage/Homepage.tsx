@@ -55,7 +55,7 @@ export default function Homepage() {
                                     as='h1'
                                     size='2xl'
                                     m='auto'
-                                    textShadow={`2px 1px 5px ${colors.black}`}>
+                                    textShadow={`2px 2px 10px ${colors.black}`}>
                                     Entra nel mondo degli Hackathon!
                                 </Heading>
                                 <Box p='5%'>
@@ -158,7 +158,7 @@ export default function Homepage() {
                             as='h3'
                             size='xl'
                             m='auto'
-                            textShadow={`2px 1px 5px ${colors.black}`}>
+                            textShadow={`2px 2px 10px ${colors.black}`}>
                             Oppure cerca i prossimi Hackathon direttamente sulla mappa
                         </Heading>
                     </Flex>

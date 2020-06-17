@@ -50,17 +50,17 @@ const ACTION_MENU_ITEMS: MenuItem[] = [
         role: [UserRole.ORGANIZATION],
     },
     {
+        name: 'I tuoi Hackathon',
+        path: '/hackathons',
+        role: [UserRole.CLIENT, UserRole.ORGANIZATION],
+    },
+    {
         name: 'Crea',
         path: '/hackathons/create',
         role: [UserRole.ORGANIZATION],
     },
     {
         name: 'Lista Hackathon',
-        path: '/hackathons',
-        role: [UserRole.ORGANIZATION],
-    },
-    {
-        name: 'I tuoi Hackathon',
         path: '/hackathons',
         role: [UserRole.CLIENT],
     },
