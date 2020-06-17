@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { AttendantDb } from '../models/Attendant';
 import { HackathonDb } from '../models/Hackathon';
 import SocketEvent from '../models/SocketEvent';
-import { UserRole } from '../models/User';
 
 const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 
@@ -209,9 +208,11 @@ export async function subscribeUser(req: Request, res: Response) {
     /*
      * Notify hackathon organization using socket
      */
-    (req.app.get('io').to(hackathon.organization.username) as SocketIO.Server).emit(
-        SocketEvent.NEW_ATTENDANT
-    );
+    (req.app
+        .get('io')
+        .to(hackathon.organization.username) as SocketIO.Server).emit(SocketEvent.NEW_ATTENDANT, {
+        hackathonName: hackathon.name,
+    });
     return res.json(
         await HackathonDb.findById(hackathon._id).populate({
             path: 'attendants',

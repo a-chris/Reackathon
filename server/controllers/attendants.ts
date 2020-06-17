@@ -7,7 +7,9 @@ import SocketEvent from '../models/SocketEvent';
 const INVITE_STATUSES = new Set(['pending', 'accepted', 'declined']);
 
 export function testWs(req: Request, res: Response) {
-    (req.app.get('io') as SocketIO.Server).to('org').emit(SocketEvent.NEW_ATTENDANT, {});
+    (req.app.get('io') as SocketIO.Server)
+        .to('org')
+        .emit(SocketEvent.NEW_ATTENDANT, { hackathonName: 'Test name' });
     return res.sendStatus(200);
 }
 

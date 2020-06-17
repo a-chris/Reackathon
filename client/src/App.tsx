@@ -51,10 +51,10 @@ export default function App() {
             }
         });
         if (state.user.role === 'ORGANIZATION') {
-            socketClient.on(SocketEvent.NEW_ATTENDANT, () => {
+            socketClient.on(SocketEvent.NEW_ATTENDANT, (data: any) => {
                 toast({
                     position: 'bottom-right',
-                    title: 'Nuova notifica',
+                    title: data?.hackathonName != null ? `${data.hackathonName}` : 'Nuova notifica',
                     description: 'Un nuovo utente si è iscritto.',
                     status: 'success',
                     isClosable: true,
