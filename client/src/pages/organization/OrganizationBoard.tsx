@@ -17,16 +17,22 @@ import colors from '../../utils/colors';
 import { BoxFullHeightAfterHeader } from '../../components/Common';
 import { AppContext } from '../../AppContext';
 
+type BoardTextType = {
+    heading: string;
+    subHeading: string;
+    linkTo: string;
+};
+
 export default function OrganizationBoard() {
     const appContext = React.useContext(AppContext);
-    const [hackathons, setHackathons] = React.useState<Hackathon[]>();
     const [stats, setStats] = React.useState<Statistics>();
+    const [boardTexts, setBoardTexts] = React.useState<BoardTextType>(boardMessages().empty);
 
     React.useEffect(() => {
         const organizationId = appContext.state?.user?._id;
         if (organizationId) {
             getOrganizationHackathons(organizationId).then((hackathons) => {
-                setHackathons(hackathons);
+                setBoardTexts(getBoardTexts(hackathons));
             });
             getStatistics().then((stats) => {
                 setStats(stats);
@@ -34,19 +40,17 @@ export default function OrganizationBoard() {
         }
     }, [appContext.state]);
 
-    const message = boardMessage(hackathons);
-
     return (
         <BoxFullHeightAfterHeader isLogged={true}>
             <FlexContainer>
                 <Box p={25} pb='5%' textAlign='center'>
                     <Heading as='h1' size='2xl' pb={10}>
-                        {message.heading}
+                        {boardTexts.heading}
                     </Heading>
                     <Heading as='h2' size='xl' pb={10}>
-                        {message.subHeading}
+                        {boardTexts.subHeading}
                     </Heading>
-                    <Link to={message.linkTo}>
+                    <Link to={boardTexts.linkTo}>
                         <Button
                             variant='outline'
                             color={colors.white}
@@ -92,7 +96,7 @@ export default function OrganizationBoard() {
     );
 }
 
-const hackathonStatus = (id?: string) => ({
+const boardMessages = (id?: string) => ({
     empty: {
         heading: 'Nessun Hackathon inserito',
         subHeading: 'Creane uno adesso!',
@@ -110,23 +114,23 @@ const hackathonStatus = (id?: string) => ({
     },
 });
 
-function boardMessage(hackathons?: Hackathon[]) {
+function getBoardTexts(hackathons?: Hackathon[]): BoardTextType {
     if (hackathons != null && hackathons.length > 0) {
         const startedHackathon = hackathons.find(
             (hackathon) => hackathon.status === HackathonStatus.STARTED
         );
         if (startedHackathon != null) {
-            return hackathonStatus(startedHackathon._id).started;
+            return boardMessages(startedHackathon._id).started;
         } else {
             const pendingHackathon = hackathons.find(
                 (hackathon) => hackathon.status === HackathonStatus.PENDING
             );
             if (pendingHackathon != null) {
-                return hackathonStatus(pendingHackathon._id).pending;
+                return boardMessages(pendingHackathon._id).pending;
             }
         }
     }
-    return hackathonStatus().empty;
+    return boardMessages().empty;
 }
 
 const FlexContainer = styled(Stack).attrs({
@@ -134,7 +138,6 @@ const FlexContainer = styled(Stack).attrs({
     h: 'fit-content',
     minH: 'inherit',
     p: '20px 0',
-    mt: '2px',
     flexWrap: 'wrap-reverse',
     bg: colors.white,
 })``;

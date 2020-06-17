@@ -67,7 +67,7 @@ export function getStatistics(): Promise<Statistics> {
 export function getOrganizationHackathons(organizationId: string): Promise<Hackathon[]> {
     return new Promise((resolve, reject) =>
         axios
-            .get('/hackathons/org', { params: { organizationId } })
+            .get(`/hackathons/org?id=${organizationId}`)
             .then((response: any) => resolve(response.data))
             .catch((error: any) => reject(error))
     );

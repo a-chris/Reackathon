@@ -50,7 +50,7 @@ import colors from '../../utils/colors';
 import { toDateString, toTimeString } from '../../utils/functions';
 import { AttendantsList, StyledBlueButtonPadded } from './components/AttendantsList';
 import { Information } from './components/HackathonInformation';
-import { StyledDateContainer, StyledTitleBox } from './components/StyledComponents';
+import { StyledTitleBox } from './components/StyledComponents';
 
 type RouteParams = {
     id: string;
@@ -58,15 +58,23 @@ type RouteParams = {
 
 const HACKATHONS_TABS = ['Informazioni', 'Iscritti'];
 
-const statusToString = (status: HackathonStatus) => {
-    switch (status) {
-        case HackathonStatus.PENDING:
-            return 'non ancora iniziato';
-        case HackathonStatus.STARTED:
-            return 'in corso';
-        case HackathonStatus.FINISHED:
-            return 'concluso';
-    }
+const hackathonStatusToString = {
+    [HackathonStatus.PENDING]: {
+        text: 'non ancora iniziato',
+        color: 'yellow',
+    },
+    [HackathonStatus.STARTED]: {
+        text: 'in corso',
+        color: 'green',
+    },
+    [HackathonStatus.FINISHED]: {
+        text: 'concluso',
+        color: 'red',
+    },
+    [HackathonStatus.ARCHIVED]: {
+        text: 'cancellato',
+        color: 'red',
+    },
 };
 
 export default function HackathonDetail() {
@@ -170,7 +178,7 @@ export default function HackathonDetail() {
             );
         } else {
             return (
-                <Stack>
+                <Stack spacing={2}>
                     {hackathonData?.status === HackathonStatus.PENDING && (
                         <>
                             <StyledBlueButtonPadded
@@ -229,17 +237,23 @@ export default function HackathonDetail() {
             <ContainerWithBackgroundImage>
                 <OverlappedBoxes
                     mainStackStyle={{ width: ['90%', '85%', '70%', '65%'] }}
+                    topBoxStyle={{
+                        pl: ['2%', '2%', '5%', '5%'],
+                        pr: ['2%', '2%', '5%', '5%'],
+                        pt: '15px',
+                        pb: '15px',
+                    }}
                     TopContent={() => (
                         <StyledTitleBox>
                             <Heading as='h1' size='xl'>
                                 {hackathonData.name}
                             </Heading>
-                            <SimpleGrid columns={[1, 1, 3, 3]} textAlign='left'>
+                            <SimpleGrid columns={[1, 1, 2, 2]} textAlign='left'>
                                 <Stack>
                                     <Stack
                                         isInline
                                         color={colors.gray_dark}
-                                        fontWeight='semibold'
+                                        fontWeight='500'
                                         letterSpacing='wide'
                                         fontSize='md'>
                                         <PseudoBox textTransform='capitalize'>
@@ -249,30 +263,59 @@ export default function HackathonDetail() {
                                             {hackathonData.location.country}
                                         </PseudoBox>
                                     </Stack>
-                                    <Badge variantColor='green' m='auto'>
-                                        Hackathon {statusToString(hackathonData.status)}
-                                    </Badge>
+
+                                    <StyledDateContainer>
+                                        <PseudoBox pr={10}>
+                                            <Stack isInline spacing='4' pb={1}>
+                                                <Icon
+                                                    name='calendar'
+                                                    size='1.3em'
+                                                    color={colors.red}
+                                                />
+                                                <Heading as='h2' size='sm'>
+                                                    Inizio
+                                                </Heading>
+                                            </Stack>
+                                            <Text pl={1}>
+                                                {toDateString(hackathonData.startDate)}, ore{' '}
+                                                {toTimeString(hackathonData.startDate)}
+                                            </Text>
+                                        </PseudoBox>
+                                        <PseudoBox>
+                                            <Stack isInline spacing='4' pb={1}>
+                                                <Icon
+                                                    name='calendar'
+                                                    size='1.3em'
+                                                    color={colors.red}
+                                                />
+                                                <Heading as='h2' size='sm'>
+                                                    Fine
+                                                </Heading>
+                                            </Stack>
+                                            <Text>
+                                                {toDateString(hackathonData.endDate)}, ore{' '}
+                                                {toTimeString(hackathonData.endDate)}
+                                            </Text>
+                                        </PseudoBox>
+                                    </StyledDateContainer>
                                 </Stack>
-                                <Badge variantColor='green' m='auto'>
-                                    Hackathon {statusToString(hackathonData.status)}
-                                </Badge>
-                                <StyledDateContainer>
-                                    <Icon name='calendar' size='1.5em' color={colors.red} />
-                                    <Box textAlign='center'>
-                                        <PseudoBox>
-                                            Dal <b>{toDateString(hackathonData.startDate)}</b>, ore{' '}
-                                            <b>{toTimeString(hackathonData.startDate)}</b>
-                                        </PseudoBox>
-                                        <PseudoBox>
-                                            Al <b>{toDateString(hackathonData.endDate)}</b>, ore{' '}
-                                            <b>{toTimeString(hackathonData.endDate)}</b>
-                                        </PseudoBox>
-                                    </Box>
-                                </StyledDateContainer>
+
                                 <Flex
                                     alignItems='center'
-                                    justifyContent={['center', 'center', 'flex-end']}>
-                                    {getHackathonButtons()}
+                                    justifyContent={['center', 'center', 'flex-end']}
+                                    wrap='wrap'
+                                    pr={[null, null, '8%', '8%']}>
+                                    <Stack spacing={3} alignItems='center'>
+                                        <Badge
+                                            variantColor={
+                                                hackathonStatusToString[hackathonData.status].color
+                                            }
+                                            mt='2'>
+                                            Hackathon{' '}
+                                            {hackathonStatusToString[hackathonData.status].text}
+                                        </Badge>
+                                        {getHackathonButtons()}
+                                    </Stack>
                                 </Flex>
                             </SimpleGrid>
                         </StyledTitleBox>
@@ -387,6 +430,17 @@ const ContainerWithBackgroundImage = styled(Box).attrs({
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     h: 'fit-content',
-    minH: '100%',
+    minH: 'inherit',
     backgroundPosition: 'bottom',
 })``;
+
+const StyledDateContainer = styled(Flex).attrs({
+    pt: ['8px', '8px', '10px', '10px'],
+    pb: ['10px', '10px', '20px', '20px'],
+    pr: 0,
+})`
+    font-size: 90%;
+    letter-spacing: 1px;
+    align-items: center;
+    flex-wrap: wrap;
+`;
