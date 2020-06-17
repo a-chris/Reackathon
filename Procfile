@@ -1,0 +1,1 @@
+web: yarn --cwd "server" ts-node index.ts

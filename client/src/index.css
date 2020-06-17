@@ -16,6 +16,14 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-#root {
-    height: 90%;
+.App {
+    height: 100%;
+}
+
+*:not(#logo) {
+    font-family: 'Montserrat';
+}
+
+#logo {
+    font-family: 'Expansiva' !important;
 }

@@ -1,4 +1,4 @@
 import socketIOClient from 'socket.io-client';
 
-const socketClient = socketIOClient('http://localhost:5000');
+const socketClient = socketIOClient('/');
 export default socketClient;

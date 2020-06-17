@@ -1,9 +1,10 @@
 {
-    "name": "reackathon-server",
+    "name": "server",
     "version": "0.0.1",
     "main": "index.js",
     "license": "MIT",
     "author": "Christian Toscano - Giada Boccali",
+    "private": true,
     "scripts": {
         "compile": "tsc",
         "start": "tsc && node js/index.js",
@@ -13,6 +14,7 @@
         "bcrypt": "^4.0.1",
         "connect-mongo": "^3.2.0",
         "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
         "express": "^4.17.1",
         "express-session": "^1.17.1",
         "lodash": "^4.17.15",
@@ -31,6 +33,7 @@
         "@types/mongoose": "^5.7.15",
         "@types/multer": "^1.4.3",
         "@types/nodemailer": "^6.4.0",
+        "@types/socket.io": "^2.1.8",
         "eslint": "^6.8.0",
         "ts-node-dev": "^1.0.0-pre.44"
     }

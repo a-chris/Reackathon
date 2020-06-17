@@ -1,22 +1,28 @@
 import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
+import http from 'http';
 import * as _ from 'lodash';
 import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path';
 import socketIo from 'socket.io';
+import { isProduction } from './config/constants';
 import * as attendantsController from './controllers/attendants';
 import * as authController from './controllers/auth';
 import * as filtersController from './controllers/filters';
 import * as hackathonsController from './controllers/hackatons';
 import * as usersController from './controllers/users';
 
-const app = express();
-const PORT = 5000;
+require('dotenv').config();
 
-mongoose.connect('mongodb://192.168.1.123', {
-    dbName: 'test',
+const app = express();
+const PORT = process.env.PORT || 5000;
+const httpServer = http.createServer(app);
+const io = socketIo(httpServer);
+
+mongoose.connect(process.env.MONGODB_URI as string, {
+    dbName: isProduction() ? undefined : 'test',
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -36,13 +42,22 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// required to work with heroku
+app.enable('trust proxy');
+app.set('io', io);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
+    cors({
+        credentials: true,
+    })
+);
+app.use(
     session({
         name: 'reackathon_session',
-        secret: 'reackathon2020',
-        resave: false,
+        secret: process.env.SECRET as string,
+        proxy: true,
+        resave: true,
         saveUninitialized: false,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24 * 14,
@@ -54,15 +69,6 @@ app.use(
             collections: 'sessions',
             autoRemove: 'native',
         }),
-    })
-);
-
-// TODO: wrap this in a if statement
-// before to deploy in qa/production
-app.use(
-    cors({
-        credentials: true,
-        origin: 'http://localhost:3000',
     })
 );
 
@@ -118,9 +124,7 @@ app.route('/hackathons/org').get(
 
 app.route('/hackathons/:id').get(hackathonsController.findHackathon);
 
-app.route('/hackathons/:id/sub')
-    .put(authController.isClient, hackathonsController.subscribeUser)
-    .delete(hackathonsController.deleteAttendant);
+app.route('/hackathons/:id/sub').put(authController.isClient, hackathonsController.subscribeUser);
 
 app.route('/hackathons/:id/status').put(hackathonsController.changeHackathonStatus);
 
@@ -142,12 +146,9 @@ app.route('/filters/cities').get(filtersController.getAvailableCities);
 app.route('/stats').get(authController.isOrganization, hackathonsController.organizationStats);
 
 /**
- * Listen
+ * HTTP Server
  */
-const server = app.listen(PORT, () => console.log('Server started!'));
-
-const io = socketIo(server);
-app.set('io', io);
+httpServer.listen(PORT, () => 'Server started!');
 
 /**
  * Socket.io put here to reuse the http server

@@ -82,7 +82,8 @@ export default function Header() {
 
     React.useEffect(() => {
         const userId = appContext.state?.user?._id;
-        if (userId != null) {
+        const isClient = appContext.state?.user?.role === 'CLIENT';
+        if (userId != null && isClient) {
             getUserAttendants(userId).then((attendants) => {
                 setInvites(mapAttendantsToInvitesData(attendants));
             });
@@ -132,8 +133,12 @@ export default function Header() {
             <Stack isInline justify='space-between' align='center'>
                 <Link to='/'>
                     <StyledLogo>
-                        <span style={{ color: `${colors.blue_light}` }}>reac</span>
-                        <span style={{ color: `${colors.red}` }}>kathon</span>
+                        <span id='logo' style={{ color: `${colors.blue_light}` }}>
+                            reac
+                        </span>
+                        <span id='logo' style={{ color: `${colors.red}` }}>
+                            kathon
+                        </span>
                     </StyledLogo>
                 </Link>
 
