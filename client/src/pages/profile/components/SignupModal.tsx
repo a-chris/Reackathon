@@ -1,4 +1,6 @@
 import {
+    Flex,
+    Link,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -8,7 +10,7 @@ import {
     Text,
 } from '@chakra-ui/core';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Logo } from '../../../components/Logo';
 import colors from '../../../utils/colors';
 
 interface SignupModalProps {
@@ -17,23 +19,30 @@ interface SignupModalProps {
 }
 
 export default function SignupModal(props: SignupModalProps) {
-    console.log('TCL: SignupModal -> props', props);
     return (
-        <Modal isOpen={props.isOpen} onClose={props.onClose}>
+        <Modal size='xl' isOpen={props.isOpen} onClose={props.onClose}>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Sembra che tu non sia iscritto a Reackathon!</ModalHeader>
+                <Logo />
+                <ModalHeader>Ops, sembra che tu non sia iscritto a Reackathon!</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Text>
-                        Per visualizzare il profilo di un altro utente è necessario registrarsi,
-                        cosa aspetti?
-                    </Text>
-                    <Link to='/signup'>
-                        <span style={{ color: colors.red }}>
-                            <b>registrati adesso</b>
-                        </span>
-                    </Link>
+                    <Flex d='column' textAlign='center'>
+                        <Logo />
+                        <Text>
+                            Per visualizzare il profilo di un altro utente è necessario registrarsi,
+                            cosa aspetti?
+                        </Text>
+                        <Text>
+                            <Link style={{ color: colors.red }} href='/signup'>
+                                <b>registrati adesso</b>
+                            </Link>{' '}
+                            oppure{' '}
+                            <Link style={{ color: colors.red }} href='/login'>
+                                <b>accedi</b>
+                            </Link>
+                        </Text>
+                    </Flex>
                 </ModalBody>
             </ModalContent>
         </Modal>
