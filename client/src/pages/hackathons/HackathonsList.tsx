@@ -85,7 +85,7 @@ export default function HackathonsList() {
 
     return (
         <BoxFullHeightAfterHeader isLogged={isLogged}>
-            <SimpleGrid w='100%' h='100%' columns={[1, 1, 2, 2]}>
+            <SimpleGrid w='100%' minH='inherit' columns={[1, 1, 2, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box textAlign='center'>
                         <Heading as='h1' size='xl' color={colors.blue_light} p={1}>

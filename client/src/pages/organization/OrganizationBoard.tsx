@@ -132,6 +132,7 @@ function boardMessage(hackathons?: Hackathon[]) {
 const FlexContainer = styled(Stack).attrs({
     alignItems: 'center',
     h: 'fit-content',
+    minH: 'inherit',
     p: '20px 0',
     mt: '2px',
     flexWrap: 'wrap-reverse',

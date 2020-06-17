@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from '@chakra-ui/core';
+import { Box, Button } from '@chakra-ui/core';
 import styled from 'styled-components';
 import colors from '../../../utils/colors';
 
@@ -25,13 +25,3 @@ export const StyledBlueButton = styled(Button).attrs({
     color: colors.white,
     rounded: 'md',
 })``;
-
-export const StyledDateContainer = styled(Stack).attrs({
-    isInline: true,
-})`
-    font-size: 90%;
-    letter-spacing: 1px;
-    padding: 5px;
-    align-items: center;
-    justify-content: center;
-`;
