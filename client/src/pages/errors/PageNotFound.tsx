@@ -35,7 +35,7 @@ export default function PageNotFound() {
                             size='2xl'
                             color={colors.white}
                             pb={5}
-                            textShadow={`2px 1px ${colors.black}`}>
+                            textShadow={`2px 1px 5px ${colors.black}`}>
                             {shownText}
                         </Heading>
                         <Link to='/'>

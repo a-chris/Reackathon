@@ -51,15 +51,18 @@ export default function Homepage() {
                     <SimpleResponsiveGrid>
                         <Flex alignSelf='center' color={colors.white} pr={0}>
                             <Stack p={[50, 45, 35, 30]} textAlign='center'>
-                                <Heading as='h1' size='2xl' m='auto'>
+                                <Heading
+                                    as='h1'
+                                    size='2xl'
+                                    m='auto'
+                                    textShadow={`2px 1px 5px ${colors.black}`}>
                                     Entra nel mondo degli Hackathon!
                                 </Heading>
                                 <Box p='5%'>
                                     <Heading
                                         as='h2'
                                         fontSize='xl'
-                                        backgroundColor={colors.blue_night}
-                                        boxShadow={`5px 5px 20px ${colors.blue_night}`}>
+                                        textShadow={`4px 4px 10px ${colors.black}`}>
                                         Entra a far parte della piattaforma di Hackathon numero uno.
                                         <br />
                                         Iscriviti ad un Hackathon, crea il tuo team ed esprimi il
@@ -151,7 +154,11 @@ export default function Homepage() {
                         />
                     </Box>
                     <Flex alignSelf='center' p='8%'>
-                        <Heading as='h3' size='xl' m='auto'>
+                        <Heading
+                            as='h3'
+                            size='xl'
+                            m='auto'
+                            textShadow={`2px 1px 5px ${colors.black}`}>
                             Oppure cerca i prossimi Hackathon direttamente sulla mappa
                         </Heading>
                     </Flex>
@@ -196,6 +203,7 @@ const FlexContainer: React.FC<{}> = (props) => {
             alignItems='center'
             justifyContent='center'
             p='10% 0'
+            backgroundColor={colors.blue_night}
             backgroundImage="url('./images/background/space-min.jpg')"
             {...BackgroundImageStyleProps}>
             {props.children}

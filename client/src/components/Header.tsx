@@ -166,8 +166,8 @@ export default function Header() {
                         onClick={onHamburgerMenuToogle}
                         variant='ghost'
                         minW='fit-content'
-                        pl={3}
-                        pr={1}>
+                        pl={2}
+                        pr={2}>
                         <svg
                             fill={colors.blue_night}
                             width='20px'
