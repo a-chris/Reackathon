@@ -23,7 +23,6 @@ export default function SignupModal(props: SignupModalProps) {
         <Modal size='xl' isOpen={props.isOpen} onClose={props.onClose}>
             <ModalOverlay />
             <ModalContent>
-                <Logo />
                 <ModalHeader>Ops, sembra che tu non sia iscritto a Reackathon!</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
