@@ -6,6 +6,11 @@ import SocketEvent from '../models/SocketEvent';
 
 const INVITE_STATUSES = new Set(['pending', 'accepted', 'declined']);
 
+export function testWs(req: Request, res: Response) {
+    (req.app.get('io') as SocketIO.Server).to('org').emit(SocketEvent.NEW_ATTENDANT, {});
+    return res.sendStatus(200);
+}
+
 export async function inviteAttendantToGroup(req: Request, res: Response) {
     const attendantIdTo = req.params?.attendantId;
     const attendantIdFrom = req.body?.from;
@@ -31,7 +36,7 @@ export async function inviteAttendantToGroup(req: Request, res: Response) {
         } as any);
     }
     await attendant.save();
-    (req.app.get('io').to(attendant.user.username) as SocketIO.Server).emit(SocketEvent.NEW_INVITE);
+    (req.app.get('io') as SocketIO.Server).to(attendant.user.username).emit(SocketEvent.NEW_INVITE);
     return res.sendStatus(200);
 }
 

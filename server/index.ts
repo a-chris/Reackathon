@@ -11,7 +11,7 @@ import { isProduction } from './config/constants';
 import * as attendantsController from './controllers/attendants';
 import * as authController from './controllers/auth';
 import * as filtersController from './controllers/filters';
-import * as hackathonsController from './controllers/hackatons';
+import * as hackathonsController from './controllers/hackathons';
 import * as usersController from './controllers/users';
 
 require('dotenv').config();
@@ -19,7 +19,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const httpServer = http.createServer(app);
-const io = socketIo(httpServer);
+const io = socketIo(httpServer, { origins: '*:*' });
 
 mongoose.connect(process.env.MONGODB_URI as string, {
     dbName: isProduction() ? undefined : 'test',
@@ -144,6 +144,8 @@ app.route('/attendants/invites/:inviteId').put(
 app.route('/filters/cities').get(filtersController.getAvailableCities);
 
 app.route('/stats').get(authController.isOrganization, hackathonsController.organizationStats);
+
+app.route('/testWs').get(attendantsController.testWs);
 
 /**
  * HTTP Server

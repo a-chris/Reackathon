@@ -1,4 +1,4 @@
 import io from 'socket.io-client';
 
-const socketClient = io.connect('http://localhost:5000');
+const socketClient = io.connect('/', { autoConnect: false });
 export default socketClient;

@@ -31,7 +31,6 @@ import {
 import _ from 'lodash';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { BoxFullHeightAfterHeader } from '../../components/Common';
@@ -78,12 +77,6 @@ export default function HackathonDetail() {
     const [isArchiveAlertOpen, setArchiveAlertOpen] = React.useState<boolean>(false);
     const cancelRef = React.useRef<HTMLElement>(null);
     const { isOpen, onOpen, onClose } = useDisclosure(); // winner dialog
-
-    useEffectOnce(() => {
-        if (appContext.state?.user?.role === 'ORGANIZATION') {
-            socketClient.emit('org_room', appContext.state.user.username);
-        }
-    });
 
     React.useEffect(() => {
         if (appContext.state?.user?.role === 'ORGANIZATION') {

@@ -1,4 +1,4 @@
-import { CSSReset, ThemeProvider, useToast } from '@chakra-ui/core';
+import { CSSReset, useToast } from '@chakra-ui/core';
 import axios from 'axios';
 import moment from 'moment';
 import 'moment/locale/it';
@@ -8,7 +8,6 @@ import { HashRouter, Redirect, Route, RouteProps, Switch, useHistory } from 'rea
 import { AppContext, reducer } from './AppContext';
 import Header from './components/Header';
 import './config/AxiosConfig';
-import { customTheme } from './fonts/theme';
 import { User, UserRole } from './models/Models';
 import PageNotFound from './pages/errors/PageNotFound';
 import HackathonDetail from './pages/hackathon/HackathonDetail';
@@ -37,11 +36,18 @@ export default function App() {
     console.log('TCL: App -> state', state);
 
     React.useEffect(() => {
-        if (state.user == null) return;
+        if (state.user == null) {
+            if (socketClient?.connected) {
+                socketClient?.disconnect();
+            }
+            return;
+        }
+        socketClient.open();
         socketClient.on('connect', () => {
             console.log('SOCKET CONNECTED');
             if (state.user != null) {
                 socketClient.emit('join_room', state.user.username);
+                console.log('TCL: App -> join_room');
             }
         });
         if (state.user.role === 'ORGANIZATION') {
@@ -91,42 +97,40 @@ export default function App() {
                 Questo sito utilizza i cookie per migliorare l'esperienza utente.
             </CookieConsent>
             <div role='main'>
-                <ThemeProvider theme={customTheme}>
-                    <AppContext.Provider value={{ state, onLoggedIn, onLogout }}>
-                        <CSSReset />
-                        <HashRouter>
-                            <Header />
-                            <Switch>
-                                <Route exact path='/' component={Homepage} />
-                                <RestrictedRoute exact path='/login' component={Login} />
-                                <RestrictedRoute exact path='/signup' component={Signup} />
-                                <RestrictedRoute
-                                    exact
-                                    path='/org'
-                                    component={OrganizationBoard}
-                                    allowedFor={[UserRole.ORGANIZATION]}
-                                />
-                                <RestrictedRoute
-                                    exact
-                                    path='/hackathons/create'
-                                    component={HackathonManagement}
-                                    allowedFor={[UserRole.ORGANIZATION]}
-                                />
-                                <RestrictedRoute
-                                    exact
-                                    path='/hackathons/update/:id'
-                                    component={HackathonManagement}
-                                    allowedFor={[UserRole.ORGANIZATION]}
-                                />
-                                <Route exact path='/hackathons/:id' component={HackathonDetail} />
-                                <Route path='/hackathons' component={HackathonsList} />
-                                <Route exact path='/profile/:username' component={Profile} />
-                                <Route exact path='/ranking' component={Ranking} />
-                                <Route component={PageNotFound} />
-                            </Switch>
-                        </HashRouter>
-                    </AppContext.Provider>
-                </ThemeProvider>
+                <AppContext.Provider value={{ state, onLoggedIn, onLogout }}>
+                    <CSSReset />
+                    <HashRouter>
+                        <Header />
+                        <Switch>
+                            <Route exact path='/' component={Homepage} />
+                            <RestrictedRoute exact path='/login' component={Login} />
+                            <RestrictedRoute exact path='/signup' component={Signup} />
+                            <RestrictedRoute
+                                exact
+                                path='/org'
+                                component={OrganizationBoard}
+                                allowedFor={[UserRole.ORGANIZATION]}
+                            />
+                            <RestrictedRoute
+                                exact
+                                path='/hackathons/create'
+                                component={HackathonManagement}
+                                allowedFor={[UserRole.ORGANIZATION]}
+                            />
+                            <RestrictedRoute
+                                exact
+                                path='/hackathons/update/:id'
+                                component={HackathonManagement}
+                                allowedFor={[UserRole.ORGANIZATION]}
+                            />
+                            <Route exact path='/hackathons/:id' component={HackathonDetail} />
+                            <Route path='/hackathons' component={HackathonsList} />
+                            <Route exact path='/profile/:username' component={Profile} />
+                            <Route exact path='/ranking' component={Ranking} />
+                            <Route component={PageNotFound} />
+                        </Switch>
+                    </HashRouter>
+                </AppContext.Provider>
             </div>
         </div>
     );
