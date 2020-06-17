@@ -5,18 +5,22 @@ import React from 'react';
 import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeline-component';
 import styled from 'styled-components';
 import { Hackathon } from '../../../models/Models';
-import colors, { getRandomColorHex } from '../../../utils/colors';
+import colors, { getRandomColorHex, getTextContrast } from '../../../utils/colors';
 import { Link } from 'react-router-dom';
 
 export default function HackathonsTimeline({ hackathons }: { hackathons: Hackathon[] }) {
-    const hackathonCount = hackathons.length;
     const elementColors = React.useMemo(() => {
-        return hackathons.map(() => getRandomColorHex());
+        return hackathons.map(() => {
+            const bg = getRandomColorHex();
+            const textColor = getTextContrast(bg);
+
+            return { bg: bg, textColor: textColor };
+        });
         /*
          *   Used to keep the same colors after a re-render
          */
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hackathonCount]);
+    }, []);
 
     return (
         <StyledBox w='100%' pb='20px'>
@@ -25,8 +29,8 @@ export default function HackathonsTimeline({ hackathons }: { hackathons: Hackath
                     <VerticalTimelineElement
                         className='vertical-timeline-element'
                         contentStyle={{
-                            background: elementColors[index],
-                            color: colors.black_almost,
+                            background: elementColors[index].bg,
+                            color: elementColors[index].textColor,
                             padding: '10px 30px',
                         }}
                         contentArrowStyle={{
@@ -34,7 +38,7 @@ export default function HackathonsTimeline({ hackathons }: { hackathons: Hackath
                         }}
                         iconStyle={{
                             boxShadow: `0 0 0 4px ${colors.black}, inset 0 2px 0 rgba(0,0,0,.08), 0 3px 0 4px rgba(0,0,0,.05)`,
-                            backgroundColor: elementColors[index],
+                            backgroundColor: elementColors[index].bg,
                         }}
                         date={formatHackathonPeriod(hack)}
                         key={index}>

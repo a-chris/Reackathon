@@ -6,7 +6,7 @@ import { VerticalTimeline, VerticalTimelineElement } from 'react-vertical-timeli
 import styled from 'styled-components';
 import { BoxWithSpacedChildren } from '../../../components/Common';
 import { Experience } from '../../../models/Models';
-import colors, { getRandomColorHex } from '../../../utils/colors';
+import colors, { getRandomColorHex, getTextContrast } from '../../../utils/colors';
 
 interface ExperiencesTimelineProps {
     canBeEdited: boolean;
@@ -47,7 +47,12 @@ export default function ExperiencesTimeline(props: ExperiencesTimelineProps) {
 
     const experiencesCount = experiences.length;
     const elementColors = React.useMemo(() => {
-        return experiences.map(() => getRandomColorHex());
+        return experiences.map(() => {
+            const bg = getRandomColorHex();
+            const textColor = getTextContrast(bg);
+
+            return { bg: bg, textColor: textColor };
+        });
         /*
          *   Used to keep the same colors after a re-render
          */
@@ -61,8 +66,8 @@ export default function ExperiencesTimeline(props: ExperiencesTimelineProps) {
                     <VerticalTimelineElement
                         className='vertical-timeline-element'
                         contentStyle={{
-                            background: elementColors[index],
-                            color: colors.black_almost,
+                            background: elementColors[index].bg,
+                            color: elementColors[index].textColor,
                             padding: '10px 30px',
                         }}
                         contentArrowStyle={{
@@ -70,7 +75,7 @@ export default function ExperiencesTimeline(props: ExperiencesTimelineProps) {
                         }}
                         iconStyle={{
                             boxShadow: `0 0 0 4px ${colors.black}, inset 0 2px 0 rgba(0,0,0,.08), 0 3px 0 4px rgba(0,0,0,.05)`,
-                            backgroundColor: elementColors[index],
+                            backgroundColor: elementColors[index].bg,
                         }}
                         date={areEditable[index] ? undefined : formatExperiencePeriod(exp)}
                         key={index}>
