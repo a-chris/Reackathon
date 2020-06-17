@@ -20,10 +20,10 @@ code {
     height: 100%;
 }
 
-*:not(#logo) {
+*:not(.logo) {
     font-family: 'Montserrat';
 }
 
-#logo {
+.logo {
     font-family: 'Expansiva' !important;
 }

@@ -9,12 +9,12 @@ import {
     DrawerHeader,
     DrawerOverlay,
     Flex,
+    Heading,
+    Icon,
     Stack,
     Tag,
     Text,
     useDisclosure,
-    Heading,
-    Icon,
 } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
@@ -25,7 +25,10 @@ import { AppContext } from '../AppContext';
 import { Attendant, UserRole } from '../models/Models';
 import { acceptInvite, declineInvite, getUserAttendants } from '../services/AttendantService';
 import { logout } from '../services/AuthService';
+import socketClient from '../socket/socket';
+import SocketEvent from '../socket/SocketEvent';
 import colors from '../utils/colors';
+import { Logo } from './Logo';
 
 type InviteData = {
     inviteId: string;
@@ -81,6 +84,20 @@ export default function Header() {
     const [invitesChanged, { inc }] = useCounter(0);
 
     React.useEffect(() => {
+        if (appContext.state?.user?.role === UserRole.CLIENT) {
+            const userId = appContext.state.user?._id;
+            socketClient.on(SocketEvent.NEW_INVITE, () => {
+                if (userId != null) {
+                    console.log('UPDATE INVITES');
+                    getUserAttendants(userId).then((attendants) => {
+                        setInvites(mapAttendantsToInvitesData(attendants));
+                    });
+                }
+            });
+        }
+    }, [appContext.state]);
+
+    React.useEffect(() => {
         const userId = appContext.state?.user?._id;
         const isClient = appContext.state?.user?.role === 'CLIENT';
         if (userId != null && isClient) {
@@ -131,17 +148,7 @@ export default function Header() {
     return (
         <StyledNavBar isSecondMenuShown={isLogged}>
             <Stack isInline justify='space-between' align='center'>
-                <Link to='/'>
-                    <StyledLogo>
-                        <span id='logo' style={{ color: `${colors.blue_light}` }}>
-                            reac
-                        </span>
-                        <span id='logo' style={{ color: `${colors.red}` }}>
-                            kathon
-                        </span>
-                    </StyledLogo>
-                </Link>
-
+                <Logo />
                 <Box
                     display={['flex', 'flex', 'none', 'none']}
                     justifyContent='flex-end'
@@ -422,14 +429,6 @@ const StyledNavBar = styled(Box).attrs((props: NavBarProps) => ({
 const StyledMenu = styled.div`
     text-align: left;
     padding-bottom: 5px;
-`;
-
-const StyledLogo = styled(Box).attrs({
-    fontSize: ['26px', '28px', '46px', '46px'],
-})`
-    font-family: 'Expansiva';
-    font-weight: 400;
-    margin: 0;
 `;
 
 const StyledHeaderButton = styled(Button).attrs({

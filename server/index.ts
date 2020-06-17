@@ -11,7 +11,7 @@ import { isProduction } from './config/constants';
 import * as attendantsController from './controllers/attendants';
 import * as authController from './controllers/auth';
 import * as filtersController from './controllers/filters';
-import * as hackathonsController from './controllers/hackatons';
+import * as hackathonsController from './controllers/hackathons';
 import * as usersController from './controllers/users';
 
 require('dotenv').config();
@@ -19,7 +19,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const httpServer = http.createServer(app);
-const io = socketIo(httpServer);
+const io = socketIo(httpServer, { origins: '*:*' });
 
 mongoose.connect(process.env.MONGODB_URI as string, {
     dbName: isProduction() ? undefined : 'test',
@@ -142,6 +142,8 @@ app.route('/filters/cities').get(filtersController.getAvailableCities);
 
 app.route('/stats').get(authController.isOrganization, hackathonsController.organizationStats);
 
+app.route('/testWs').get(attendantsController.testWs);
+
 /**
  * HTTP Server
  */
@@ -151,16 +153,19 @@ httpServer.listen(PORT, () => 'Server started!');
  * Socket.io put here to reuse the http server
  */
 io.on('connection', (client) => {
-    client.on('test', () => {
-        client.emit('FromAPI', new Date());
+    /*
+     * Create a room for a certain user
+     * identified by the username
+     */
+    client.on('join_room', (username: string) => {
+        console.log('TCL: join_room', username);
+        client.join(username);
     });
 
     /*
-     * Create a room for a certain organization
-     * identified by the organization username
+     * Remove the client from his rooms
      */
-    client.on('org_room', (username: string) => {
-        console.log('TCL: org_room', username);
-        client.join(username);
+    client.on('disconnect', () => {
+        client.leaveAll();
     });
 });

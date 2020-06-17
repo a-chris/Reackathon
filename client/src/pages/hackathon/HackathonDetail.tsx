@@ -27,12 +27,10 @@ import {
     Tabs,
     Text,
     useDisclosure,
-    useToast,
 } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useEffectOnce } from 'react-use';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
 import { BoxFullHeightAfterHeader } from '../../components/Common';
@@ -45,7 +43,7 @@ import {
     subscribeToHackathon,
 } from '../../services/HackathonService';
 import socketClient from '../../socket/socket';
-import SocketEvent, { HackathonSocketData } from '../../socket/SocketEvent';
+import SocketEvent from '../../socket/SocketEvent';
 import colors from '../../utils/colors';
 import { toDateString, toTimeString } from '../../utils/functions';
 import { AttendantsList } from './components/AttendantsList';
@@ -80,7 +78,6 @@ const hackathonStatusToString = {
 export default function HackathonDetail() {
     const appContext = React.useContext(AppContext);
     const params = useParams<RouteParams>();
-    const toast = useToast();
     const hackathonId = params.id;
     const [hackathonData, setHackathonData] = React.useState<Hackathon>();
     const [attendant, setAttendant] = React.useState<Attendant | undefined>(undefined);
@@ -89,32 +86,16 @@ export default function HackathonDetail() {
     const cancelRef = React.useRef<HTMLElement>(null);
     const { isOpen, onOpen, onClose } = useDisclosure(); // winner dialog
 
-    useEffectOnce(() => {
-        if (appContext.state?.user?.role === 'ORGANIZATION') {
-            socketClient.emit('org_room', appContext.state.user.username);
-        }
-    });
-
     React.useEffect(() => {
         if (appContext.state?.user?.role === 'ORGANIZATION') {
-            socketClient.on(appContext.state.user.username, (data: HackathonSocketData) => {
-                if (data.event === SocketEvent.NEW_ATTENDANT) {
-                    toast({
-                        position: 'top-right',
-                        title: 'Nuova notifica',
-                        description: 'Un nuovo utente si è iscritto.',
-                        status: 'success',
-                        isClosable: true,
-                    });
-                }
-                if (hackathonId === data.id) {
+            socketClient.on(SocketEvent.NEW_ATTENDANT, (data: any) => {
+                if (hackathonId === data?.id) {
                     // Update the current hackathon
                     console.log('UPDATE HACKATHON');
                     getHackathon(data.id).then((hackathon) => setHackathonData(hackathon));
                 }
             });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [appContext.state, hackathonId]);
 
     React.useEffect(() => {
