@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { AttendantDb } from '../models/Attendant';
 import { HackathonDb } from '../models/Hackathon';
 import SocketEvent from '../models/SocketEvent';
+import { UserDb } from '../models/User';
 
 const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 
@@ -44,7 +45,7 @@ const sanitizeFilters = (filters: any): FilterType => {
             .filter((e) => HACKATHON_FIELDS.has(e[0]))
             .forEach((e) => {
                 const key = mapFiltersToString(e[0]);
-                if (key != undefined) {
+                if (key != null) {
                     sanitizedFilters[key] = e[1];
                 }
             });
@@ -52,11 +53,23 @@ const sanitizeFilters = (filters: any): FilterType => {
     return sanitizedFilters as FilterType;
 };
 
-export function findHackathons(req: Request, res: Response) {
+export async function findHackathons(req: Request, res: Response) {
     const query = req.query;
     const filters = sanitizeFilters(query);
 
-    HackathonDb.find(filters)
+    const filtersToApply = { ...filters } as any;
+    let userHackathons;
+    if (query.user != null) {
+        const user = await UserDb.findOne({ 'username': query.user.toString() });
+        if (user != null) {
+            const attendants = await AttendantDb.find({ 'user': user._id }).populate('hackathon');
+            if (attendants != null && attendants.length > 0) {
+                userHackathons = attendants.map((a) => a.hackathon._id);
+                filtersToApply._id = { '$in': userHackathons };
+            }
+        }
+    }
+    HackathonDb.find(filtersToApply)
         .populate('organization')
         .exec((err, hackathons) => {
             res.json(hackathons);
@@ -208,11 +221,12 @@ export async function subscribeUser(req: Request, res: Response) {
     /*
      * Notify hackathon organization using socket
      */
-    (req.app
-        .get('io')
-        .to(hackathon.organization.username) as SocketIO.Server).emit(SocketEvent.NEW_ATTENDANT, {
-        hackathonName: hackathon.name,
-    });
+    (req.app.get('io').to(hackathon.organization.username) as SocketIO.Server).emit(
+        SocketEvent.NEW_ATTENDANT,
+        {
+            hackathonName: hackathon.name,
+        }
+    );
     return res.json(
         await HackathonDb.findById(hackathon._id).populate({
             path: 'attendants',
@@ -223,7 +237,6 @@ export async function subscribeUser(req: Request, res: Response) {
 
 export function organizationStats(req: Request, res: Response) {
     const user = req.session?.user;
-    console.log('organizationStats -> user', user);
 
     if (user._id == null) return res.sendStatus(401);
 
@@ -247,7 +260,6 @@ export function organizationStats(req: Request, res: Response) {
                 .map((hackathon) => hackathon.prize.amount)
                 .reduce((amountA, amountB) => amountA + amountB);
         }
-        return res.json(stats);
+        res.json(stats);
     });
-    return res.json(stats);
 }

@@ -6,26 +6,27 @@ import {
     AccordionPanel,
     Badge,
     Box,
+    Checkbox,
     Flex,
+    FormLabel,
     Heading,
     Input,
     Select,
     SimpleGrid,
     Stack,
     Text,
-    FormLabel,
 } from '@chakra-ui/core';
 import queryString from 'query-string';
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { BoxWithSpacedChildren, BoxFullHeightAfterHeader } from '../../components/Common';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import { AppContext } from '../../AppContext';
+import { BoxFullHeightAfterHeader, BoxWithSpacedChildren } from '../../components/Common';
 import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getAvailableCities } from '../../services/FilterService';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 import { toDateString } from '../../utils/functions';
-import { AppContext } from '../../AppContext';
 
 type RouteParams = {
     organization?: string;
@@ -36,6 +37,7 @@ type RouteParams = {
     from?: string;
     to?: string;
     status?: HackathonStatus;
+    user?: string;
 };
 
 const ROUTE_PARAMS = new Set([
@@ -47,6 +49,7 @@ const ROUTE_PARAMS = new Set([
     'from',
     'to',
     'status',
+    'user',
 ]);
 
 const HACKATHON_STATUSES = {
@@ -58,6 +61,7 @@ const HACKATHON_STATUSES = {
 
 export default function HackathonsList() {
     const appContext = React.useContext(AppContext);
+    const history = useHistory();
     const location = useLocation();
     const [hackathons, setHackathons] = React.useState<Hackathon[]>();
     const [availableCities, setAvailableCities] = React.useState<string[]>([]);
@@ -78,6 +82,18 @@ export default function HackathonsList() {
         if (name != null && value != null) {
             const sanitizedValue = value === '' ? undefined : value;
             setFilters((curr) => ({ ...curr, [name]: sanitizedValue }));
+        }
+    };
+
+    const onChangeOwnHackathons = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { checked } = event.target;
+
+        const username = appContext.state?.user?.username;
+        if (checked != null && username != null) {
+            setFilters((curr) => ({ ...curr, user: checked ? username : undefined }));
+            if (queryString.parse(location.search)?.user != null) {
+                history.push('/hackathons');
+            }
         }
     };
 
@@ -140,6 +156,16 @@ export default function HackathonsList() {
                                         <b>Data di fine:</b>
                                         <Input type='date' name='to' onChange={onChangeFilter} />
                                     </FormLabel>
+                                    {isLogged && (
+                                        <Checkbox
+                                            size='lg'
+                                            pt='15px'
+                                            variantColor='orange'
+                                            defaultIsChecked={filters.user != null}
+                                            onChange={onChangeOwnHackathons}>
+                                            I tuoi hackathon
+                                        </Checkbox>
+                                    )}
                                 </Flex>
                             </AccordionPanel>
                         </AccordionItem>
