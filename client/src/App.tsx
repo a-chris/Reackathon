@@ -68,8 +68,12 @@ export default function App() {
 
     axios.interceptors.response.use((response) => {
         if (response.status === 500) {
-            // TODO: do something
-            history.push('/error');
+            toast({
+                position: 'bottom-right',
+                title: 'Sembra ci sia stato un problema',
+                status: 'error',
+                isClosable: true,
+            });
         }
         return response;
     });
@@ -91,11 +95,20 @@ export default function App() {
         }
     }, [onLoggedIn, onLogout]);
 
+    const onAcceptCookie = React.useCallback(() => {
+        localStorage.setItem('cookie', 'true');
+    }, []);
+
+    const cookieAccepted = localStorage.getItem('cookie') === 'true';
+
     return (
         <div className='App'>
-            <CookieConsent debug={true} buttonText='Ho capito'>
-                Questo sito utilizza i cookie per migliorare l'esperienza utente.
-            </CookieConsent>
+            {!cookieAccepted && (
+                <CookieConsent debug={true} buttonText='Ho capito' onAccept={onAcceptCookie}>
+                    Questo sito utilizza i cookie per migliorare l'esperienza utente.
+                </CookieConsent>
+            )}
+
             <div role='main'>
                 <AppContext.Provider value={{ state, onLoggedIn, onLogout }}>
                     <CSSReset />
