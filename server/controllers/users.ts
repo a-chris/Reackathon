@@ -71,8 +71,12 @@ export function uploadAvatar(req: Request, res: Response) {
 
         if (user.avatar != null) {
             // remove previous avatar if present
-            if (fs.existsSync(path.resolve(__dirname, '../uploads/' + user.avatar))) {
-                fs.unlinkSync(path.resolve(__dirname, '../uploads/' + user.avatar));
+            try {
+                if (fs.existsSync(path.resolve(__dirname, '../uploads/' + user.avatar))) {
+                    fs.unlinkSync(path.resolve(__dirname, '../uploads/' + user.avatar));
+                }
+            } catch (err) {
+                console.error(err);
             }
         }
 
