@@ -1,28 +1,17 @@
 import React from 'react';
 import { User } from '../models/Models';
-import { Icon, Flex, Text, Tooltip } from '@chakra-ui/core';
+import { Flex, Text, Tooltip, Box } from '@chakra-ui/core';
 import styled from '@emotion/styled';
 import colors from '../utils/colors';
+import { BsShieldFill, BsFillAwardFill } from 'react-icons/bs';
 
 export default function UserBadge(props: { user: User; styleProps?: object }) {
     return (
         <StyledBadgeFlex {...props.styleProps}>
-            <Tooltip
-                hasArrow
-                label='Hackathon vinti'
-                aria-label='Hackathon vinti'
-                placement='bottom'>
-                <Icon name='star' size='12px' />
-            </Tooltip>
+            <Box as={BsFillAwardFill} size='16px' color={colors.orange} />
             <Text>{props.user.badge?.win}</Text>
 
-            <Tooltip
-                hasArrow
-                label='Hackathon a cui ha partecipato'
-                aria-label='Hackathon a cui ha partecipato'
-                placement='bottom'>
-                <Icon name='moon' size='12px' ml={2} />
-            </Tooltip>
+            <Box as={BsShieldFill} size='16px' ml={2} />
             <Text>{props.user.badge?.partecipation}</Text>
         </StyledBadgeFlex>
     );

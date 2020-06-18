@@ -241,7 +241,7 @@ export default function Header() {
                         <ButtonGroup spacing={3}>
                             {actionsMenu?.map((el, index) => (
                                 <Button
-                                    key={el.path}
+                                    key={el.path + index}
                                     h='1.8em'
                                     pl={6}
                                     pr={6}

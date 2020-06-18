@@ -9,6 +9,7 @@ import {
     Tag,
     Text,
     useDisclosure,
+    Button,
 } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
@@ -19,6 +20,8 @@ import { User } from '../../models/Models';
 import { getUsersRanking } from '../../services/UserService';
 import colors, { getRandomColorString, getRandomVariantColorString } from '../../utils/colors';
 import SignupModal from '../profile/components/SignupModal';
+import { BsShieldFill, BsFillAwardFill } from 'react-icons/bs';
+import styled from 'styled-components';
 
 export default function Ranking() {
     const [users, setUsers] = React.useState<User[]>();
@@ -67,13 +70,28 @@ export default function Ranking() {
                     </Heading>
                 )}
                 BottomContent={() => (
-                    <Box p={5}>
+                    <Box p={4}>
                         {users == null || users?.length === 0 ? (
                             <Heading as='h2' p='20' size='lg'>
                                 Devi aver effettuato l'accesso per poter vedere la classifica.
                             </Heading>
                         ) : (
                             <Box>
+                                <Flex justifyContent='center' wrap='wrap'>
+                                    <StyledLegendContainer>
+                                        <Box
+                                            as={BsFillAwardFill}
+                                            size='16px'
+                                            color={colors.orange}
+                                        />
+                                        <Text>Numero di vittorie</Text>
+                                    </StyledLegendContainer>
+
+                                    <StyledLegendContainer>
+                                        <Box as={BsShieldFill} size='16px' ml={2} />
+                                        <Text>Numero di partecipazioni</Text>
+                                    </StyledLegendContainer>
+                                </Flex>
                                 <Flex alignItems='center' p='2' justifyContent='center'>
                                     <Text as='label' pr={2} fontSize='md' fontWeight='500'>
                                         Ordina per:
@@ -158,3 +176,15 @@ export default function Ranking() {
         </>
     );
 }
+
+const StyledLegendContainer = styled(Stack).attrs({
+    isInline: true,
+    bg: colors.white,
+    size: 'sm',
+    rounded: 'md',
+    w: 'fit-content',
+    h: 'fit-content',
+    alignItems: 'center',
+    p: 1,
+    m: 1,
+})``;
