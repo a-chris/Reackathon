@@ -102,7 +102,6 @@ dist
 .tern-port
 
 server/*.js
-server/uploads/*
 server/resources/email/emai_config.json
 server/js/*
 build/
