@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Flex, Heading, Stack, Text, useDisclosure } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
-import { useParams, useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import 'react-vertical-timeline-component/style.min.css';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
@@ -78,7 +78,6 @@ export default function Profile() {
     };
 
     const isProfileOwner = username === appContext?.state?.user?.username;
-    const avatarUrl = user?.avatar != null ? 'avatar/' + user?.avatar : undefined;
 
     return (
         <BoxFullHeightAfterHeader isLogged={appContext.state?.user != null}>
@@ -95,8 +94,8 @@ export default function Profile() {
                             <Stack direction='column'>
                                 <Avatar
                                     size='xl'
-                                    name={'avatar/' + user?.name}
-                                    src={avatarUrl}
+                                    name={user?.username}
+                                    src={user?.avatar != null ? 'avatar/' + user.avatar : undefined}
                                     color={colors.white}
                                     bg={colors.red}
                                 />
