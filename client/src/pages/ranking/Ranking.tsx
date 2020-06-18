@@ -51,6 +51,11 @@ export default function Ranking() {
         setOrder(e.target.value);
     };
 
+    const userColors = React.useMemo(() => {
+        return (users || []).map(() => getRandomColorString());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [users?.length]);
+
     return (
         <>
             <OverlappedBoxes
@@ -112,7 +117,7 @@ export default function Ranking() {
                                 </Flex>
                                 {users?.map((user, index) => (
                                     <StyledUserBox
-                                        borderColor={getRandomColorString()}
+                                        borderColor={userColors[index]}
                                         key={index}
                                         pb={2}>
                                         <Stack isInline alignItems='center' verticalAlign='middle'>
@@ -126,7 +131,11 @@ export default function Ranking() {
                                                 pl={5}>
                                                 <Avatar
                                                     name={user.username}
-                                                    src={'avatar/' + user.avatar}
+                                                    src={
+                                                        user?.avatar != null
+                                                            ? 'avatar/' + user.avatar
+                                                            : undefined
+                                                    }
                                                     textAlign='center'
                                                     size='lg'
                                                 />
