@@ -149,11 +149,7 @@ export default function Profile() {
                         </>
                     )}
                 />
-                <SignupModal
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    onOverlayClose={() => history.push('/login')}
-                />
+                <SignupModal isOpen={isOpen} onClose={onClose} />
             </ContainerWithBackgroundImage>
         </BoxFullHeightAfterHeader>
     );

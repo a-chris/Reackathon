@@ -12,14 +12,16 @@ import React from 'react';
 import { Logo } from '../../../components/Logo';
 import colors from '../../../utils/colors';
 import { BoxWithSpacedChildren, StyledLinkRouter } from '../../../components/Common';
+import { useHistory } from 'react-router';
 
 interface SignupModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onOverlayClose?: () => void;
 }
 
 export default function SignupModal(props: SignupModalProps) {
+    const history = useHistory();
+
     return (
         <Modal size='xl' isOpen={props.isOpen} onClose={props.onClose} closeOnOverlayClick={false}>
             <ModalOverlay />
@@ -32,7 +34,7 @@ export default function SignupModal(props: SignupModalProps) {
                         Ops, sembra che tu non sia iscritto a Reackathon!
                     </Text>
                 </ModalHeader>
-                <ModalCloseButton onClick={props.onOverlayClose} />
+                <ModalCloseButton onClick={() => history.push('/login')} />
                 <ModalBody p={5}>
                     <Flex d='column' textAlign='center'>
                         <BoxWithSpacedChildren space='20px'>
