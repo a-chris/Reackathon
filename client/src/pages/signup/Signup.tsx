@@ -63,7 +63,7 @@ export default function Signup() {
                 .filter((el) => el[1] === undefined || el[1] === '')
                 .map((el) => el[0])
         );
-    }, [signupData]); //TODO optimize
+    }, [signupData]);
 
     const onChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event?.target;

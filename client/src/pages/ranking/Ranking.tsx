@@ -12,15 +12,15 @@ import {
 } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
-import { StyledUserBox, StyedLinkRouter as StyledLinkRouter } from '../../components/Common';
+import { BsFillAwardFill, BsShieldFill } from 'react-icons/bs';
+import styled from 'styled-components';
+import { StyedLinkRouter as StyledLinkRouter, StyledUserBox } from '../../components/Common';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import UserBadge from '../../components/UserBadge';
 import { User } from '../../models/Models';
 import { getUsersRanking } from '../../services/UserService';
 import colors, { getRandomColorString, getRandomVariantColorString } from '../../utils/colors';
 import SignupModal from '../profile/components/SignupModal';
-import { BsShieldFill, BsFillAwardFill } from 'react-icons/bs';
-import styled from 'styled-components';
 
 export default function Ranking() {
     const [users, setUsers] = React.useState<User[]>();

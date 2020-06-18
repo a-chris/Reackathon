@@ -77,14 +77,12 @@ export default function HackathonManagement() {
     const [groupError, setGroupError] = React.useState<boolean>(false);
     const [attendantsNumError, setAttendantsNumError] = React.useState<boolean>(false);
     const [locationMissingFields, setLocationMissingFields] = React.useState<string[]>([]);
-    //TODO optional add min max errors and validation
     const [missingData, setMissingData] = React.useState<string[]>([]);
 
     React.useEffect(() => {
         if (hackathonId) {
             getHackathon(hackathonId).then((hackathon) => {
                 setHackathonData(hackathon);
-                console.log('HackathonManagement -> hackathon', hackathon);
             });
         }
     }, [hackathonId]);

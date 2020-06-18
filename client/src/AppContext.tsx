@@ -22,8 +22,10 @@ export interface Action {
 export const AppContext = React.createContext<AppStore>({});
 
 export const reducer = (state: AppState, action: Action): AppState => {
-    console.log('TCL: App -> state', state);
-    console.log('TCL: App -> action', action);
+    if (process.env.NODE_ENV === 'development') {
+        console.log('TCL: App -> state', state);
+        console.log('TCL: App -> action', action);
+    }
     switch (action.type) {
         case LOGIN_ACTION.LOGIN_REQUEST:
             return { ...state };

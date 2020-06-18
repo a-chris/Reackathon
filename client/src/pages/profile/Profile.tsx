@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 import 'react-vertical-timeline-component/style.min.css';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
+import { BoxFullHeightAfterHeader, ContainerWithBackgroundImage } from '../../components/Common';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import UserBadge from '../../components/UserBadge';
 import { Experience, User, UserRole } from '../../models/Models';
@@ -17,7 +18,6 @@ import colors from '../../utils/colors';
 import ClientProfileInfo from './components/ClientProfileInfo';
 import OrganizationProfileInfo from './components/OrganizationProfileInfo';
 import SignupModal from './components/SignupModal';
-import { BoxFullHeightAfterHeader, ContainerWithBackgroundImage } from '../../components/Common';
 
 export default function Profile() {
     const { username } = useParams();

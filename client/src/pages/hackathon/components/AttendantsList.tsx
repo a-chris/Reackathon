@@ -1,7 +1,7 @@
 import { Avatar, Badge, Box, Heading, Stack, Tag, Text } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
-import { StyledResponsiveFlex, StyledUserBox, StyedLinkRouter } from '../../../components/Common';
+import { StyedLinkRouter, StyledResponsiveFlex, StyledUserBox } from '../../../components/Common';
 import UserBadge from '../../../components/UserBadge';
 import { Attendant } from '../../../models/Models';
 import { inviteAttendantToGroup } from '../../../services/AttendantService';
@@ -57,7 +57,11 @@ export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentA
                                     <Stack isInline alignItems='center'>
                                         <Avatar
                                             name={attendant.user.username}
-                                            src={'avatar/' + attendant.user.avatar}
+                                            src={
+                                                attendant.user?.avatar
+                                                    ? `avatar/${attendant.user.avatar}`
+                                                    : undefined
+                                            }
                                             pr='3px'
                                         />
                                         <StyedLinkRouter to={`/profile/${attendant.user.username}`}>
