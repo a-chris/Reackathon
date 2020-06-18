@@ -39,7 +39,11 @@ export default function PageNotFound() {
                             {shownText}
                         </Heading>
                         <Link to='/'>
-                            <Button variant='outline' color={colors.black} bg={colors.white}>
+                            <Button
+                                variant='outline'
+                                color={colors.red}
+                                borderColor={colors.red}
+                                bg={colors.white}>
                                 Torna alla home
                             </Button>
                         </Link>
@@ -51,6 +55,7 @@ export default function PageNotFound() {
 }
 
 const StyledContainerWithBackground = styled(Box).attrs({
+    backgroundColor: colors.gray_smoke,
     backgroundImage: "url('./images/background/error.jpg')",
     w: '100%',
     backgroundRepeat: 'no-repeat',

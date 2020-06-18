@@ -1,7 +1,6 @@
 import { Avatar, Box, Flex, Heading, Radio, RadioGroup, Stack, Tag, Text } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { StyledUserBox, StyedLinkRouter as StyledLinkRouter } from '../../components/Common';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import UserBadge from '../../components/UserBadge';

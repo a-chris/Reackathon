@@ -19,6 +19,7 @@ const colors = {
     blue_light: '#1d3073',
     blue: '#0b1b4c',
     red: '#DB0000',
+    gray_smoke: '#1a202c',
 };
 
 export default colors;
