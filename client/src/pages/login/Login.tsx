@@ -79,23 +79,23 @@ export default function Login() {
                 )}
                 BottomContent={() => (
                     <Box>
-                        <Stack spacing={3} p={8}>
-                            <FormControl isInvalid={isLoginInvalid}>
-                                <StyledLabel htmlFor='username'>Username</StyledLabel>
-                                <InputGroup size='md'>
-                                    <InputLeftElement children={<Icon name='spinner' />} />
-                                    <Input
-                                        type='text'
-                                        placeholder='Username'
-                                        defaultValue=''
-                                        variant='flushed'
-                                        name='username'
-                                        id='username'
-                                        onChange={onChangeValue}
-                                    />
-                                </InputGroup>
-                            </FormControl>
-                            <form>
+                        <form onSubmit={onLogin}>
+                            <Stack spacing={3} p={8}>
+                                <FormControl isInvalid={isLoginInvalid}>
+                                    <StyledLabel htmlFor='username'>Username</StyledLabel>
+                                    <InputGroup size='md'>
+                                        <InputLeftElement children={<Icon name='spinner' />} />
+                                        <Input
+                                            type='text'
+                                            placeholder='Username'
+                                            defaultValue=''
+                                            variant='flushed'
+                                            name='username'
+                                            id='username'
+                                            onChange={onChangeValue}
+                                        />
+                                    </InputGroup>
+                                </FormControl>
                                 <FormControl isInvalid={isLoginInvalid}>
                                     <StyledLabel htmlFor='password'>Password</StyledLabel>
                                     <InputGroup size='md'>
@@ -135,25 +135,25 @@ export default function Login() {
                                         Username o password non validi
                                     </FormErrorMessage>
                                 </FormControl>
-                            </form>
-                        </Stack>
+                            </Stack>
 
-                        <Button
-                            bg={colors.blue_night}
-                            color={colors.white}
-                            _hover={{ bg: colors.blue_light }}
-                            isLoading={loading}
-                            type='submit'
-                            margin={3}
-                            onClick={onLogin}>
-                            Accedi
-                        </Button>
-                        <Text p={5} fontSize='0.9em'>
-                            Oppure{' '}
-                            <Link style={{ color: colors.red }} href='/signup'>
-                                <b>registrati</b>
-                            </Link>
-                        </Text>
+                            <Button
+                                bg={colors.blue_night}
+                                color={colors.white}
+                                _hover={{ bg: colors.blue_light }}
+                                isLoading={loading}
+                                type='submit'
+                                margin={3}
+                                onClick={onLogin}>
+                                Accedi
+                            </Button>
+                            <Text p={5} fontSize='0.9em'>
+                                Oppure{' '}
+                                <Link style={{ color: colors.red }} href='/signup'>
+                                    <b>registrati</b>
+                                </Link>
+                            </Text>
+                        </form>
                     </Box>
                 )}
             />
