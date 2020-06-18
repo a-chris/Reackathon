@@ -117,19 +117,23 @@ export default function HackathonDetail() {
     }, [hackathonData, appContext]);
 
     const onHackathonSubscribe = React.useCallback(() => {
-        subscribeToHackathon(hackathonId).then((response: any) => {
-            if (response.response?.status === 403) {
-                toast({
-                    position: 'bottom-right',
-                    title: 'Numero massimo di utenti raggiunto',
-                    status: 'warning',
-                    isClosable: true,
-                });
-            }
-            if (response.data != null || response?.response.data != null) {
-                setHackathonData(response.data || response.response.data);
-            }
-        });
+        subscribeToHackathon(hackathonId)
+            .then((response) => {
+                setHackathonData(response.data);
+            })
+            .catch((reason) => {
+                if (reason.response?.status === 403) {
+                    toast({
+                        position: 'bottom-right',
+                        title: 'Numero massimo di utenti raggiunto',
+                        status: 'warning',
+                        isClosable: true,
+                    });
+                }
+                if (reason.response.data != null) {
+                    setHackathonData(reason.response.data);
+                }
+            });
     }, [hackathonId, toast]);
 
     const onChangeStatus = React.useCallback(

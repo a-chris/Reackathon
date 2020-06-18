@@ -50,47 +50,54 @@ export async function replyToInvite(req: Request, res: Response) {
         .populate('hackathon');
     if (attendantReceiver == null) return res.sendStatus(400);
     const invite = attendantReceiver?.invites?.find((i) => i._id == inviteId);
-    const hackathon = await HackathonDb.findById(attendantReceiver?.hackathon).populate(
-        'attendants'
-    );
-    if (hackathon == null) return res.sendStatus(400).json({ error: 'Can not find hackathon' });
-    else if (hackathon.status !== 'pending') {
-        // hackathon not in pending, attendants can't accept invites now
-        return res.sendStatus(403);
-    }
-    const attendantSender = await AttendantDb.findById(invite!.from._id);
-    if (attendantSender == null)
-        return res.sendStatus(400).json({ error: 'Can not find attendant sender of the invite' });
-    if (
-        (hackathon.attendantsRequirements.maxGroupComponents == null ||
-            hackathon.attendantsRequirements.maxGroupComponents > 1) &&
-        attendantSender?.group == null
-    ) {
-        // create the group for both attendants
-        const newGroupNumber = (_.max(hackathon?.attendants?.map((a) => a.group)) || 0) + 1;
-        attendantSender!.group = newGroupNumber;
-        attendantReceiver!.group = newGroupNumber;
-        // remove other invites for this hackathon
-        attendantSender!.invites = [];
-        attendantReceiver!.invites = [];
-    } else {
-        // assign to the receiver the sender's group
-        const groupMembersCountOfSender = hackathon.attendants.filter(
-            (a) => a.group === attendantSender.group
-        ).length;
+    if (invite == null) return res.sendStatus(400);
+    if (newStatus === 'accepted') {
+        const hackathon = await HackathonDb.findById(attendantReceiver?.hackathon).populate(
+            'attendants'
+        );
+        if (hackathon == null) return res.sendStatus(400).json({ error: 'Can not find hackathon' });
+        else if (hackathon.status !== 'pending') {
+            // hackathon not in pending, attendants can't accept invites now
+            return res.sendStatus(403);
+        }
+        const attendantSender = await AttendantDb.findById(invite!.from._id);
+        if (attendantSender == null)
+            return res
+                .sendStatus(400)
+                .json({ error: 'Can not find attendant sender of the invite' });
         if (
-            hackathon.attendantsRequirements.maxGroupComponents == null ||
-            groupMembersCountOfSender < hackathon.attendantsRequirements.maxGroupComponents
+            (hackathon.attendantsRequirements.maxGroupComponents == null ||
+                hackathon.attendantsRequirements.maxGroupComponents > 1) &&
+            attendantSender?.group == null
         ) {
-            attendantReceiver!.group = attendantSender.group;
+            // create the group for both attendants
+            const newGroupNumber = (_.max(hackathon?.attendants?.map((a) => a.group)) || 0) + 1;
+            attendantSender!.group = newGroupNumber;
+            attendantReceiver!.group = newGroupNumber;
             // remove other invites for this hackathon
+            attendantSender!.invites = [];
             attendantReceiver!.invites = [];
         } else {
-            return res.status(400).json({ error: 'Max components number reached for this group' });
+            // assign to the receiver the sender's group
+            const groupMembersCountOfSender = hackathon.attendants.filter(
+                (a) => a.group === attendantSender.group
+            ).length;
+            if (
+                hackathon.attendantsRequirements.maxGroupComponents == null ||
+                groupMembersCountOfSender < hackathon.attendantsRequirements.maxGroupComponents
+            ) {
+                attendantReceiver!.group = attendantSender.group;
+                // remove other invites for this hackathon
+                attendantReceiver!.invites = [];
+            } else {
+                return res
+                    .status(400)
+                    .json({ error: 'Max components number reached for this group' });
+            }
         }
+        await attendantSender!.save();
     }
     invite!.status = newStatus.toString();
-    await attendantSender!.save();
     return res.json(await attendantReceiver?.save());
 }
 
