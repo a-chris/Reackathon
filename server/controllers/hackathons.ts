@@ -211,6 +211,11 @@ export async function subscribeUser(req: Request, res: Response) {
 
     if (hackathon.attendants.find((a) => a.user === user._id) != null) {
         return res.status(400).json({ error: 'User already subscribed to this hackathon' });
+    } else if (
+        hackathon.attendantsRequirements.maxNum != null &&
+        hackathon.attendantsRequirements.maxNum <= hackathon.attendants.length
+    ) {
+        return res.status(403).json(hackathon);
     }
     const newAttendant = await AttendantDb.create({
         user: user._id,

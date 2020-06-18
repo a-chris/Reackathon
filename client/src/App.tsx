@@ -8,7 +8,6 @@ import CookieConsent from 'react-cookie-consent';
 import { HashRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
 import { AppContext, reducer } from './AppContext';
 import Header from './components/Header';
-import './config/AxiosConfig';
 import { User, UserRole } from './models/Models';
 import PageNotFound from './pages/errors/PageNotFound';
 import HackathonDetail from './pages/hackathon/HackathonDetail';
@@ -24,6 +23,10 @@ import { getLocalUser } from './services/UserService';
 import socketClient from './socket/socket';
 import SocketEvent from './socket/SocketEvent';
 import { LOGIN_ACTION } from './utils/constants';
+
+if (process.env.NODE_ENV === 'development') {
+    require('./config/AxiosConfig');
+}
 
 /*
  * Set moment language to italian for the whole application
@@ -71,17 +74,20 @@ export default function App() {
         };
     }, [state.user, toast]);
 
-    axios.interceptors.response.use((response) => {
-        if (response.status === 500) {
-            toast({
-                position: 'bottom-right',
-                title: 'Sembra ci sia stato un problema',
-                status: 'error',
-                isClosable: true,
-            });
+    axios.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (error.response.status === 500) {
+                toast({
+                    position: 'bottom-right',
+                    title: 'Sembra ci sia stato un problema',
+                    status: 'error',
+                    isClosable: true,
+                });
+            }
+            return error;
         }
-        return response;
-    });
+    );
 
     const onLoggedIn = React.useCallback((user: User) => {
         dispatch({ type: LOGIN_ACTION.LOGGED_IN, payload: user });
