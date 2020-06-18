@@ -139,8 +139,12 @@ export default function Signup() {
             )}
             BottomContent={() => (
                 <Box>
-                    <Stack spacing={3} p={8}>
-                        <form>
+                    <form
+                        onSubmit={(e: any) => {
+                            e.preventDefault();
+                            onSignup();
+                        }}>
+                        <Stack spacing={3} p={8}>
                             <FormControl isInvalid={usernameError.length > 0} isRequired>
                                 <StyledLabel htmlFor='username'>Username</StyledLabel>
                                 <InputGroup size='md'>
@@ -229,63 +233,64 @@ export default function Signup() {
                                 </InputGroup>
                                 <FormErrorMessage>Le password non coincidono.</FormErrorMessage>
                             </FormControl>
-                        </form>
-                        <FormControl isRequired>
-                            <StyledLabel htmlFor='email'>Email</StyledLabel>
-                            <InputGroup size='md'>
-                                <InputLeftElement children={<Icon name='email' />} />
-                                <Input
-                                    type='text'
-                                    placeholder='Email'
-                                    defaultValue=''
-                                    variant='flushed'
-                                    name='email'
-                                    id='email'
-                                    onChange={onChangeValue}
-                                />
-                            </InputGroup>
-                        </FormControl>
-                        <FormControl isRequired>
-                            <StyledLabel htmlFor='name'>Nome e Cognome</StyledLabel>
-                            <InputGroup size='md'>
-                                <InputLeftElement children={<Icon name='spinner' />} />
-                                <Input
-                                    type='text'
-                                    placeholder='Nome'
-                                    defaultValue=''
-                                    variant='flushed'
-                                    name='name'
-                                    id='name'
-                                    onChange={onChangeValue}
-                                />
-                            </InputGroup>
-                        </FormControl>
-                        <RadioGroup
-                            isInline
-                            value={signupData.role.toString()}
-                            name='role'
-                            textAlign='center'
-                            onChange={onRoleChangeValue}>
-                            <Radio value='CLIENT' variantColor='red'>
-                                Partecipante
-                            </Radio>
-                            <Radio value='ORGANIZATION' variantColor='red'>
-                                Organizzatore
-                            </Radio>
-                        </RadioGroup>
-                    </Stack>
-                    <Box textAlign='center'>
-                        <Button
-                            isDisabled={!allValuesValid}
-                            bg={colors.blue_night}
-                            _hover={{ bg: colors.blue_light }}
-                            color={colors.white}
-                            isLoading={loading}
-                            type='submit'
-                            onClick={onSignup}>
-                            Registrati
-                        </Button>
-                    </Box>
+                            <FormControl isRequired>
+                                <StyledLabel htmlFor='email'>Email</StyledLabel>
+                                <InputGroup size='md'>
+                                    <InputLeftElement children={<Icon name='email' />} />
+                                    <Input
+                                        type='text'
+                                        placeholder='Email'
+                                        defaultValue=''
+                                        variant='flushed'
+                                        name='email'
+                                        id='email'
+                                        onChange={onChangeValue}
+                                    />
+                                </InputGroup>
+                            </FormControl>
+                            <FormControl isRequired>
+                                <StyledLabel htmlFor='name'>Nome e Cognome</StyledLabel>
+                                <InputGroup size='md'>
+                                    <InputLeftElement children={<Icon name='spinner' />} />
+                                    <Input
+                                        type='text'
+                                        placeholder='Nome'
+                                        defaultValue=''
+                                        variant='flushed'
+                                        name='name'
+                                        id='name'
+                                        onChange={onChangeValue}
+                                    />
+                                </InputGroup>
+                            </FormControl>
+                            <RadioGroup
+                                isInline
+                                value={signupData.role.toString()}
+                                name='role'
+                                textAlign='center'
+                                onChange={onRoleChangeValue}>
+                                <Radio value='CLIENT' variantColor='red'>
+                                    Partecipante
+                                </Radio>
+                                <Radio value='ORGANIZATION' variantColor='red'>
+                                    Organizzatore
+                                </Radio>
+                            </RadioGroup>
+                        </Stack>
+                        <Box textAlign='center'>
+                            <Button
+                                isDisabled={!allValuesValid}
+                                bg={colors.blue_night}
+                                _hover={{ bg: colors.blue_light }}
+                                color={colors.white}
+                                isLoading={loading}
+                                type='submit'
+                                onClick={onSignup}>
+                                Registrati
+                            </Button>
+                        </Box>
+                    </form>
+
                     <Text p={3} fontSize='0.9em' textAlign='center'>
                         Oppure{' '}
                         <Link to='/login'>

@@ -9,6 +9,7 @@ import {
     Tag,
     Heading,
     Icon,
+    Text,
 } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
 import { getRandomVariantColorString } from '../../../utils/colors';
@@ -58,44 +59,48 @@ export default function SkillsComponent(props: SkillsComponentProps) {
                 Competenze
             </Heading>
             <Flex flexWrap='wrap' alignItems='center'>
-                {skills.map((skill, index) =>
-                    props.isEditable ? (
-                        <InputGroup key={index} p={1} w='min-content'>
-                            <Input
-                                w='min-content'
-                                size='sm'
-                                name={index.toString()}
-                                value={skill}
-                                onChange={onChangeValue}
-                            />
-                            <InputRightElement
-                                width='4rem'
-                                alignItems='center'
-                                children={
-                                    <IconButton
-                                        size='xs'
-                                        variant='solid'
-                                        aria-label='elimina competenza'
-                                        icon='delete'
-                                        onClick={() => onRemove(index)}
-                                    />
-                                }
-                            />
-                        </InputGroup>
-                    ) : (
-                        <Tag
-                            size='lg'
-                            variantColor={getRandomVariantColorString()}
-                            m={1}
-                            key={index}>
-                            {skill}
-                        </Tag>
-                    )
-                )}
+                {skills != null && skills.length > 0
+                    ? skills.map((skill, index) =>
+                          props.isEditable ? (
+                              <InputGroup key={index} w='min-content'>
+                                  <Input
+                                      w='min-content'
+                                      size='sm'
+                                      name={index.toString()}
+                                      value={skill}
+                                      onChange={onChangeValue}
+                                  />
+                                  <InputRightElement
+                                      width='4rem'
+                                      alignItems='center'
+                                      children={
+                                          <IconButton
+                                              size='xs'
+                                              variant='solid'
+                                              aria-label='elimina competenza'
+                                              icon='delete'
+                                              onClick={() => onRemove(index)}
+                                          />
+                                      }
+                                  />
+                              </InputGroup>
+                          ) : (
+                              <Tag
+                                  size='lg'
+                                  variantColor={getRandomVariantColorString()}
+                                  m={1}
+                                  key={index}>
+                                  {skill}
+                              </Tag>
+                          )
+                      )
+                    : !props.isEditable && <Text pb={5}>Ancora nessuna esperienza.</Text>}
+
                 {props.isEditable && (
                     <IconButton
                         isRound
                         icon='add'
+                        variantColor='green'
                         size='sm'
                         aria-label='Aggiungi una nuova competenza'
                         onClick={onAdd}

@@ -62,7 +62,8 @@ export default function Homepage() {
                                     <Heading
                                         as='h2'
                                         fontSize='xl'
-                                        textShadow={`4px 4px 10px ${colors.black}`}>
+                                        letterSpacing='1px'
+                                        textShadow={`1px 0px 10px ${colors.black}, 0px 1px 10px ${colors.black}, -1px 0px 10px ${colors.black}, 0px -1px 10px ${colors.black}`}>
                                         Entra a far parte della piattaforma di Hackathon numero uno.
                                         <br />
                                         Iscriviti ad un Hackathon, crea il tuo team ed esprimi il
