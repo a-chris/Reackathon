@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { Hackathon, HackathonStatus, NewHackathon, Statistics } from '../models/Models';
 
 export function getHackathons(filters: {} = {}): Promise<Hackathon[]> {
@@ -28,13 +28,8 @@ export function createHackathon(hackathonData: NewHackathon): Promise<Hackathon>
     );
 }
 
-export function subscribeToHackathon(hackathonId: string): Promise<Hackathon> {
-    return new Promise((resolve, reject) =>
-        axios
-            .put(`/hackathons/${hackathonId}/sub`)
-            .then((response: any) => resolve(response.data))
-            .catch((error: any) => reject(error))
-    );
+export function subscribeToHackathon(hackathonId: string): Promise<AxiosResponse<Hackathon>> {
+    return axios.put(`/hackathons/${hackathonId}/sub`);
 }
 
 export function changeHackathonStatus(

@@ -27,6 +27,7 @@ import {
     Tabs,
     Text,
     useDisclosure,
+    useToast,
 } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
@@ -52,7 +53,7 @@ import colors from '../../utils/colors';
 import { toDateString, toTimeString } from '../../utils/functions';
 import { AttendantsList } from './components/AttendantsList';
 import { Information } from './components/HackathonInformation';
-import { StyledTitleBox, StyledBlueButtonPadded } from './components/StyledComponents';
+import { StyledBlueButtonPadded, StyledTitleBox } from './components/StyledComponents';
 
 type RouteParams = {
     id: string;
@@ -89,13 +90,13 @@ export default function HackathonDetail() {
     const [isArchiveAlertOpen, setArchiveAlertOpen] = React.useState<boolean>(false);
     const cancelRef = React.useRef<HTMLElement>(null);
     const { isOpen, onOpen, onClose } = useDisclosure(); // winner dialog
+    const toast = useToast();
 
     React.useEffect(() => {
         if (appContext.state?.user?.role === 'ORGANIZATION') {
             socketClient.on(SocketEvent.NEW_ATTENDANT, (data: any) => {
                 if (hackathonId === data?.id) {
                     // Update the current hackathon
-                    console.log('UPDATE HACKATHON');
                     getHackathon(data.id).then((hackathon) => setHackathonData(hackathon));
                 }
             });
@@ -116,10 +117,20 @@ export default function HackathonDetail() {
     }, [hackathonData, appContext]);
 
     const onHackathonSubscribe = React.useCallback(() => {
-        subscribeToHackathon(hackathonId)
-            .then((hackathon) => setHackathonData(hackathon))
-            .catch((error) => console.log(error));
-    }, [hackathonId]);
+        subscribeToHackathon(hackathonId).then((response: any) => {
+            if (response.response?.status === 403) {
+                toast({
+                    position: 'bottom-right',
+                    title: 'Numero massimo di utenti raggiunto',
+                    status: 'warning',
+                    isClosable: true,
+                });
+            }
+            if (response.data != null || response?.response.data != null) {
+                setHackathonData(response.data || response.response.data);
+            }
+        });
+    }, [hackathonId, toast]);
 
     const onChangeStatus = React.useCallback(
         (status: HackathonStatus) => {
@@ -149,6 +160,17 @@ export default function HackathonDetail() {
             return;
         }
 
+        if (
+            currentUser.role === UserRole.CLIENT &&
+            hackathonData?.attendantsRequirements.maxNum != null &&
+            hackathonData?.attendants.length >= hackathonData.attendantsRequirements.maxNum
+        ) {
+            return (
+                <Heading as='h2' size='lg' color={colors.red_dark}>
+                    Iscrizioni chiuse
+                </Heading>
+            );
+        }
         if (currentUser.role === UserRole.CLIENT) {
             return attendant == null ? (
                 <StyledBlueButtonPadded onClick={() => setAlertOpen(true)}>
