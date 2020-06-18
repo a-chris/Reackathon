@@ -157,8 +157,11 @@ export default function Login() {
                             </Button>
                             <Text p={5} fontSize='0.9em'>
                                 Oppure{' '}
-                                <StyledLinkRouter to='/signup' linkcolor={colors.red}>
-                                    <b>registrati</b>
+                                <StyledLinkRouter
+                                    to='/signup'
+                                    linkcolor={colors.red}
+                                    linkWeight='600'>
+                                    registrati
                                 </StyledLinkRouter>
                             </Text>
                         </form>

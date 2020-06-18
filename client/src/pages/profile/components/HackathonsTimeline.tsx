@@ -41,6 +41,7 @@ export default function HackathonsTimeline({ hackathons }: { hackathons: Hackath
                             backgroundColor: elementColors[index].bg,
                         }}
                         date={formatHackathonPeriod(hack)}
+                        dateClassName='date-color'
                         key={index}>
                         <Link to={`/hackathons/${hack._id}`}>
                             <Flex justify='space-between'>
@@ -60,6 +61,13 @@ export default function HackathonsTimeline({ hackathons }: { hackathons: Hackath
 const StyledBox = styled(Box)`
     .vertical-timeline.vertical-timeline-custom-line::before {
         background: ${colors.black_almost};
+    }
+
+    .date-color {
+        @media only screen and (min-width: 1170px) {
+            color: ${colors.black};
+            padding-left: 10px;
+        }
     }
 `;
 

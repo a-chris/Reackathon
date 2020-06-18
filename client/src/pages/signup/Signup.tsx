@@ -17,9 +17,8 @@ import {
 } from '@chakra-ui/core';
 import * as _ from 'lodash';
 import React, { ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
 import { AppContext } from '../../AppContext';
-import { StyledLabel } from '../../components/Common';
+import { StyledLabel, StyledLinkRouter } from '../../components/Common';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { isUserRole, UserRole } from '../../models/Models';
 import { signup, SignupData, usernameAlreadyExists } from '../../services/AuthService';
@@ -291,11 +290,9 @@ export default function Signup() {
 
                     <Text p={3} fontSize='0.9em' textAlign='center'>
                         Oppure{' '}
-                        <Link to='/login'>
-                            <span style={{ color: colors.red }}>
-                                <b>accedi</b>
-                            </span>
-                        </Link>
+                        <StyledLinkRouter to='/login' linkcolor={colors.red} linkWeight='600'>
+                            accedi
+                        </StyledLinkRouter>
                     </Text>
                 </Box>
             )}

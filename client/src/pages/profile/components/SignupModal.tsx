@@ -40,12 +40,18 @@ export default function SignupModal(props: SignupModalProps) {
                                 registrarsi, cosa aspetti?
                             </Text>
                             <Text>
-                                <StyledLinkRouter to='/signup' linkcolor={colors.red}>
-                                    <b>Registrati adesso</b>
+                                <StyledLinkRouter
+                                    to='/signup'
+                                    linkcolor={colors.red}
+                                    linkWeight='600'>
+                                    Registrati adesso
                                 </StyledLinkRouter>{' '}
                                 oppure{' '}
-                                <StyledLinkRouter to='/login' linkcolor={colors.red}>
-                                    <b>accedi</b>
+                                <StyledLinkRouter
+                                    to='/login'
+                                    linkcolor={colors.red}
+                                    linkWeight='600'>
+                                    accedi
                                 </StyledLinkRouter>
                             </Text>
                         </BoxWithSpacedChildren>

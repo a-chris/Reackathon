@@ -2,7 +2,7 @@ import React from 'react';
 import { Hackathon } from '../../../models/Models';
 import HackathonsTimeline from './HackathonsTimeline';
 import { getOrganizationHackathons } from '../../../services/HackathonService';
-import { Box, Heading, Flex, Button, Icon } from '@chakra-ui/core';
+import { Box, Heading, Flex, Button, Icon, Text } from '@chakra-ui/core';
 import { Link } from 'react-router-dom';
 
 interface ExperienceProps {
@@ -37,8 +37,10 @@ export default function OrganizationProfileInfo(props: ExperienceProps) {
                     </Link>
                 </Flex>
             )}
-            {hackathons != null && hackathons.length > 0 && (
+            {hackathons != null && hackathons.length > 0 ? (
                 <HackathonsTimeline hackathons={hackathons} />
+            ) : (
+                <Text pb={5}>Nessun Hackathon organizzato</Text>
             )}
         </Box>
     );

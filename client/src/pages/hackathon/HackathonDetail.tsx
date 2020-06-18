@@ -273,7 +273,7 @@ export default function HackathonDetail() {
                                     <Box>
                                         Creato da{' '}
                                         <StyledLinkRouter
-                                            to={`profile/${hackathonData.organization.username}`}>
+                                            to={`/profile/${hackathonData.organization.username}`}>
                                             <b>{hackathonData.organization.name}</b>
                                         </StyledLinkRouter>
                                     </Box>
