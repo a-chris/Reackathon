@@ -60,7 +60,7 @@ export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentA
                                         <Stack isInline alignItems='center'>
                                             <Avatar
                                                 name={attendant.user.username}
-                                                src={attendant.user.avatar}
+                                                src={'avatar/' + attendant.user.avatar}
                                                 pr='3px'
                                             />
                                             <Heading as='h3' size='md'>

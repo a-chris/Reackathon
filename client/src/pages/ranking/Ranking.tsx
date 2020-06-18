@@ -90,7 +90,7 @@ export default function Ranking() {
                                             pl={5}>
                                             <Avatar
                                                 name={user.username}
-                                                src={user.avatar}
+                                                src={'avatar/' + user.avatar}
                                                 textAlign='center'
                                                 size='lg'
                                             />
