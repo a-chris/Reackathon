@@ -290,7 +290,7 @@ export default function Signup() {
 
                     <Text p={3} fontSize='0.9em' textAlign='center'>
                         Oppure{' '}
-                        <StyledLinkRouter to='/login' linkcolor={colors.red} linkWeight='600'>
+                        <StyledLinkRouter to='/login' linkcolor={colors.red} linkweight='600'>
                             accedi
                         </StyledLinkRouter>
                     </Text>

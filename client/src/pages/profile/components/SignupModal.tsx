@@ -16,11 +16,12 @@ import { BoxWithSpacedChildren, StyledLinkRouter } from '../../../components/Com
 interface SignupModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onOverlayClose?: () => void;
 }
 
 export default function SignupModal(props: SignupModalProps) {
     return (
-        <Modal size='xl' isOpen={props.isOpen} onClose={props.onClose}>
+        <Modal size='xl' isOpen={props.isOpen} onClose={props.onClose} closeOnOverlayClick={false}>
             <ModalOverlay />
             <ModalContent w='90%'>
                 <ModalHeader pt={10} textAlign='center'>
@@ -31,7 +32,7 @@ export default function SignupModal(props: SignupModalProps) {
                         Ops, sembra che tu non sia iscritto a Reackathon!
                     </Text>
                 </ModalHeader>
-                <ModalCloseButton />
+                <ModalCloseButton onClick={props.onOverlayClose} />
                 <ModalBody p={5}>
                     <Flex d='column' textAlign='center'>
                         <BoxWithSpacedChildren space='20px'>
@@ -43,14 +44,14 @@ export default function SignupModal(props: SignupModalProps) {
                                 <StyledLinkRouter
                                     to='/signup'
                                     linkcolor={colors.red}
-                                    linkWeight='600'>
+                                    linkweight='600'>
                                     Registrati adesso
                                 </StyledLinkRouter>{' '}
                                 oppure{' '}
                                 <StyledLinkRouter
                                     to='/login'
                                     linkcolor={colors.red}
-                                    linkWeight='600'>
+                                    linkweight='600'>
                                     accedi
                                 </StyledLinkRouter>
                             </Text>

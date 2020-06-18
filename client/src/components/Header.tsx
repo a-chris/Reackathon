@@ -384,7 +384,7 @@ function InviteItem(props: InviteItemProps) {
                 <StyledLinkRouter
                     to={`/profile/${props.inviteData.from}`}
                     linkcolor={colors.red}
-                    linkWeight='500'>
+                    linkweight='500'>
                     {props.inviteData.from}
                 </StyledLinkRouter>{' '}
                 ti ha invitato a far parte del suo gruppo.
@@ -394,7 +394,7 @@ function InviteItem(props: InviteItemProps) {
                 <StyledLinkRouter
                     to={`/hackathons/${props.inviteData.hackathonId}`}
                     linkcolor={colors.red}
-                    linkWeight='500'>
+                    linkweight='500'>
                     {props.inviteData.hackathon}
                 </StyledLinkRouter>
             </Text>

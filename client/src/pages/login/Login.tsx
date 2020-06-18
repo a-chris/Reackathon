@@ -160,7 +160,7 @@ export default function Login() {
                                 <StyledLinkRouter
                                     to='/signup'
                                     linkcolor={colors.red}
-                                    linkWeight='600'>
+                                    linkweight='600'>
                                     registrati
                                 </StyledLinkRouter>
                             </Text>
