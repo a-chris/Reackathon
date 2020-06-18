@@ -106,7 +106,6 @@ export default function Signup() {
         if (passwordConfirmError == null) {
             setPasswordConfirmError(true);
         } else {
-            console.log(signupData);
             setLoading(true);
             signup(signupData)
                 .then((user) => {
@@ -116,7 +115,6 @@ export default function Signup() {
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
                     setLoading(false);
                 });
         }

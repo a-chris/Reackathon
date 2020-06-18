@@ -23,12 +23,6 @@ const center = {
 function MapContainer(props: MapProps) {
     const history = useHistory();
 
-    const onMarkerClustererClick = (markerClusterer: any) => {
-        const clickedMarkers = markerClusterer.getMarkers();
-        console.log(`Current clicked markers length: ${clickedMarkers.length}`);
-        console.log(clickedMarkers);
-    };
-
     const onMarkerClick = (id: string) => {
         history.push('/hackathons/' + id);
     };
@@ -38,7 +32,6 @@ function MapContainer(props: MapProps) {
             <GoogleMap mapContainerStyle={props.style || defaultMapStyle} center={center} zoom={6}>
                 {props.hackathons != null && (
                     <MarkerClusterer
-                        onClick={onMarkerClustererClick}
                         averageCenter
                         enableRetinaIcons
                         gridSize={30}

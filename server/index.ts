@@ -142,8 +142,6 @@ app.route('/filters/cities').get(filtersController.getAvailableCities);
 
 app.route('/stats').get(authController.isOrganization, hackathonsController.organizationStats);
 
-app.route('/testWs').get(attendantsController.testWs);
-
 /**
  * HTTP Server
  */

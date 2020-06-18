@@ -45,7 +45,6 @@ export function logout(loginData: LoginData): Promise<boolean> {
         axios
             .post('/logout', loginData)
             .then((response: any) => {
-                console.log('TCL: response', response);
                 setLocalUser(null);
                 resolve(response.data);
             })
