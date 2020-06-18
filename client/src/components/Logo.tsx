@@ -13,7 +13,7 @@ export function Logo(props: LogoProps) {
         <Link to='/'>
             <StyledLogo>
                 {props.withLogoImage && (
-                    <Image src='/logo.png' size={['26px', '28px', '46px', '46px']} />
+                    <Image src='/logo.png' size={['26px', '28px', '46px', '46px']} alt='logo' />
                 )}
                 <span className='logo' style={{ color: colors.blue_light }}>
                     reac

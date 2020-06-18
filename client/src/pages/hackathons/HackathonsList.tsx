@@ -222,8 +222,10 @@ export default function HackathonsList() {
                                     <Box mt={1} mb={1}>
                                         Creato da{' '}
                                         <StyledLinkRouter
-                                            to={`/profile/${hackathon.organization.username}`}>
-                                            <b>{hackathon.organization.name}</b>
+                                            to={`/profile/${hackathon.organization.username}`}
+                                            linkcolor={colors.blue_night}
+                                            linkweight='600'>
+                                            {hackathon.organization.name}
                                         </StyledLinkRouter>
                                     </Box>
                                     <Link to={'hackathons/' + hackathon._id}>
