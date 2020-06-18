@@ -121,7 +121,11 @@ export default function Header() {
 
     function onMenuClick(path: string) {
         setHamburgerMenuOpen(false);
-        history.push(path);
+        if (path === '/hackathons' && appContext.state?.user?.role === 'CLIENT') {
+            history.push({ pathname: path, search: `?user=${appContext.state.user.username}` });
+        } else {
+            history.push(path);
+        }
     }
 
     const onHamburgerMenuToogle = () => setHamburgerMenuOpen(!isHamburgerMenuOpen);

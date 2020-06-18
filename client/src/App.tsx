@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
 import CookieConsent from 'react-cookie-consent';
-import { HashRouter, Redirect, Route, RouteProps, Switch, useHistory } from 'react-router-dom';
+import { HashRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
 import { AppContext, reducer } from './AppContext';
 import Header from './components/Header';
 import './config/AxiosConfig';
@@ -30,7 +30,6 @@ import { LOGIN_ACTION } from './utils/constants';
 moment.locale('it');
 
 export default function App() {
-    const history = useHistory();
     const [state, dispatch] = React.useReducer(reducer, {});
     const toast = useToast();
     console.log('TCL: App -> state', state);
