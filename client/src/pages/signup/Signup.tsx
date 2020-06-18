@@ -51,7 +51,6 @@ export default function Signup() {
             _.every([!passwordError, !passwordConfirmError, !usernameError]) &&
             missingData.length === 0;
         setAllValuesValid(allValid);
-        console.log('Signup -> allValid', allValid);
     }, [passwordError, passwordConfirmError, usernameError, missingData]);
 
     React.useEffect(() => {
@@ -137,89 +136,96 @@ export default function Signup() {
             BottomContent={() => (
                 <Box>
                     <Stack spacing={3} p={8}>
-                        <FormControl isInvalid={usernameError.length > 0} isRequired>
-                            <StyledLabel htmlFor='username'>Username</StyledLabel>
-                            <InputGroup size='md'>
-                                <InputLeftElement children={<Icon name='sun' />} />
-                                <Input
-                                    type='text'
-                                    placeholder='Username'
-                                    defaultValue=''
-                                    variant='flushed'
-                                    name='username'
-                                    id='username'
-                                    onChange={onChangeValue}
-                                    onBlur={validateUsername}
-                                />
-                                {signupData?.username?.length > 0 && (
-                                    <InputRightElement
-                                        children={
-                                            usernameError ? (
-                                                <Icon name='not-allowed' color='red.500' />
-                                            ) : (
-                                                <Icon name='check' color='green.500' />
-                                            )
-                                        }
+                        <form>
+                            <FormControl isInvalid={usernameError.length > 0} isRequired>
+                                <StyledLabel htmlFor='username'>Username</StyledLabel>
+                                <InputGroup size='md'>
+                                    <InputLeftElement children={<Icon name='sun' />} />
+                                    <Input
+                                        type='text'
+                                        placeholder='Username'
+                                        defaultValue=''
+                                        variant='flushed'
+                                        name='username'
+                                        id='username'
+                                        onChange={onChangeValue}
+                                        autoComplete='username'
+                                        onBlur={validateUsername}
                                     />
-                                )}
-                            </InputGroup>
-                            <FormErrorMessage>{usernameError}</FormErrorMessage>
-                        </FormControl>
-                        <FormControl isInvalid={passwordError} isRequired>
-                            <StyledLabel htmlFor='password'>Password</StyledLabel>
-                            <InputGroup size='md'>
-                                <InputLeftElement children={<Icon name='lock' />} />
-                                <Input
-                                    type={passwordVisible ? 'text' : 'password'}
-                                    placeholder='Password'
-                                    defaultValue=''
-                                    pr='4.5rem'
-                                    variant='flushed'
-                                    name='password'
-                                    id='password'
-                                    onChange={onChangeValue}
-                                    onBlur={validatePassword}
-                                />
-                                <InputRightElement width='4.5rem'>
-                                    <IconButton
-                                        h='1.75rem'
-                                        size='sm'
-                                        onClick={togglePasswordVisibility}
-                                        aria-label={passwordVisible ? 'Hide' : 'Show'}
-                                        icon={passwordVisible ? 'view' : 'view-off'}
+                                    {signupData?.username?.length > 0 && (
+                                        <InputRightElement
+                                            children={
+                                                usernameError ? (
+                                                    <Icon name='not-allowed' color='red.500' />
+                                                ) : (
+                                                    <Icon name='check' color='green.500' />
+                                                )
+                                            }
+                                        />
+                                    )}
+                                </InputGroup>
+                                <FormErrorMessage>{usernameError}</FormErrorMessage>
+                            </FormControl>
+                            <FormControl isInvalid={passwordError} isRequired>
+                                <StyledLabel htmlFor='password'>Password</StyledLabel>
+                                <InputGroup size='md'>
+                                    <InputLeftElement children={<Icon name='lock' />} />
+                                    <Input
+                                        type={passwordVisible ? 'text' : 'password'}
+                                        placeholder='Password'
+                                        defaultValue=''
+                                        pr='4.5rem'
+                                        variant='flushed'
+                                        name='password'
+                                        id='password'
+                                        autoComplete='new-password'
+                                        onChange={onChangeValue}
+                                        onBlur={validatePassword}
                                     />
-                                </InputRightElement>
-                            </InputGroup>
-                            <FormErrorMessage>
-                                {`La password deve essere lunga almeno ${MIN_PASSWORD_LENGTH} caratteri.`}
-                            </FormErrorMessage>
-                        </FormControl>
-                        <FormControl isInvalid={passwordConfirmError} isRequired>
-                            <StyledLabel htmlFor='passwordConfirm'>Conferma Password</StyledLabel>
-                            <InputGroup size='md'>
-                                <InputLeftElement children={<Icon name='lock' />} />
-                                <Input
-                                    type={passwordVisible ? 'text' : 'password'}
-                                    placeholder='Password di conferma'
-                                    defaultValue=''
-                                    pr='4.5rem'
-                                    variant='flushed'
-                                    name='passwordConfirm'
-                                    id='passwordConfirm'
-                                    onBlur={validateConfirmPassword}
-                                />
-                                <InputRightElement width='4.5rem'>
-                                    <IconButton
-                                        h='1.75rem'
-                                        size='sm'
-                                        onClick={togglePasswordVisibility}
-                                        aria-label={passwordVisible ? 'Hide' : 'Show'}
-                                        icon={passwordVisible ? 'view' : 'view-off'}
+                                    <InputRightElement width='4.5rem'>
+                                        <IconButton
+                                            h='1.75rem'
+                                            size='sm'
+                                            onClick={togglePasswordVisibility}
+                                            aria-label={passwordVisible ? 'Hide' : 'Show'}
+                                            icon={passwordVisible ? 'view' : 'view-off'}
+                                        />
+                                    </InputRightElement>
+                                </InputGroup>
+                                <FormErrorMessage>
+                                    {`La password deve essere lunga almeno ${MIN_PASSWORD_LENGTH} caratteri.`}
+                                </FormErrorMessage>
+                            </FormControl>
+                            <FormControl isInvalid={passwordConfirmError} isRequired>
+                                <StyledLabel htmlFor='passwordConfirm'>
+                                    Conferma Password
+                                </StyledLabel>
+                                <InputGroup size='md'>
+                                    <InputLeftElement children={<Icon name='lock' />} />
+                                    <Input
+                                        type={passwordVisible ? 'text' : 'password'}
+                                        placeholder='Password di conferma'
+                                        defaultValue=''
+                                        pr='4.5rem'
+                                        variant='flushed'
+                                        name='passwordConfirm'
+                                        id='passwordConfirm'
+                                        autoComplete='new-password'
+                                        onBlur={validateConfirmPassword}
                                     />
-                                </InputRightElement>
-                            </InputGroup>
-                            <FormErrorMessage>Le password non coincidono.</FormErrorMessage>
-                        </FormControl>
+                                    <InputRightElement width='4.5rem'>
+                                        <IconButton
+                                            h='1.75rem'
+                                            size='sm'
+                                            onClick={togglePasswordVisibility}
+                                            aria-label={passwordVisible ? 'Hide' : 'Show'}
+                                            icon={passwordVisible ? 'view' : 'view-off'}
+                                        />
+                                    </InputRightElement>
+                                </InputGroup>
+                                <FormErrorMessage>Le password non coincidono.</FormErrorMessage>
+                            </FormControl>
+                        </form>
                         <FormControl isRequired>
                             <StyledLabel htmlFor='email'>Email</StyledLabel>
                             <InputGroup size='md'>
