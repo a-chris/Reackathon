@@ -30,12 +30,13 @@ import { LOGIN_ACTION } from './utils/constants';
  */
 moment.locale('it');
 
+const notificationSound = new Howl({
+    src: [require('./resources/sound/pop.mp3')],
+});
+
 export default function App() {
     const [state, dispatch] = React.useReducer(reducer, {});
     const toast = useToast();
-    const notificationSound = new Howl({
-        src: [require('./resources/sound/pop.mp3')],
-    });
 
     React.useEffect(() => {
         if (state.user == null) {
@@ -68,7 +69,7 @@ export default function App() {
         return () => {
             socketClient.disconnect();
         };
-    }, [notificationSound, state.user, toast]);
+    }, [state.user, toast]);
 
     axios.interceptors.response.use((response) => {
         if (response.status === 500) {

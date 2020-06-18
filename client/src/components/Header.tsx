@@ -16,6 +16,7 @@ import {
     Text,
     useDisclosure,
 } from '@chakra-ui/core';
+import { Howl } from 'howler';
 import _ from 'lodash';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -74,6 +75,10 @@ const ACTION_MENU_ITEMS: MenuItem[] = [
     },
 ];
 
+const notificationSound = new Howl({
+    src: [require('./../resources/sound/pop.mp3')],
+});
+
 export default function Header() {
     const history = useHistory();
     const appContext = React.useContext(AppContext);
@@ -89,6 +94,7 @@ export default function Header() {
             socketClient.on(SocketEvent.NEW_INVITE, () => {
                 if (userId != null) {
                     console.log('UPDATE INVITES');
+                    notificationSound.play();
                     getUserAttendants(userId).then((attendants) => {
                         setInvites(mapAttendantsToInvitesData(attendants));
                     });
