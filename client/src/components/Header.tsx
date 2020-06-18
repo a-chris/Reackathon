@@ -112,12 +112,10 @@ export default function Header() {
             logout(appContext.state.user).then(() => {
                 if (appContext?.onLogout != null) {
                     appContext.onLogout();
-                    // push the user to the homepage
-                    history.push('/');
                 }
             });
         }
-    }, [appContext, history]);
+    }, [appContext]);
 
     function onMenuClick(path: string) {
         setHamburgerMenuOpen(false);
