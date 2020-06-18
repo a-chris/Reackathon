@@ -79,7 +79,11 @@ export default function Login() {
                 )}
                 BottomContent={() => (
                     <Box>
-                        <form onSubmit={onLogin}>
+                        <form
+                            onSubmit={(e: any) => {
+                                e.preventDefault();
+                                onLogin();
+                            }}>
                             <Stack spacing={3} p={8}>
                                 <FormControl isInvalid={isLoginInvalid}>
                                     <StyledLabel htmlFor='username'>Username</StyledLabel>
