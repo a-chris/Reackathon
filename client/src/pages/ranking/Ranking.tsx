@@ -14,7 +14,7 @@ import _ from 'lodash';
 import React from 'react';
 import { BsFillAwardFill, BsShieldFill } from 'react-icons/bs';
 import styled from 'styled-components';
-import { StyedLinkRouter as StyledLinkRouter, StyledUserBox } from '../../components/Common';
+import { StyledLinkRouter, StyledUserBox } from '../../components/Common';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import UserBadge from '../../components/UserBadge';
 import { User } from '../../models/Models';

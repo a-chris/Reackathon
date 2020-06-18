@@ -20,7 +20,11 @@ import queryString from 'query-string';
 import React from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { AppContext } from '../../AppContext';
-import { BoxFullHeightAfterHeader, BoxWithSpacedChildren } from '../../components/Common';
+import {
+    BoxFullHeightAfterHeader,
+    BoxWithSpacedChildren,
+    StyledLinkRouter,
+} from '../../components/Common';
 import MapContainer from '../../components/Map';
 import { Hackathon, HackathonStatus } from '../../models/Models';
 import { getAvailableCities } from '../../services/FilterService';
@@ -214,6 +218,15 @@ export default function HackathonsList() {
                                                 {toDateString(hackathon.endDate)}
                                             </Text>
                                         </Box>
+                                    </Link>
+                                    <Box mt={1} mb={1}>
+                                        Creato da{' '}
+                                        <StyledLinkRouter
+                                            to={`/profile/${hackathon.organization.username}`}>
+                                            <b>{hackathon.organization.name}</b>
+                                        </StyledLinkRouter>
+                                    </Box>
+                                    <Link to={'hackathons/' + hackathon._id}>
                                         <Flex alignItems='baseline' justifyContent='space-between'>
                                             <Box
                                                 color={colors.gray_dark}

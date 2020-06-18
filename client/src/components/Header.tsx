@@ -19,7 +19,7 @@ import {
 import { Howl } from 'howler';
 import _ from 'lodash';
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useCounter } from 'react-use';
 import styled from 'styled-components';
 import { AppContext } from '../AppContext';
@@ -30,6 +30,7 @@ import socketClient from '../socket/socket';
 import SocketEvent from '../socket/SocketEvent';
 import colors from '../utils/colors';
 import { Logo } from './Logo';
+import { StyledLinkRouter } from './Common';
 
 type InviteData = {
     inviteId: string;
@@ -59,14 +60,14 @@ const ACTION_MENU_ITEMS: MenuItem[] = [
         role: [UserRole.CLIENT],
     },
     {
-        name: 'Crea',
+        name: 'Crea Hackathon',
         path: '/hackathons/create',
         role: [UserRole.ORGANIZATION],
     },
     {
         name: 'Lista Hackathon',
         path: '/hackathons',
-        role: [UserRole.CLIENT],
+        role: [UserRole.CLIENT, UserRole.ORGANIZATION],
     },
     {
         name: 'Classifica',
@@ -366,16 +367,22 @@ function InviteItem(props: InviteItemProps) {
         <Box border={`2px solid ${colors.gray_dark}`} p={2}>
             <Text>
                 L'utente{' '}
-                <StyledLink to={`/profile/${props.inviteData.from}`}>
+                <StyledLinkRouter
+                    to={`/profile/${props.inviteData.from}`}
+                    linkColor={colors.red}
+                    linkWeight='500'>
                     {props.inviteData.from}
-                </StyledLink>{' '}
+                </StyledLinkRouter>{' '}
                 ti ha invitato a far parte del suo gruppo.
             </Text>
             <Text pt={2}>
                 Hackathon:{' '}
-                <StyledLink to={`/hackathons/${props.inviteData.hackathonId}`}>
+                <StyledLinkRouter
+                    to={`/hackathons/${props.inviteData.hackathonId}`}
+                    linkColor={colors.red}
+                    linkWeight='500'>
                     {props.inviteData.hackathon}
-                </StyledLink>
+                </StyledLinkRouter>
             </Text>
             <Flex justifyContent='flex-end' pt={2}>
                 {props.inviteData.status === 'pending' && (
@@ -455,10 +462,10 @@ const StyledHamburgerHeaderButton = styled(Button).attrs({
     variant: 'ghost',
 })``;
 
-const StyledLink = styled(Link)`
-    color: ${colors.red};
-    font-weight: 500;
-    :hover {
-        text-decoration: underline;
-    }
-`;
+// const StyledLink = styled(Link)`
+//     color: ${colors.red};
+//     font-weight: 500;
+//     :hover {
+//         text-decoration: underline;
+//     }
+// `;

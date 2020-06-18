@@ -12,7 +12,7 @@ import {
 import React from 'react';
 import { Logo } from '../../../components/Logo';
 import colors from '../../../utils/colors';
-import { BoxWithSpacedChildren } from '../../../components/Common';
+import { BoxWithSpacedChildren, StyledLinkRouter } from '../../../components/Common';
 
 interface SignupModalProps {
     isOpen: boolean;
@@ -41,13 +41,13 @@ export default function SignupModal(props: SignupModalProps) {
                                 registrarsi, cosa aspetti?
                             </Text>
                             <Text>
-                                <Link style={{ color: colors.red }} href='/signup'>
+                                <StyledLinkRouter to='/signup' linkColor={colors.red}>
                                     <b>Registrati adesso</b>
-                                </Link>{' '}
+                                </StyledLinkRouter>{' '}
                                 oppure{' '}
-                                <Link style={{ color: colors.red }} href='/login'>
+                                <StyledLinkRouter to='/login' linkColor={colors.red}>
                                     <b>accedi</b>
-                                </Link>
+                                </StyledLinkRouter>
                             </Text>
                         </BoxWithSpacedChildren>
                     </Flex>

@@ -10,16 +10,16 @@ import {
     InputGroup,
     InputLeftElement,
     InputRightElement,
-    Link,
     Stack,
     Text,
 } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
 import { AppContext } from '../../AppContext';
-import { StyledCenteredContainer, StyledLabel } from '../../components/Common';
+import { StyledCenteredContainer, StyledLabel, StyledLinkRouter } from '../../components/Common';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { login, LoginData } from '../../services/AuthService';
 import colors from '../../utils/colors';
+import { FaUser } from 'react-icons/fa';
 
 export default function Login() {
     const appContext = React.useContext(AppContext);
@@ -84,7 +84,9 @@ export default function Login() {
                                 <FormControl isInvalid={isLoginInvalid}>
                                     <StyledLabel htmlFor='username'>Username</StyledLabel>
                                     <InputGroup size='md'>
-                                        <InputLeftElement children={<Icon name='spinner' />} />
+                                        <InputLeftElement
+                                            children={<Box as={FaUser} size='16px' />}
+                                        />
                                         <Input
                                             type='text'
                                             placeholder='Username'
@@ -99,7 +101,9 @@ export default function Login() {
                                 <FormControl isInvalid={isLoginInvalid}>
                                     <StyledLabel htmlFor='password'>Password</StyledLabel>
                                     <InputGroup size='md'>
-                                        <InputLeftElement children={<Icon name='lock' />} />
+                                        <InputLeftElement
+                                            children={<Icon name='lock' size='16px' />}
+                                        />
                                         <Input
                                             type={pwdVisible ? 'text' : 'password'}
                                             placeholder='Password'
@@ -149,9 +153,9 @@ export default function Login() {
                             </Button>
                             <Text p={5} fontSize='0.9em'>
                                 Oppure{' '}
-                                <Link style={{ color: colors.red }} href='/signup'>
+                                <StyledLinkRouter to='/signup' linkColor={colors.red}>
                                     <b>registrati</b>
-                                </Link>
+                                </StyledLinkRouter>
                             </Text>
                         </form>
                     </Box>

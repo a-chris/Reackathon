@@ -62,7 +62,14 @@ export const StyledResponsiveFlex = styled(Box).attrs({
     justify-content: space-between;
 `;
 
-export const StyedLinkRouter = styled(Link)`
+interface TextProps {
+    linkColor?: string;
+    linkWeight?: string;
+}
+
+export const StyledLinkRouter = styled(Link)<TextProps>`
+    color: ${(props) => (props?.linkColor ? props?.linkColor : 'inherit')};
+    font-weight: ${(props) => (props?.linkWeight ? props?.linkWeight : 'inherit')};
     :hover {
         text-decoration: underline;
     }

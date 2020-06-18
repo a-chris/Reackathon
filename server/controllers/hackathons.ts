@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { AttendantDb } from '../models/Attendant';
 import { HackathonDb } from '../models/Hackathon';
 import SocketEvent from '../models/SocketEvent';
-import { UserDb } from '../models/User';
+import { UserDb, UserRole } from '../models/User';
 
 const HackathonAction = ['pending', 'started', 'finished', 'archived'];
 
@@ -62,10 +62,16 @@ export async function findHackathons(req: Request, res: Response) {
     if (query.user != null) {
         const user = await UserDb.findOne({ 'username': query.user.toString() });
         if (user != null) {
-            const attendants = await AttendantDb.find({ 'user': user._id }).populate('hackathon');
-            if (attendants != null && attendants.length > 0) {
-                userHackathons = attendants.map((a) => a.hackathon._id);
-                filtersToApply._id = { '$in': userHackathons };
+            if (user.role === UserRole.CLIENT) {
+                const attendants = await AttendantDb.find({ 'user': user._id }).populate(
+                    'hackathon'
+                );
+                if (attendants != null && attendants.length > 0) {
+                    userHackathons = attendants.map((a) => a.hackathon._id);
+                    filtersToApply._id = { '$in': userHackathons };
+                }
+            } else if (user.role === UserRole.ORGANIZATION) {
+                filtersToApply.organization = user._id;
             }
         }
     }
@@ -189,7 +195,7 @@ export async function changeHackathonStatus(req: Request, res: Response) {
         .populate('organization')
         .populate({
             path: 'attendants',
-            populate: { path: 'user', select: 'username' },
+            populate: { path: 'user' },
         });
     return res.json(newHackathon);
 }

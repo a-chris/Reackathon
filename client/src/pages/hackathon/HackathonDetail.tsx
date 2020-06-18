@@ -33,7 +33,11 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { BoxFullHeightAfterHeader, ContainerWithBackgroundImage } from '../../components/Common';
+import {
+    BoxFullHeightAfterHeader,
+    ContainerWithBackgroundImage,
+    StyledLinkRouter,
+} from '../../components/Common';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { Attendant, Hackathon, HackathonStatus, UserRole } from '../../models/Models';
@@ -244,6 +248,13 @@ export default function HackathonDetail() {
                                             {hackathonData.location.country}
                                         </PseudoBox>
                                     </Stack>
+                                    <Box>
+                                        Creato da{' '}
+                                        <StyledLinkRouter
+                                            to={`profile/${hackathonData.organization.username}`}>
+                                            <b>{hackathonData.organization.name}</b>
+                                        </StyledLinkRouter>
+                                    </Box>
 
                                     <StyledDateContainer>
                                         <PseudoBox pr={10}>
