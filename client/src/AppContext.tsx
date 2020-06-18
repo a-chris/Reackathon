@@ -42,6 +42,7 @@ export const reducer = (state: AppState, action: Action): AppState => {
                 user: undefined,
             };
         case LOGIN_ACTION.LOGOUT:
+            socketClient.removeAllListeners();
             socketClient.disconnect();
             setLocalUser(null);
             return {

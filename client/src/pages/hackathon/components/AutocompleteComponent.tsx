@@ -35,15 +35,12 @@ export default function AutocompleteComponent(props: AutocompleteComponentProps)
     const [autocomplete, setAutocomplete] = React.useState<google.maps.places.Autocomplete>();
 
     function onLoad(autocompleteRes: google.maps.places.Autocomplete) {
-        console.log('onLoad -> autocompleteRes', autocompleteRes);
-
         setAutocomplete(autocompleteRes);
     }
 
     function onPlaceChanged() {
         if (autocomplete != null) {
             const autocompletePlace = autocomplete.getPlace();
-            console.log('onPlaceChanged -> autocompletePlace', autocompletePlace);
             const locationData: any = {};
             const missingData = [];
 
@@ -70,10 +67,9 @@ export default function AutocompleteComponent(props: AutocompleteComponentProps)
                 missingData.push('long', 'lat');
             }
 
-            console.log('onPlaceChanged -> locationData', locationData);
             props.onPlaceChanged(locationData, missingData);
         } else {
-            console.log('Autocomplete is not loaded yet!');
+            console.warn('Autocomplete is not loaded yet!');
         }
     }
 

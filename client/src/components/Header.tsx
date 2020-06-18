@@ -95,7 +95,6 @@ export default function Header() {
             const userId = appContext.state.user?._id;
             socketClient.on(SocketEvent.NEW_INVITE, () => {
                 if (userId != null) {
-                    console.log('UPDATE INVITES');
                     notificationSound.play();
                     getUserAttendants(userId).then((attendants) => {
                         setInvites(mapAttendantsToInvitesData(attendants));
