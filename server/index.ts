@@ -100,7 +100,7 @@ app.route('/signup').post(authController.signup);
 app.route('/logout').post(authController.logout);
 app.route('/users/exist').get(usersController.usernameExists);
 
-app.route('/users/ranking').get(usersController.getUsersRanking);
+app.route('/users/ranking').get(authController.isLogged, usersController.getUsersRanking);
 
 app.route('/users/:username')
     .get(authController.isLogged, usersController.getUserDetail)

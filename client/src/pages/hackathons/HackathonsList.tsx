@@ -56,7 +56,7 @@ const HACKATHON_STATUSES = {
     pending: 'In attesa',
     started: 'In corso',
     finished: 'Concluso',
-    archived: 'Archiviato',
+    archived: 'Cancellato',
 };
 
 export default function HackathonsList() {
@@ -129,7 +129,7 @@ export default function HackathonsList() {
                                     <FormLabel pl={1}>
                                         <b>Città:</b>
                                         <Select
-                                            minW='200.19px'
+                                            minW='212px'
                                             placeholder='-'
                                             name='city'
                                             onChange={onChangeFilter}>
@@ -143,7 +143,7 @@ export default function HackathonsList() {
                                     <FormLabel pl={1}>
                                         <b>Stato:</b>
                                         <Select
-                                            minW='200.19px'
+                                            minW='212px'
                                             placeholder='-'
                                             name='status'
                                             onChange={onChangeFilter}>
@@ -156,11 +156,21 @@ export default function HackathonsList() {
                                     </FormLabel>
                                     <FormLabel pl={1}>
                                         <b>Data di inizio:</b>
-                                        <Input type='date' name='from' onChange={onChangeFilter} />
+                                        <Input
+                                            type='date'
+                                            name='from'
+                                            onChange={onChangeFilter}
+                                            minW='212px'
+                                        />
                                     </FormLabel>
                                     <FormLabel pl={1}>
                                         <b>Data di fine:</b>
-                                        <Input type='date' name='to' onChange={onChangeFilter} />
+                                        <Input
+                                            type='date'
+                                            name='to'
+                                            onChange={onChangeFilter}
+                                            minW='212px'
+                                        />
                                     </FormLabel>
                                     {isLogged && (
                                         <Checkbox
@@ -181,47 +191,43 @@ export default function HackathonsList() {
                             <Text textAlign='center'>Nessun hackathon trovato.</Text>
                         ) : (
                             hackathons.map((hackathon, index) => (
-                                    <Box
-                                        p={2}
-                                        color='gray.500'
-                                        border={'2px solid ' + colors.gray}
-                                        textAlign='left'
-                                        key={index}>
-                                        <Link
-                                            key={hackathon._id}
-                                            to={'hackathons/' + hackathon._id}>
-                                            <Heading as='h2' size='lg' color={colors.gray_darker}>
-                                                {hackathon.name}
-                                            </Heading>
-                                            <Text color={colors.gray_light}>
-                                                {hackathon.description.substring(0, 150)}...
-                                            </Text>
+                                <Box
+                                    p={2}
+                                    color='gray.500'
+                                    border={'2px solid ' + colors.gray}
+                                    textAlign='left'
+                                    key={index}>
+                                    <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
+                                        <Heading as='h2' size='lg' color={colors.gray_darker}>
+                                            {hackathon.name}
+                                        </Heading>
+                                        <Text color={colors.gray_light}>
+                                            {hackathon.description.substring(0, 150)}...
+                                        </Text>
 
-                                            <Box mt={1} mb={1}>
-                                                <Text
-                                                    fontSize='sm'
-                                                    fontWeight='semibold'
-                                                    color={colors.gray_dark}>
-                                                    {toDateString(hackathon.startDate)} -{' '}
-                                                    {toDateString(hackathon.endDate)}
-                                                </Text>
+                                        <Box mt={1} mb={1}>
+                                            <Text
+                                                fontSize='sm'
+                                                fontWeight='semibold'
+                                                color={colors.gray_dark}>
+                                                {toDateString(hackathon.startDate)} -{' '}
+                                                {toDateString(hackathon.endDate)}
+                                            </Text>
+                                        </Box>
+                                        <Flex alignItems='baseline' justifyContent='space-between'>
+                                            <Box
+                                                color={colors.gray_dark}
+                                                fontWeight='semibold'
+                                                letterSpacing='wide'
+                                                fontSize='xs'
+                                                textTransform='uppercase'>
+                                                {hackathon.location.city} &bull;{' '}
+                                                {hackathon.location.country}
                                             </Box>
-                                            <Flex
-                                                alignItems='baseline'
-                                                justifyContent='space-between'>
-                                                <Box
-                                                    color={colors.gray_dark}
-                                                    fontWeight='semibold'
-                                                    letterSpacing='wide'
-                                                    fontSize='xs'
-                                                    textTransform='uppercase'>
-                                                    {hackathon.location.city} &bull;{' '}
-                                                    {hackathon.location.country}
-                                                </Box>
-                                                {StatusBadge(hackathon)}
-                                            </Flex>
-                                        </Link>
-                                    </Box>
+                                            {StatusBadge(hackathon)}
+                                        </Flex>
+                                    </Link>
+                                </Box>
                             ))
                         )}
                     </BoxWithSpacedChildren>
@@ -272,6 +278,10 @@ function StatusBadge(hackathon: Hackathon) {
         case HackathonStatus.FINISHED:
             color = 'red';
             text = 'concluso';
+            break;
+        case HackathonStatus.ARCHIVED:
+            color = 'red';
+            text = 'Annullato';
             break;
     }
     if (text === '') return;

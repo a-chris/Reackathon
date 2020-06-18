@@ -70,7 +70,7 @@ const hackathonStatusToString = {
         color: 'red',
     },
     [HackathonStatus.ARCHIVED]: {
-        text: 'cancellato',
+        text: 'annullato',
         color: 'red',
     },
 };
