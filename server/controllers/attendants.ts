@@ -61,6 +61,10 @@ export async function replyToInvite(req: Request, res: Response) {
         'attendants'
     );
     if (hackathon == null) return res.sendStatus(400).json({ error: 'Can not find hackathon' });
+    else if (hackathon.status !== 'pending') {
+        // hackathon not in pending, attendants can't accept invites now
+        return res.sendStatus(403);
+    }
     const attendantSender = await AttendantDb.findById(invite!.from._id);
     if (attendantSender == null)
         return res.sendStatus(400).json({ error: 'Can not find attendant sender of the invite' });

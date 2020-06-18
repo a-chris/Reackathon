@@ -15,6 +15,7 @@ import {
     Tag,
     Text,
     useDisclosure,
+    useToast,
 } from '@chakra-ui/core';
 import { Howl } from 'howler';
 import _ from 'lodash';
@@ -87,6 +88,7 @@ export default function Header() {
     const [invites, setInvites] = React.useState<InviteData[]>([]);
     const [isHamburgerMenuOpen, setHamburgerMenuOpen] = React.useState<boolean>(false);
     const [invitesChanged, { inc }] = useCounter(0);
+    const toast = useToast();
 
     React.useEffect(() => {
         if (appContext.state?.user?.role === UserRole.CLIENT) {
@@ -132,10 +134,23 @@ export default function Header() {
         }
     }
 
-    const onHamburgerMenuToogle = () => setHamburgerMenuOpen(!isHamburgerMenuOpen);
+    const onHamburgerMenuToggle = () => setHamburgerMenuOpen((curr) => !curr);
 
     const onAcceptInvite = (inviteId: string) => {
-        acceptInvite(inviteId).then(() => inc(1));
+        acceptInvite(inviteId)
+            .then(() => inc(1))
+            .catch((reason) => {
+                if (reason.response.status === 403) {
+                    toast({
+                        position: 'bottom-right',
+                        title: 'Hackathon avviato o cancellato.',
+                        description: "Non è possibile accettare l'invito in questo momento.",
+                        status: 'warning',
+                        isClosable: true,
+                    });
+                    declineInvite(inviteId).then(() => inc(1));
+                }
+            });
     };
 
     const onDeclineInvite = (inviteId: string) => {
@@ -178,7 +193,7 @@ export default function Header() {
                         </Button>
                     )}
                     <Button
-                        onClick={onHamburgerMenuToogle}
+                        onClick={onHamburgerMenuToggle}
                         variant='ghost'
                         minW='fit-content'
                         pl={2}
@@ -289,7 +304,7 @@ export default function Header() {
                 <Drawer
                     isOpen={isHamburgerMenuOpen}
                     placement='right'
-                    onClose={onHamburgerMenuToogle}
+                    onClose={onHamburgerMenuToggle}
                     finalFocusRef={drawerRef}>
                     <DrawerOverlay />
                     <DrawerContent>
