@@ -63,13 +63,13 @@ export const StyledResponsiveFlex = styled(Box).attrs({
 `;
 
 interface TextProps {
-    linkColor?: string;
+    linkcolor?: string;
     linkWeight?: string;
 }
 
 export const StyledLinkRouter = styled(Link)<TextProps>`
-    color: ${(props) => (props?.linkColor ? props?.linkColor : 'inherit')};
-    font-weight: ${(props) => (props?.linkWeight ? props?.linkWeight : 'inherit')};
+    color: ${(props) => (props?.linkcolor ? props.linkcolor : 'inherit')};
+    font-weight: ${(props) => (props?.linkWeight ? props.linkWeight : 'inherit')};
     :hover {
         text-decoration: underline;
     }

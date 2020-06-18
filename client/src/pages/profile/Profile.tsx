@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, Flex, Heading, Stack, Text, useDisclosure } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import 'react-vertical-timeline-component/style.min.css';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
@@ -22,6 +22,7 @@ import SignupModal from './components/SignupModal';
 export default function Profile() {
     const { username } = useParams();
     const appContext = React.useContext(AppContext);
+    const history = useHistory();
     const [user, setUser] = React.useState<User>();
     const [hasPendingRemove, setHasPendingRemove] = React.useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -149,7 +150,13 @@ export default function Profile() {
                         </>
                     )}
                 />
-                <SignupModal isOpen={isOpen} onClose={onClose} />
+                <SignupModal
+                    isOpen={isOpen}
+                    onClose={() => {
+                        onClose();
+                        history.push('/login');
+                    }}
+                />
             </ContainerWithBackgroundImage>
         </BoxFullHeightAfterHeader>
     );

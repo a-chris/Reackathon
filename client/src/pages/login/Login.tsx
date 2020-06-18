@@ -157,7 +157,7 @@ export default function Login() {
                             </Button>
                             <Text p={5} fontSize='0.9em'>
                                 Oppure{' '}
-                                <StyledLinkRouter to='/signup' linkColor={colors.red}>
+                                <StyledLinkRouter to='/signup' linkcolor={colors.red}>
                                     <b>registrati</b>
                                 </StyledLinkRouter>
                             </Text>

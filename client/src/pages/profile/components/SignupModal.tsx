@@ -1,6 +1,5 @@
 import {
     Flex,
-    Link,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -41,11 +40,11 @@ export default function SignupModal(props: SignupModalProps) {
                                 registrarsi, cosa aspetti?
                             </Text>
                             <Text>
-                                <StyledLinkRouter to='/signup' linkColor={colors.red}>
+                                <StyledLinkRouter to='/signup' linkcolor={colors.red}>
                                     <b>Registrati adesso</b>
                                 </StyledLinkRouter>{' '}
                                 oppure{' '}
-                                <StyledLinkRouter to='/login' linkColor={colors.red}>
+                                <StyledLinkRouter to='/login' linkcolor={colors.red}>
                                     <b>accedi</b>
                                 </StyledLinkRouter>
                             </Text>

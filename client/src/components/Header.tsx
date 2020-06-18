@@ -128,7 +128,7 @@ export default function Header() {
 
     function onMenuClick(path: string) {
         setHamburgerMenuOpen(false);
-        if (path === '/hackathons' && appContext.state?.user?.role === 'CLIENT') {
+        if (path === '/hackathons' && appContext.state?.user?.role != null) {
             history.push({ pathname: path, search: `?user=${appContext.state.user.username}` });
         } else {
             history.push(path);
@@ -384,7 +384,7 @@ function InviteItem(props: InviteItemProps) {
                 L'utente{' '}
                 <StyledLinkRouter
                     to={`/profile/${props.inviteData.from}`}
-                    linkColor={colors.red}
+                    linkcolor={colors.red}
                     linkWeight='500'>
                     {props.inviteData.from}
                 </StyledLinkRouter>{' '}
@@ -394,7 +394,7 @@ function InviteItem(props: InviteItemProps) {
                 Hackathon:{' '}
                 <StyledLinkRouter
                     to={`/hackathons/${props.inviteData.hackathonId}`}
-                    linkColor={colors.red}
+                    linkcolor={colors.red}
                     linkWeight='500'>
                     {props.inviteData.hackathon}
                 </StyledLinkRouter>
