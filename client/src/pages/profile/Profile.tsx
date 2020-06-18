@@ -94,7 +94,7 @@ export default function Profile() {
                             <Stack direction='column'>
                                 <Avatar
                                     size='xl'
-                                    name={user?.name}
+                                    name={'avatar/' + user?.name}
                                     src={avatarUrl}
                                     color={colors.white}
                                     bg={colors.red}

@@ -10,11 +10,11 @@ import {
     InputGroup,
     InputLeftElement,
     InputRightElement,
+    Link,
     Stack,
     Text,
 } from '@chakra-ui/core';
 import React, { ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
 import { AppContext } from '../../AppContext';
 import { StyledCenteredContainer, StyledLabel } from '../../components/Common';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
@@ -95,42 +95,47 @@ export default function Login() {
                                     />
                                 </InputGroup>
                             </FormControl>
-                            <FormControl isInvalid={isLoginInvalid}>
-                                <StyledLabel htmlFor='password'>Password</StyledLabel>
-                                <InputGroup size='md'>
-                                    <InputLeftElement children={<Icon name='lock' />} />
-                                    <Input
-                                        type={pwdVisible ? 'text' : 'password'}
-                                        placeholder='Password'
-                                        defaultValue=''
-                                        pr='4.5rem'
-                                        variant='flushed'
-                                        name='password'
-                                        id='password'
-                                        onChange={onChangeValue}
-                                    />
-                                    <InputRightElement width='4.5rem'>
-                                        {pwdVisible ? (
-                                            <IconButton
-                                                h='1.75rem'
-                                                size='sm'
-                                                onClick={togglePwdVisibility}
-                                                aria-label='Hide'
-                                                icon='view-off'
-                                            />
-                                        ) : (
-                                            <IconButton
-                                                h='1.75rem'
-                                                size='sm'
-                                                onClick={togglePwdVisibility}
-                                                aria-label='Show'
-                                                icon='view'
-                                            />
-                                        )}
-                                    </InputRightElement>
-                                </InputGroup>
-                                <FormErrorMessage>Username o password non validi</FormErrorMessage>
-                            </FormControl>
+                            <form>
+                                <FormControl isInvalid={isLoginInvalid}>
+                                    <StyledLabel htmlFor='password'>Password</StyledLabel>
+                                    <InputGroup size='md'>
+                                        <InputLeftElement children={<Icon name='lock' />} />
+                                        <Input
+                                            type={pwdVisible ? 'text' : 'password'}
+                                            placeholder='Password'
+                                            defaultValue=''
+                                            pr='4.5rem'
+                                            variant='flushed'
+                                            name='password'
+                                            id='password'
+                                            autoComplete='on'
+                                            onChange={onChangeValue}
+                                        />
+                                        <InputRightElement width='4.5rem'>
+                                            {pwdVisible ? (
+                                                <IconButton
+                                                    h='1.75rem'
+                                                    size='sm'
+                                                    onClick={togglePwdVisibility}
+                                                    aria-label='Hide'
+                                                    icon='view-off'
+                                                />
+                                            ) : (
+                                                <IconButton
+                                                    h='1.75rem'
+                                                    size='sm'
+                                                    onClick={togglePwdVisibility}
+                                                    aria-label='Show'
+                                                    icon='view'
+                                                />
+                                            )}
+                                        </InputRightElement>
+                                    </InputGroup>
+                                    <FormErrorMessage>
+                                        Username o password non validi
+                                    </FormErrorMessage>
+                                </FormControl>
+                            </form>
                         </Stack>
 
                         <Button
@@ -145,10 +150,8 @@ export default function Login() {
                         </Button>
                         <Text p={5} fontSize='0.9em'>
                             Oppure{' '}
-                            <Link to='/signup'>
-                                <span style={{ color: colors.red }}>
-                                    <b>registrati</b>
-                                </span>
+                            <Link style={{ color: colors.red }} href='/signup'>
+                                <b>registrati</b>
                             </Link>
                         </Text>
                     </Box>

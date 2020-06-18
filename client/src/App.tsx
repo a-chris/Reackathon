@@ -1,5 +1,6 @@
 import { CSSReset, useToast } from '@chakra-ui/core';
 import axios from 'axios';
+import { Howl } from 'howler';
 import moment from 'moment';
 import 'moment/locale/it';
 import React from 'react';
@@ -29,10 +30,13 @@ import { LOGIN_ACTION } from './utils/constants';
  */
 moment.locale('it');
 
+const notificationSound = new Howl({
+    src: [require('./resources/sound/pop.mp3')],
+});
+
 export default function App() {
     const [state, dispatch] = React.useReducer(reducer, {});
     const toast = useToast();
-    console.log('TCL: App -> state', state);
 
     React.useEffect(() => {
         if (state.user == null) {
@@ -41,14 +45,15 @@ export default function App() {
             }
             return;
         }
-        socketClient.open();
-        socketClient.on('connect', () => {
-            console.log('SOCKET CONNECTED');
-            if (state.user != null) {
-                socketClient.emit('join_room', state.user.username);
-                console.log('TCL: App -> join_room');
-            }
-        });
+        if (socketClient?.disconnected) {
+            socketClient.open();
+            socketClient.removeAllListeners();
+            socketClient.once('connect', () => {
+                if (state.user != null) {
+                    socketClient.emit('join_room', state.user.username);
+                }
+            });
+        }
         if (state.user.role === 'ORGANIZATION') {
             socketClient.on(SocketEvent.NEW_ATTENDANT, (data: any) => {
                 toast({
@@ -58,6 +63,7 @@ export default function App() {
                     status: 'success',
                     isClosable: true,
                 });
+                notificationSound.play();
             });
         }
         return () => {

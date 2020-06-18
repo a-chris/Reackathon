@@ -266,7 +266,7 @@ export default function HackathonManagement() {
                             <Stack>
                                 <Box display={{ md: 'flex' }}>
                                     <StyleDataDiv>
-                                        <FormControl isRequired p={1}>
+                                        <FormControl isRequired pr={1} pt={1} pb={1}>
                                             <FormLabel htmlFor='startDate'>
                                                 Data di inizio
                                             </FormLabel>
@@ -283,7 +283,7 @@ export default function HackathonManagement() {
                                             />
                                         </FormControl>
 
-                                        <FormControl isRequired p={1}>
+                                        <FormControl isRequired pr={1} pt={1} pb={1}>
                                             <FormLabel htmlFor='startTime'>Ora di inizio</FormLabel>
                                             <Input
                                                 size='sm'
@@ -300,7 +300,7 @@ export default function HackathonManagement() {
                                     </StyleDataDiv>
 
                                     <StyleDataDiv>
-                                        <FormControl isRequired p={1}>
+                                        <FormControl isRequired pr={1} pt={1} pb={1}>
                                             <FormLabel htmlFor='endDate'>Data di fine</FormLabel>
                                             <Input
                                                 size='sm'
@@ -315,7 +315,7 @@ export default function HackathonManagement() {
                                             />
                                         </FormControl>
 
-                                        <FormControl isRequired p={1}>
+                                        <FormControl isRequired pr={1} pt={1} pb={1}>
                                             <FormLabel htmlFor='endTime'>Ora di fine</FormLabel>
                                             <Input
                                                 size='sm'
@@ -338,7 +338,6 @@ export default function HackathonManagement() {
                                 </FormErrorMessage>
                             </Stack>
                         </FormControl>
-                        <Divider borderColor={colors.red} />
                         <FormControl isInvalid={locationMissingFields.length > 0} isRequired>
                             <FormLabel htmlFor='location'>Indirizzo</FormLabel>
                             <AutocompleteComponent
@@ -537,5 +536,5 @@ const StyledAccordionItem = styled(AccordionItem)`
 `;
 
 const StyleDataDiv = styled.div`
-    padding: 8px;
+    padding: 8px 8px 8px 0;
 `;

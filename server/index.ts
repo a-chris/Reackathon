@@ -158,14 +158,14 @@ io.on('connection', (client) => {
      * identified by the username
      */
     client.on('join_room', (username: string) => {
-        console.log('TCL: join_room', username);
+        client.leaveAll();
         client.join(username);
     });
 
     /*
      * Remove the client from his rooms
      */
-    client.on('disconnect', () => {
+    client.on('disconnection', () => {
         client.leaveAll();
     });
 });

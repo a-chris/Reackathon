@@ -9,7 +9,6 @@ import {
     Tag,
     Text,
     useDisclosure,
-    Button,
 } from '@chakra-ui/core';
 import _ from 'lodash';
 import React from 'react';
@@ -127,7 +126,7 @@ export default function Ranking() {
                                                 pl={5}>
                                                 <Avatar
                                                     name={user.username}
-                                                    src={user.avatar}
+                                                    src={'avatar/' + user.avatar}
                                                     textAlign='center'
                                                     size='lg'
                                                 />

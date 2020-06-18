@@ -1,6 +1,6 @@
 import React from 'react';
 import { User } from '../models/Models';
-import { Flex, Text, Tooltip, Box } from '@chakra-ui/core';
+import { Flex, Text, Box } from '@chakra-ui/core';
 import styled from '@emotion/styled';
 import colors from '../utils/colors';
 import { BsShieldFill, BsFillAwardFill } from 'react-icons/bs';

@@ -57,7 +57,7 @@ export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentA
                                     <Stack isInline alignItems='center'>
                                         <Avatar
                                             name={attendant.user.username}
-                                            src={attendant.user.avatar}
+                                            src={'avatar/' + attendant.user.avatar}
                                             pr='3px'
                                         />
                                         <StyedLinkRouter to={`/profile/${attendant.user.username}`}>
