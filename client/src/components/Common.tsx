@@ -1,6 +1,7 @@
 import { Box, FormLabel } from '@chakra-ui/core';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import colors from '../utils/colors';
 
 interface BoxWithSpacedChildrenProps {
     space: string;
@@ -46,10 +47,12 @@ export const StyledLabel = styled(FormLabel)`
 
 export const StyledUserBox = styled(Box).attrs({
     p: '2%',
-    m: 1,
+    m: 3,
+    rounded: 'md',
 })`
     border-width: 2px;
     border-style: solid;
+    box-shadow: 1px 1px 3px ${colors.gray_dark};
 `;
 
 export const StyledResponsiveFlex = styled(Box).attrs({
@@ -64,3 +67,13 @@ export const StyedLinkRouter = styled(Link)`
         text-decoration: underline;
     }
 `;
+
+export const ContainerWithBackgroundImage = styled(Box).attrs({
+    backgroundImage: "url('./images/background/europe2.jpg')",
+    w: '100%',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    h: 'fit-content',
+    minH: 'inherit',
+    backgroundPosition: 'bottom',
+})``;

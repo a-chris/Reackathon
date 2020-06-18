@@ -2,7 +2,7 @@ import { Avatar, Box, Flex, Heading, Radio, RadioGroup, Stack, Tag, Text } from 
 import _ from 'lodash';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { StyledUserBox } from '../../components/Common';
+import { StyledUserBox, StyedLinkRouter as StyledLinkRouter } from '../../components/Common';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import UserBadge from '../../components/UserBadge';
 import { User } from '../../models/Models';
@@ -56,7 +56,7 @@ export default function Ranking() {
                     ) : (
                         <Box>
                             <Flex alignItems='center' p='2' justifyContent='center'>
-                                <Text as='label' pr={2} fontSize='sm'>
+                                <Text as='label' pr={2} fontSize='md' fontWeight='500'>
                                     Ordina per:
                                 </Text>
                                 <RadioGroup
@@ -95,11 +95,11 @@ export default function Ranking() {
                                                 size='lg'
                                             />
                                             <Stack ml={5}>
-                                                <Link to={`/profile/${user.username}`}>
+                                                <StyledLinkRouter to={`/profile/${user.username}`}>
                                                     <Heading as='h3' size='md'>
                                                         {user.username}
                                                     </Heading>
-                                                </Link>
+                                                </StyledLinkRouter>
                                                 <Text>{user.name}</Text>
                                             </Stack>
                                         </Flex>

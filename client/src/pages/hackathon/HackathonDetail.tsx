@@ -33,7 +33,7 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AppContext } from '../../AppContext';
-import { BoxFullHeightAfterHeader } from '../../components/Common';
+import { BoxFullHeightAfterHeader, ContainerWithBackgroundImage } from '../../components/Common';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import OverlappedBoxes from '../../components/OverlappedBoxes';
 import { Attendant, Hackathon, HackathonStatus, UserRole } from '../../models/Models';
@@ -404,16 +404,6 @@ function WinnerDialog(props: WinnerDialogProps) {
         </Modal>
     );
 }
-
-const ContainerWithBackgroundImage = styled(Box).attrs({
-    backgroundImage: "url('./images/background/space-min.jpg')",
-    w: '100%',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    h: 'fit-content',
-    minH: 'inherit',
-    backgroundPosition: 'bottom',
-})``;
 
 const StyledDateContainer = styled(Flex).attrs({
     pt: ['8px', '8px', '10px', '10px'],

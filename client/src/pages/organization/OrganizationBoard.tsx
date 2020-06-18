@@ -145,7 +145,7 @@ const FlexContainer = styled(Stack).attrs({
 const StyledStat = styled(Box).attrs({
     bg: colors.white,
 })`
-    border: 1px solid ${colors.blue_light};
+    border: 2px solid ${colors.blue_light};
     box-shadow: 1px 1px 5px ${colors.blue_light};
 `;
 

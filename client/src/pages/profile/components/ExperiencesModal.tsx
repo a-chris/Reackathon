@@ -122,7 +122,11 @@ export default function ExperienceModal(props: ExperienceModalProps) {
                     <Button variant='ghost' onClick={onCancel}>
                         ANNULLA
                     </Button>
-                    <Button variantColor='blue' mr={3} onClick={onSave}>
+                    <Button
+                        variantColor='blue'
+                        mr={3}
+                        onClick={onSave}
+                        isDisabled={newExperiences.length === 0}>
                         SALVA
                     </Button>
                 </ModalFooter>

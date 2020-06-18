@@ -17,6 +17,7 @@ import colors from '../../utils/colors';
 import ClientProfileInfo from './components/ClientProfileInfo';
 import OrganizationProfileInfo from './components/OrganizationProfileInfo';
 import SignupModal from './components/SignupModal';
+import { BoxFullHeightAfterHeader, ContainerWithBackgroundImage } from '../../components/Common';
 
 export default function Profile() {
     const { username } = useParams();
@@ -79,72 +80,78 @@ export default function Profile() {
     const avatarUrl = user?.avatar != null ? 'avatar/' + user?.avatar : undefined;
 
     return (
-        <>
-            <OverlappedBoxes
-                mainStackStyle={{ w: ['90%', '90%', '70%', '70%'] }}
-                topBoxStyle={{ w: ['90%', '90%', '80%', '80%'], p: 2 }}
-                TopContent={() => (
-                    <Flex align='center' justify='space-evenly' flexWrap='wrap' textAlign='center'>
-                        <Stack direction='column'>
-                            <Avatar
-                                size='xl'
-                                name={user?.name}
-                                src={avatarUrl}
-                                color={colors.white}
-                                bg={colors.red}
-                            />
-                            {isProfileOwner && (
-                                <UploadButton size='xs' fontSize='sm'>
-                                    <label>
-                                        <input type='file' onChange={onAvatarUpload} />
-                                        Carica foto
-                                    </label>
-                                </UploadButton>
-                            )}
-                        </Stack>
-                        <Box pl={'1'} minW='60%'>
-                            <Heading as='h1' size='xl'>
-                                {user?.username}
-                            </Heading>
-                            {user?.badge && (
-                                <UserBadge
-                                    user={user}
-                                    styleProps={{ m: 'auto', w: 'fit-content' }}
+        <BoxFullHeightAfterHeader isLogged={appContext.state?.user != null}>
+            <ContainerWithBackgroundImage>
+                <OverlappedBoxes
+                    mainStackStyle={{ w: ['90%', '90%', '70%', '70%'] }}
+                    topBoxStyle={{ w: ['90%', '90%', '80%', '80%'], p: 2 }}
+                    TopContent={() => (
+                        <Flex
+                            align='center'
+                            justify='space-evenly'
+                            flexWrap='wrap'
+                            textAlign='center'>
+                            <Stack direction='column'>
+                                <Avatar
+                                    size='xl'
+                                    name={user?.name}
+                                    src={avatarUrl}
+                                    color={colors.white}
+                                    bg={colors.red}
                                 />
-                            )}
-                            <Heading as='h2' size='lg' fontWeight='500'>
-                                {user?.name}
-                            </Heading>
-                            <Text>{user?.email}</Text>
-                        </Box>
-                    </Flex>
-                )}
-                BottomContent={() => (
-                    <>
-                        {user?.role != null && (
-                            <Stack align='center' pt='10px'>
-                                {user?.role === UserRole.CLIENT ? (
-                                    <ClientProfileInfo
-                                        user={user}
-                                        isProfileOwner={isProfileOwner}
-                                        onRemoveExperience={onRemoveExperience}
-                                        onSaveExperiences={onSaveExperiences}
-                                        onAddExperiences={onAddExperiences}
-                                        onSaveSkills={onSaveSkills}
-                                    />
-                                ) : (
-                                    <OrganizationProfileInfo
-                                        userId={user?._id}
-                                        isProfileOwner={isProfileOwner}
-                                    />
+                                {isProfileOwner && (
+                                    <UploadButton size='xs' fontSize='sm'>
+                                        <label>
+                                            <input type='file' onChange={onAvatarUpload} />
+                                            Carica foto
+                                        </label>
+                                    </UploadButton>
                                 )}
                             </Stack>
-                        )}
-                    </>
-                )}
-            />
-            <SignupModal isOpen={isOpen} onClose={onClose} />
-        </>
+                            <Box pl={'1'} minW='60%'>
+                                <Heading as='h1' size='xl'>
+                                    {user?.username}
+                                </Heading>
+                                {user?.badge && (
+                                    <UserBadge
+                                        user={user}
+                                        styleProps={{ m: 'auto', w: 'fit-content' }}
+                                    />
+                                )}
+                                <Heading as='h2' size='lg' fontWeight='500'>
+                                    {user?.name}
+                                </Heading>
+                                <Text>{user?.email}</Text>
+                            </Box>
+                        </Flex>
+                    )}
+                    BottomContent={() => (
+                        <>
+                            {user?.role != null && (
+                                <Stack align='center' pt='10px'>
+                                    {user?.role === UserRole.CLIENT ? (
+                                        <ClientProfileInfo
+                                            user={user}
+                                            isProfileOwner={isProfileOwner}
+                                            onRemoveExperience={onRemoveExperience}
+                                            onSaveExperiences={onSaveExperiences}
+                                            onAddExperiences={onAddExperiences}
+                                            onSaveSkills={onSaveSkills}
+                                        />
+                                    ) : (
+                                        <OrganizationProfileInfo
+                                            userId={user?._id}
+                                            isProfileOwner={isProfileOwner}
+                                        />
+                                    )}
+                                </Stack>
+                            )}
+                        </>
+                    )}
+                />
+                <SignupModal isOpen={isOpen} onClose={onClose} />
+            </ContainerWithBackgroundImage>
+        </BoxFullHeightAfterHeader>
     );
 }
 

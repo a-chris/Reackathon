@@ -208,11 +208,12 @@ export async function subscribeUser(req: Request, res: Response) {
     /*
      * Notify hackathon organization using socket
      */
-    (req.app
-        .get('io')
-        .to(hackathon.organization.username) as SocketIO.Server).emit(SocketEvent.NEW_ATTENDANT, {
-        hackathonName: hackathon.name,
-    });
+    (req.app.get('io').to(hackathon.organization.username) as SocketIO.Server).emit(
+        SocketEvent.NEW_ATTENDANT,
+        {
+            hackathonName: hackathon.name,
+        }
+    );
     return res.json(
         await HackathonDb.findById(hackathon._id).populate({
             path: 'attendants',
@@ -247,7 +248,6 @@ export function organizationStats(req: Request, res: Response) {
                 .map((hackathon) => hackathon.prize.amount)
                 .reduce((amountA, amountB) => amountA + amountB);
         }
-        return res.json(stats);
+        res.json(stats);
     });
-    return res.json(stats);
 }

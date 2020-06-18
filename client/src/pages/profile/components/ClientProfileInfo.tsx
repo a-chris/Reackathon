@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, Heading, Icon, useDisclosure } from '@chakra-ui/core';
+import { Box, Button, Divider, Flex, Heading, Icon, useDisclosure, Text } from '@chakra-ui/core';
 import React from 'react';
 import { Experience, User } from '../../../models/Models';
 import colors from '../../../utils/colors';
@@ -64,13 +64,15 @@ export default function ClientProfileInfo(props: ExperienceProps) {
                         </Button>
                     </Flex>
                 )}
-                {props.user?.experiences != null && props.user?.experiences?.length > 0 && (
+                {props.user?.experiences != null && props.user?.experiences?.length > 0 ? (
                     <ExperiencesTimeline
                         canBeEdited={props.isProfileOwner}
                         experiences={props.user.experiences}
                         onSave={props.onSaveExperiences}
                         onRemove={props.onRemoveExperience}
                     />
+                ) : (
+                    <Text pb={5}>Ancora nessuna esperienza.</Text>
                 )}
             </Box>
             {props.isProfileOwner && (

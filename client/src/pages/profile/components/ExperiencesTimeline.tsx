@@ -68,7 +68,7 @@ export default function ExperiencesTimeline(props: ExperiencesTimelineProps) {
                         contentStyle={{
                             background: elementColors[index].bg,
                             color: elementColors[index].textColor,
-                            padding: '10px 30px',
+                            padding: '10px 20px',
                         }}
                         contentArrowStyle={{
                             borderRight: '7px solid ' + colors.black_almost,
@@ -78,10 +78,14 @@ export default function ExperiencesTimeline(props: ExperiencesTimelineProps) {
                             backgroundColor: elementColors[index].bg,
                         }}
                         date={areEditable[index] ? undefined : formatExperiencePeriod(exp)}
+                        dateClassName='date-color'
                         key={index}>
-                        <Flex justify='space-between'>
+                        <Flex justify='space-between' wrap='wrap' maxW='100%'>
                             {areEditable[index] ? (
-                                <BoxWithSpacedChildren space='10px'>
+                                <BoxWithSpacedChildren
+                                    space='10px'
+                                    color={colors.black}
+                                    maxW='inherit'>
                                     <Input
                                         size='sm'
                                         placeholder='Ruolo'
@@ -114,15 +118,17 @@ export default function ExperiencesTimeline(props: ExperiencesTimelineProps) {
                                     />
                                 </BoxWithSpacedChildren>
                             ) : (
-                                <Box>
+                                <Box pb='10px'>
                                     <Text>{exp?.role}</Text>
                                     <Text>{exp?.company}</Text>
                                 </Box>
                             )}
                             {props.canBeEdited && (
                                 <Flex direction='column' justify='space-between'>
-                                    <Flex>
+                                    <Flex pb={2}>
                                         <IconButton
+                                            color={colors.black}
+                                            bg={colors.white}
                                             isRound
                                             size='sm'
                                             variant='ghost'
@@ -132,6 +138,8 @@ export default function ExperiencesTimeline(props: ExperiencesTimelineProps) {
                                         />
                                         <Box w='15px' />
                                         <IconButton
+                                            color={colors.black}
+                                            bg={colors.white}
                                             isRound
                                             size='sm'
                                             variant='ghost'
@@ -142,7 +150,9 @@ export default function ExperiencesTimeline(props: ExperiencesTimelineProps) {
                                     </Flex>
                                     {areEditable[index] && (
                                         <Flex direction='row-reverse'>
-                                            <Button onClick={() => props.onSave(experiences)}>
+                                            <Button
+                                                color={colors.black}
+                                                onClick={() => props.onSave(experiences)}>
                                                 SALVA
                                             </Button>
                                         </Flex>
@@ -160,6 +170,13 @@ export default function ExperiencesTimeline(props: ExperiencesTimelineProps) {
 const StyledBox = styled(Box)`
     .vertical-timeline.vertical-timeline-custom-line::before {
         background: ${colors.black_almost};
+    }
+
+    .date-color {
+        @media only screen and (min-width: 1170px) {
+            color: ${colors.black};
+            padding-left: 10px;
+        }
     }
 `;
 

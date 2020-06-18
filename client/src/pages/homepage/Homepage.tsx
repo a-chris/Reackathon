@@ -204,7 +204,8 @@ const FlexContainer: React.FC<{}> = (props) => {
             justifyContent='center'
             p='10% 0'
             backgroundColor={colors.blue_night}
-            backgroundImage="url('./images/background/space-min.jpg')"
+            backgroundImage="url('./images/background/europe2.jpg')"
+            backgroundPosition='bottom'
             {...BackgroundImageStyleProps}>
             {props.children}
         </Flex>

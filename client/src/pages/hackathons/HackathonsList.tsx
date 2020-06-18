@@ -84,8 +84,14 @@ export default function HackathonsList() {
     const isLogged = appContext.state?.user != null;
 
     return (
-        <BoxFullHeightAfterHeader isLogged={isLogged}>
-            <SimpleGrid w='100%' minH='inherit' columns={[1, 1, 2, 2]}>
+        <BoxFullHeightAfterHeader
+            isLogged={isLogged}
+            h={[
+                'calc(100vh - 3.2rem)',
+                'calc(100vh - 3.2rem)',
+                isLogged ? 'calc(100vh - 6.5rem)' : 'calc(100vh - 4rem)',
+            ]}>
+            <SimpleGrid w='100%' minH='inherit' h='inherit' columns={[1, 1, 2, 2]}>
                 <Stack p={[25, 25, 15, 5]} overflowY='auto'>
                     <Box textAlign='center'>
                         <Heading as='h1' size='xl' color={colors.blue_light} p={1}>
@@ -149,43 +155,47 @@ export default function HackathonsList() {
                             <Text textAlign='center'>Nessun hackathon trovato.</Text>
                         ) : (
                             hackathons.map((hackathon, index) => (
-                                <Box
-                                    p={2}
-                                    color='gray.500'
-                                    border={'2px solid ' + colors.gray}
-                                    textAlign='left'
-                                    key={index}>
-                                    <Link key={hackathon._id} to={'hackathons/' + hackathon._id}>
-                                        <Heading as='h2' size='lg' color={colors.gray_darker}>
-                                            {hackathon.name}
-                                        </Heading>
-                                        <Text color={colors.gray_light}>
-                                            {hackathon.description.substring(0, 150)}...
-                                        </Text>
-
-                                        <Box mt={1} mb={1}>
-                                            <Text
-                                                fontSize='sm'
-                                                fontWeight='semibold'
-                                                color={colors.gray_dark}>
-                                                {toDateString(hackathon.startDate)} -{' '}
-                                                {toDateString(hackathon.endDate)}
+                                    <Box
+                                        p={2}
+                                        color='gray.500'
+                                        border={'2px solid ' + colors.gray}
+                                        textAlign='left'
+                                        key={index}>
+                                        <Link
+                                            key={hackathon._id}
+                                            to={'hackathons/' + hackathon._id}>
+                                            <Heading as='h2' size='lg' color={colors.gray_darker}>
+                                                {hackathon.name}
+                                            </Heading>
+                                            <Text color={colors.gray_light}>
+                                                {hackathon.description.substring(0, 150)}...
                                             </Text>
-                                        </Box>
-                                        <Flex alignItems='baseline' justifyContent='space-between'>
-                                            <Box
-                                                color={colors.gray_dark}
-                                                fontWeight='semibold'
-                                                letterSpacing='wide'
-                                                fontSize='xs'
-                                                textTransform='uppercase'>
-                                                {hackathon.location.city} &bull;{' '}
-                                                {hackathon.location.country}
+
+                                            <Box mt={1} mb={1}>
+                                                <Text
+                                                    fontSize='sm'
+                                                    fontWeight='semibold'
+                                                    color={colors.gray_dark}>
+                                                    {toDateString(hackathon.startDate)} -{' '}
+                                                    {toDateString(hackathon.endDate)}
+                                                </Text>
                                             </Box>
-                                            {StatusBadge(hackathon)}
-                                        </Flex>
-                                    </Link>
-                                </Box>
+                                            <Flex
+                                                alignItems='baseline'
+                                                justifyContent='space-between'>
+                                                <Box
+                                                    color={colors.gray_dark}
+                                                    fontWeight='semibold'
+                                                    letterSpacing='wide'
+                                                    fontSize='xs'
+                                                    textTransform='uppercase'>
+                                                    {hackathon.location.city} &bull;{' '}
+                                                    {hackathon.location.country}
+                                                </Box>
+                                                {StatusBadge(hackathon)}
+                                            </Flex>
+                                        </Link>
+                                    </Box>
                             ))
                         )}
                     </BoxWithSpacedChildren>
