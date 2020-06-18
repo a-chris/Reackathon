@@ -8,6 +8,7 @@ import CookieConsent from 'react-cookie-consent';
 import { HashRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
 import { AppContext, reducer } from './AppContext';
 import Header from './components/Header';
+import './config/AxiosConfig';
 import { User, UserRole } from './models/Models';
 import PageNotFound from './pages/errors/PageNotFound';
 import HackathonDetail from './pages/hackathon/HackathonDetail';
@@ -23,10 +24,6 @@ import { getLocalUser } from './services/UserService';
 import socketClient from './socket/socket';
 import SocketEvent from './socket/SocketEvent';
 import { LOGIN_ACTION } from './utils/constants';
-
-if (process.env.NODE_ENV === 'development') {
-    require('./config/AxiosConfig');
-}
 
 /*
  * Set moment language to italian for the whole application
@@ -50,7 +47,7 @@ export default function App() {
         }
         if (socketClient?.disconnected) {
             socketClient.open();
-            socketClient.removeAllListeners();
+            socketClient.removeEventListener('connect');
             socketClient.once('connect', () => {
                 if (state.user != null) {
                     socketClient.emit('join_room', state.user.username);
