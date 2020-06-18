@@ -82,7 +82,7 @@ export default function App() {
                     isClosable: true,
                 });
             }
-            return error;
+            return Promise.reject(error);
         }
     );
 
