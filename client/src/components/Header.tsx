@@ -46,7 +46,6 @@ type MenuItem = {
     name: string;
     path: string;
     role: UserRole[] | undefined;
-    action?: () => void;
 };
 
 const ACTION_MENU_ITEMS: MenuItem[] = [
@@ -58,7 +57,7 @@ const ACTION_MENU_ITEMS: MenuItem[] = [
     {
         name: 'I tuoi Hackathon',
         path: '/hackathons',
-        role: [UserRole.CLIENT],
+        role: [UserRole.CLIENT, UserRole.ORGANIZATION],
     },
     {
         name: 'Crea Hackathon',
@@ -67,7 +66,7 @@ const ACTION_MENU_ITEMS: MenuItem[] = [
     },
     {
         name: 'Lista Hackathon',
-        path: '/hackathons',
+        path: '/hackathons/',
         role: [UserRole.CLIENT, UserRole.ORGANIZATION],
     },
     {

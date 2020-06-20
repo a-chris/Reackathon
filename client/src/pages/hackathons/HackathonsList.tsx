@@ -31,6 +31,7 @@ import { getAvailableCities } from '../../services/FilterService';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 import { toDateString } from '../../utils/functions';
+import hash from 'object-hash';
 
 type RouteParams = {
     organization?: string;
@@ -76,6 +77,10 @@ export default function HackathonsList() {
     React.useEffect(() => {
         getAvailableCities().then((cities) => setAvailableCities(cities));
     }, []);
+
+    React.useEffect(() => {
+        setFilters(sanitizeRouteParams(queryString.parse(location.search)));
+    }, [location.search]);
 
     React.useEffect(() => {
         getHackathons(filters).then((hackathons) => setHackathons(hackathons));
@@ -134,6 +139,7 @@ export default function HackathonsList() {
                                         <b>Città:</b>
                                         <Select
                                             minW='212px'
+                                            value={filters.city}
                                             placeholder='-'
                                             name='city'
                                             onChange={onChangeFilter}>
@@ -251,6 +257,7 @@ export default function HackathonsList() {
                     <MapContainer
                         hackathons={hackathons}
                         style={{ height: '100%', width: '100%' }}
+                        key={hash(filters)}
                     />
                 </Box>
             </SimpleGrid>
