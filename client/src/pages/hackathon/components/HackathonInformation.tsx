@@ -9,6 +9,7 @@ import {
     StatLabel,
     StatNumber,
     Text,
+    Flex,
 } from '@chakra-ui/core';
 import React from 'react';
 import { Hackathon } from '../../../models/Models';
@@ -71,6 +72,16 @@ export const Information: React.FC<{ hackathon: Hackathon }> = ({ hackathon }) =
                 Requisiti richiesti per partecipare
             </Heading>
             <Text>{hackathon.attendantsRequirements.description}</Text>
+
+            <Stat pt={4}>
+                {hackathon.attendantsRequirements.maxGroupComponents != null ? (
+                    <StatNumber>{hackathon.attendantsRequirements.maxGroupComponents}</StatNumber>
+                ) : (
+                    <StatNumber>&#8734;</StatNumber>
+                )}
+                <StatLabel>Numero massimo</StatLabel>
+                <StatHelpText>Di componenti per gruppo</StatHelpText>
+            </Stat>
             <Divider borderColor={colors.red} />
 
             <Heading as='h2' size='md'>
