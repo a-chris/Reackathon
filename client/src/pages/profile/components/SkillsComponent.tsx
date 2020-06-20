@@ -94,7 +94,7 @@ export default function SkillsComponent(props: SkillsComponentProps) {
                               </Tag>
                           )
                       )
-                    : !props.isEditable && <Text pb={5}>Ancora nessuna esperienza.</Text>}
+                    : !props.isEditable && <Text pb={5}>Ancora nessuna competenza.</Text>}
 
                 {props.isEditable && (
                     <IconButton
