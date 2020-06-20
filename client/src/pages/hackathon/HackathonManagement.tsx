@@ -155,6 +155,7 @@ export default function HackathonManagement() {
 
     const onChangePrize = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event?.target;
+        console.log(value);
         if (name != null && value != null) {
             setHackathonData((curr) => ({ ...curr, prize: { ...curr.prize, [name]: value } }));
         }
@@ -458,17 +459,12 @@ export default function HackathonManagement() {
                     <AccordionPanel pb={4}>
                         <FormControl isRequired>
                             <FormLabel htmlFor='amount'>Premio in denaro</FormLabel>
-                            <NumberInput step={5} defaultValue={0} min={0}>
-                                <NumberInputField
-                                    id='amount'
-                                    name='amount'
-                                    onChange={onChangePrize}
-                                />
-                                <NumberInputStepper>
-                                    <NumberIncrementStepper />
-                                    <NumberDecrementStepper />
-                                </NumberInputStepper>
-                            </NumberInput>
+                            <Input
+                                id='amount'
+                                name='amount'
+                                value={hackathonData.prize.amount}
+                                onChange={onChangePrize}
+                            />
                         </FormControl>
 
                         <FormControl pr={4}>
