@@ -274,15 +274,15 @@ export default function HackathonDetail() {
                                             {hackathonData.location.country}
                                         </PseudoBox>
                                     </Stack>
-                                    <Box>
-                                        Creato da{' '}
+                                    <Flex wrap='wrap'>
+                                        <p>Creato da&nbsp;</p>
                                         <StyledLinkRouter
                                             to={`/profile/${hackathonData.organization.username}`}
                                             linkcolor={colors.blue_night}
                                             linkweight='600'>
                                             {hackathonData.organization.name}
                                         </StyledLinkRouter>
-                                    </Box>
+                                    </Flex>
 
                                     <StyledDateContainer>
                                         <PseudoBox pr={10}>
@@ -327,11 +327,11 @@ export default function HackathonDetail() {
                                     pr={[null, null, '8%', '8%']}>
                                     <Stack spacing={3} alignItems='center'>
                                         <Badge
+                                            rounded='md'
                                             variantColor={
                                                 hackathonStatusToString[hackathonData.status].color
                                             }
                                             mt='2'>
-                                            Hackathon{' '}
                                             {hackathonStatusToString[hackathonData.status].text}
                                         </Badge>
                                         {getHackathonButtons()}
