@@ -98,7 +98,7 @@ export default function OrganizationBoard() {
 
 const boardMessages = (id?: string) => ({
     empty: {
-        heading: 'Nessun Hackathon inserito',
+        heading: 'Nessun Hackathon in programma',
         subHeading: 'Creane uno adesso!',
         linkTo: '/hackathons/create',
     },

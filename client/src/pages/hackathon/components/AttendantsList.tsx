@@ -19,7 +19,7 @@ export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentA
 
     React.useEffect(() => {
         setOrderedAttendants(_.orderBy(attendants, ['group'], ['asc']));
-    }, [attendants, currentAttendant]);
+    }, [attendants]);
 
     const onInviteAttendant = (toId: string) => {
         if (currentAttendant?._id != null) {
@@ -30,19 +30,21 @@ export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentA
     };
 
     const colors: string[] = React.useMemo(() => {
+        if (orderedAttendants == null) return [];
+
         const tmpColors: string[] = [];
-        for (let i = 0; i < attendants.length; i++) {
-            const attendant = attendants[i];
+        for (let i = 0; i < orderedAttendants.length; i++) {
+            const attendant = orderedAttendants[i];
             if (i === 0 || attendant.group == null) {
                 tmpColors.push(getRandomColorString());
-            } else if (attendant.group === attendants[i - 1].group) {
+            } else if (attendant.group === orderedAttendants[i - 1].group) {
                 tmpColors.push(tmpColors[i - 1]);
             } else {
-                tmpColors.push('');
+                tmpColors.push(getRandomColorString());
             }
         }
         return tmpColors;
-    }, [attendants]);
+    }, [orderedAttendants]);
 
     return (
         <StyledBottomBoxContainer>
@@ -130,7 +132,10 @@ function getGroupButton(
     );
     const alreadyInvited = invite != null || invitedAttendants.has(attendantInList._id);
 
-    if (alreadyInvited && invite?.status === 'pending') {
+    if (
+        (alreadyInvited && invite?.status === 'pending') ||
+        (alreadyInvited && invite?.status == null)
+    ) {
         return (
             <Badge ml='1' fontSize='0.8em' variantColor='green' rounded='md'>
                 <Text fontSize='md' fontWeight='bold'>
