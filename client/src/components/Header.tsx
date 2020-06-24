@@ -56,7 +56,7 @@ const ACTION_MENU_ITEMS: MenuItem[] = [
     },
     {
         name: 'I tuoi Hackathon',
-        path: '/hackathons',
+        path: '/hackathons/',
         role: [UserRole.CLIENT, UserRole.ORGANIZATION],
     },
     {
@@ -66,7 +66,7 @@ const ACTION_MENU_ITEMS: MenuItem[] = [
     },
     {
         name: 'Lista Hackathon',
-        path: '/hackathons/',
+        path: '/hackathons',
         role: [UserRole.CLIENT, UserRole.ORGANIZATION],
     },
     {
@@ -126,8 +126,11 @@ export default function Header() {
 
     function onMenuClick(path: string) {
         setHamburgerMenuOpen(false);
-        if (path === '/hackathons' && appContext.state?.user?.role != null) {
-            history.push({ pathname: path, search: `?user=${appContext.state.user.username}` });
+        if (path === '/hackathons/' && appContext.state?.user?.role != null) {
+            history.push({
+                pathname: '/hackathons',
+                search: `?user=${appContext.state.user.username}`,
+            });
         } else {
             history.push(path);
         }
