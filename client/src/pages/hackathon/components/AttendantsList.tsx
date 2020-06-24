@@ -32,18 +32,12 @@ export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentA
     const colors: string[] = React.useMemo(() => {
         if (orderedAttendants == null) return [];
 
-        const tmpColors: string[] = [];
-        for (let i = 0; i < orderedAttendants.length; i++) {
-            const attendant = orderedAttendants[i];
-            if (i === 0 || attendant.group == null) {
-                tmpColors.push(getRandomColorString());
-            } else if (attendant.group === orderedAttendants[i - 1].group) {
-                tmpColors.push(tmpColors[i - 1]);
-            } else {
-                tmpColors.push(getRandomColorString());
-            }
-        }
-        return tmpColors;
+        const grouped = _.groupBy(orderedAttendants, (a) => a.group);
+        const colorsMap = new Map();
+        Object.keys(grouped).forEach((key) => colorsMap.set(key, getRandomColorString()));
+        return orderedAttendants.map((a) =>
+            a.group != null ? colorsMap.get(a.group.toString()) : getRandomColorString()
+        );
     }, [orderedAttendants]);
 
     return (
