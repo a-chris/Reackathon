@@ -10,7 +10,7 @@ import { getAvailableCities } from '../../services/FilterService';
 import { getHackathons } from '../../services/HackathonService';
 import colors from '../../utils/colors';
 
-const initialFilter = { country: 'Italy', status: HackathonStatus.PENDING };
+const initialFilter = { country: 'Italia', status: HackathonStatus.PENDING };
 
 const CITY_TO_SHOW = 6;
 
