@@ -74,7 +74,6 @@ export const AttendantsList: React.FC<AttendantsProps> = ({ attendants, currentA
                                     <UserBadge user={attendant.user} />
                                 </Box>
                                 <Stack
-                                    isInline
                                     textAlign={['center', 'center', 'left']}
                                     alignItems='center'
                                     spacing='2px'>
@@ -126,14 +125,24 @@ function getGroupButton(
     }
 
     let text = '';
-    const alreadyInvited =
-        attendantInList.invites?.find((invite) => (invite.from as any) === currentAttendant._id) !=
-            null || invitedAttendants.has(attendantInList._id);
-    if (alreadyInvited) {
+    const invite = attendantInList.invites?.find(
+        (invite) => (invite.from as any) === currentAttendant._id
+    );
+    const alreadyInvited = invite != null || invitedAttendants.has(attendantInList._id);
+
+    if (alreadyInvited && invite?.status === 'pending') {
         return (
-            <Badge ml='1' fontSize='0.8em' variantColor='green'>
+            <Badge ml='1' fontSize='0.8em' variantColor='green' rounded='md'>
                 <Text fontSize='md' fontWeight='bold'>
                     INVITATO
+                </Text>
+            </Badge>
+        );
+    } else if (alreadyInvited && invite?.status === 'declined') {
+        return (
+            <Badge ml='1' fontSize='0.8em' variantColor='red' rounded='md'>
+                <Text fontSize='sm' fontWeight='bold'>
+                    NON ACCETTATO
                 </Text>
             </Badge>
         );
@@ -142,6 +151,7 @@ function getGroupButton(
     } else if (currentAttendant.group != null && attendantInList.group == null) {
         text = 'Invita nel tuo gruppo';
     }
+
     if (text)
         return (
             <StyledBlueButton size='sm' onClick={() => onInvite(attendantInList._id)}>
