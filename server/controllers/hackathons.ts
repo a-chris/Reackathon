@@ -56,8 +56,8 @@ const sanitizeFilters = (filters: any): FilterType => {
 export async function findHackathons(req: Request, res: Response) {
     const query = req.query;
     const filters = sanitizeFilters(query);
-
     const filtersToApply = { ...filters } as any;
+
     let userHackathons;
     if (query.user != null) {
         const user = await UserDb.findOne({ 'username': query.user.toString() });
@@ -75,6 +75,20 @@ export async function findHackathons(req: Request, res: Response) {
             }
         }
     }
+
+    let startDateFilter = {};
+    if (filters.from != null) {
+        startDateFilter = { $gte: filters.from };
+        filtersToApply.from = undefined;
+    }
+    if (filters.to != null) {
+        startDateFilter = { ...startDateFilter, $lt: filters.to };
+        filtersToApply.to = undefined;
+    }
+    if (!_.isEmpty(startDateFilter)) {
+        filtersToApply.startDate = startDateFilter;
+    }
+
     HackathonDb.find(filtersToApply)
         .populate('organization')
         .exec((err, hackathons) => {
