@@ -1,5 +1,5 @@
 # Reackathon Project
+Reackathon is a platform to bring toghether organizators and partecipants of hackathons built on top of React + Express + MongoDB + Typescript.
+The project has been developed for an exam at the University of Bologna.
 
-Reackathon è una piattaforma per la gestione di hackathon sviluppata con React + Express + MongoDB + Typescript.
-
-Autori: Christian Toscano - Giada Boccali
+Contributors: Christian Toscano - Giada Boccali
